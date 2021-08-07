@@ -1,0 +1,270 @@
+<div class="right_col" role="main">
+
+	<div class="row" ng-controller="conditionController as ctrl">
+
+
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="x_panel">
+				<div class="x_title">
+					<div class="col-md-6 text-left">
+						<h3>Conditions</h3>
+					</div>
+					<div class="col-md-6 text-right"> 
+					  <div>
+					  	<button class="btn btn-xs btn-info" onclick="window.location.href='#/correlation'">
+							<h5><i class="glyphicon glyphicon-arrow-left" aria-hidden="true"></i> Back to Rules</h5>
+						</button>
+		            </div>
+					</div>
+
+					<div class="clearfix"></div>
+				</div>
+				<div class="x_content">
+					<br />
+					<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+ 					 </script>
+
+
+					<div uib-alert ng-repeat="alert in ctrl.alertMessagaes"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+		
+					
+<form name="rolesForm">
+	<div class="col-md-12 col-sm-12">
+		<div class="form-group col-md-12 col-sm-12">
+ 	            <label for="name">Filter Name <span class="required">*</span></label>
+	            <input type="text" ng-model="ctrl.condition.conditionName" class="form-control input-sm" id="name" placeholder="" required />	 
+	     </div>
+      
+   
+      <!-- <uib-tabset active="active">
+    <uib-tab index="0" heading="Field Chooser">
+    
+    	<div class="form-group col-md-12 col-sm-12">
+            	<br/>
+             <span ng-bind-html="output"></span>
+           	 <query-builder fields ="tempField" group="filter.group"></query-builder>
+      		
+        </div>
+    
+    </uib-tab>
+    <uib-tab index="1">
+      <uib-tab-heading >
+       	Filter Query
+      </uib-tab-heading>
+      <br/>
+      <div class="form-group col-md-6 col-sm-6">
+            <input type="text" class="form-control input-sm" ng-model="ctrl.condition.filterQuery" id="email" value="{{output}}" placeholder="">
+          	
+      		
+      		
+        </div>
+    </uib-tab>
+  </uib-tabset> -->
+  
+  
+  <div class="col-md-12">
+  <div data-elastic-builder="elasticBuilderData"></div>
+  
+  </div>
+        
+         
+	
+       
+	
+	   
+        
+	
+	</div>
+	<br/>
+	
+
+
+
+<hr/>
+
+
+
+<div class="form-group" style="padding-top: 12px">
+							<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+								<button type="button" class="btn btn-primary" ng-click="ctrl.editRestoreFilter()">Cancel</button>
+								<button class="btn btn-primary" type="reset">Reset</button>
+									<input type="button"
+									value="Save"
+									class="btn btn-primary" ng-click="ctrl.submitData()" >
+							</div>
+						</div>
+
+
+</form>
+<script type="text/ng-template" id="queryBuilderDirective.html">
+    <div class="alert alert-warning alert-group">
+        <div class="form-inline">
+            <select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select>
+            <button style="margin-left: 5px" ng-click="addCondition()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Condition</button>
+        	<button style="margin-left: 5px" ng-click="switchToBasic()" class="btn btn-sm btn-default">Basic</button>
+        </div>
+        <div class="group-conditions">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        <div class="form-inline">
+						
+						<select ng-model="rule.indexType" class="form-control input-sm" ng-change="getFields($index)">
+									<option value="apps">Apps</option>
+									<option value="corp">Corp</option>
+									<option value="homeadvisor">Home Advisor</option>
+									<option value="vimeo">Viemo</option>
+									
+							 </select>	
+
+						<select ng-model="rule.logType" class="form-control input-sm">
+									<option value="AD">AD</option>
+									<option value="Windows">Windows</option>
+									<option value="arubaswitches">Arubaswitches</option>
+									<option value="arubawireless">Arubawireless</option>
+									<option value="paloalto">Paloalto</option>
+									<option value="clearpass">Clearpass</option>
+									<option value="dhcp">dhcp</opion>
+							 </select>
+                            <select ng-options="t.name as t.name for t in fields" ng-model="rule.field" class="form-control input-sm"></select>
+                            <select style="margin-left: 5px"  ng-model="rule.condition" class="form-control input-sm">
+								<option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option
+							</select>
+                            <input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/>
+                            <button style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </script>
+<script type="text/ng-template" id="createCategoryConditions.html">
+			
+
+<div class="panel panel-flat">
+		<div class="panel-heading">
+
+			<div class="heading-elements">
+				<ul class="icons-list">
+					<li>
+						<button type="button"
+							ng-click="controller.goBack()" class="btn btn-info  btn-xs">
+							<b>Back</b> 
+						</button>
+				</ul>
+			</div>
+		</div>
+<br/>
+		
+                            <div class="panel-body">
+                            
+                            <form class="form-horizontal group-border-dashed" ng-submit = "controller.submitData()">
+					
+					<div class="form-group">
+                                            <label class="col-sm-3 control-label">Condition Name</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" required="" placeholder=""  ng-model="controller.condition.categoryName">
+                                            </div>
+                        </div>					
+					<div class="form-group">
+                                            <div class="col-sm-offset-3 col-sm-9 m-t-15">
+                                                <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                                    Submit
+                                                </button>
+                                                <button type="reset" class="btn btn-default waves-effect m-l-5">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+
+				</form>	
+                            
+                            
+                           
+                            
+
+                            
+                        </div>
+                        </div>			  
+
+
+							
+
+
+				
+			  </script>
+
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Filter Details</h2>
+
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<br />
+						<div class='pull-right'>
+							<input class="form-control" type="text" name="search"
+								placeholder="search conditions" ng-model="search"
+								ng-click="tableParams.sorting({})" />
+
+						</div>
+						<table class="table" st-safe-src="rowCollection"
+							st-table="displayCollection">
+							<thead>
+								<tr>
+									<th>Condition Name</th>
+									<th>Filter Query</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+									ng-repeat="data in displayCollection|orderBy:sortKey:reverse|filter:search">
+									<td>{{data.conditionName}}</td>
+									<td>{{data.filterQuery}}</td>
+									
+									<td>
+									<button class="btn btn-xs btn-info"
+											ng-click="ctrl.displayUpdate(data.id)">
+											<i class="fa fa-pencil" aria-hidden="true"></i>
+										</button>
+										<button class="btn btn-xs btn-info"
+											ng-click="deleteCondition(data.id)">
+											<i class="fa fa-trash" aria-hidden="true"></i>
+										</button></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+
+									<td colspan="4" class="text-center">
+
+										<div st-pagination="" st-items-by-page="itemsByPage"
+											st-displayed-pages="7"></div>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+
+	</div>
+
+
+
+		
+</div>

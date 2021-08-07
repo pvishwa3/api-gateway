@@ -1,0 +1,244 @@
+<div ng-controller="miterController as controller"
+	ng-init="controller.init()" class="content-wrapper">
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-4">
+			<h4 class="page-title ">Manage Tactics</h4>
+		</div>
+		<div class="col-sm-8">
+			<button ng-click='controller.openTacticsModel()' class="btn btn-primary pull-right">Create Tactics</button>
+            <button id="deleteTacticButton" href="javascript:void('0')" ng-click='controller.deleteTactics(controller.tacticsId[0].id,controller.tacticsId[0].tacticsName)' class="btn btn-danger pull-right mar-rgt">Delete</button>
+			<button id="editTacticButton" href="javascript:void('0')" ng-click='controller.displayEdit(controller.tacticsId[0].id)' class="btn btn-primary pull-right mar-rgt">Edit</button>
+		</div>
+	</div>
+
+	<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+	<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+	<div class="card">
+		<div class="card-body">
+<!-- 			<div ng-include src="templateUrl" onload='myFunction()'></div> -->
+			<div id = "tacticsContent" class="{{theme}}"></div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<script type="text/ng-template" id="viewTactics.html">
+            
+                 
+    <ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+        <li class="nav-item ">
+            <a ng-click="controller.desectAll()" class="nav-link active" id="home-tab" data-toggle="tab" href="javascript:void('0')" data-target="#whoweare" role="tab" aria-controls="whoweare" aria-selected="false">Tactics</a>
+          </li>
+          <li class="nav-item">
+            <a ng-click="controller.desectAll();controller.loadTechniques()" class="nav-link" id="profile-tab" data-toggle="tab" href="javascript:void('0')" data-target="#ourgoal" role="tab" aria-controls="ourgoal"
+                aria-selected="false">Techniques</a>
+        </li>
+    </ul>
+    <div class="tab-content tab-content-basic" style="padding-top:1%">
+        <div class="tab-pane fade active show" id="whoweare" role="tabpanel" aria-labelledby="home-tab"> 
+            <div class="">
+				<div id = "tacticsContent" class="{{theme}}"></div>
+			</div>
+       	</div>
+        
+
+         <div class="tab-pane fade" id="ourgoal" role="tabpanel" aria-labelledby="profile-tab"> 
+				<div id = "techniqueContent" class="{{theme}}" style="height: 500px;"></div>
+            
+        </div>
+        
+        </div>
+    </div>
+        </script>
+
+
+	<script type="text/ng-template" id="viewTechniques.html">
+
+			<div class="panel panel-table">
+				<div class="panel-body">
+					<div id = "technique2Content" class="{{theme}}" style="height: 500px;"></div>
+				</div>
+			</div>
+	
+
+	</script>
+
+
+	<div class="modal fade" id="tactics-modal" role="dialog" tabindex="-1"
+		aria-labelledby="spaces-modal" aria-hidden="true">
+
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form class="form-horizontal" role="form" name="tacticsForm" ng-submit="saveTactics()" novalidate="novalidate">
+					<!--Modal header-->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Tactics</h4>
+					</div>
+
+					<!--Modal body-->
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in controller.tacticsMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="">
+							<div class="">
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label for="field-1" class="control-label">Tactics Id</label>
+										<input type="text" class="form-control" ng-model="controller.miter.tacticsId" autocomplete="off" name="tacticsId" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+										<div class="text-danger text-bold help-block with-errors" ng-show=" (tacticsForm.$submitted || tacticsForm.tacticsId.$touched ) && tacticsForm.tacticsId.$error.required "> Tactics Id mandatory</div>
+										<div class="text-danger text-bold help-block with-errors" ng-show=" (tacticsForm.$submitted || tacticsForm.tacticsId.$touched ) && tacticsForm.tacticsId.$error.pattern "> Special characters are not allowed</div>
+									</div>
+
+									<div class="form-group">
+										<label for="field-1" class="control-label">Tactics name</label> 
+										<input type="text" class="form-control" ng-model="controller.miter.tacticsName" autocomplete="off" name="tacticsName" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+										<div class="text-danger text-bold help-block with-errors" ng-show="(tacticsForm.$submitted || tacticsForm.tacticsName.$touched ) && tacticsForm.tacticsName.$error.required "> Tactics Name is mandatory</div>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(tacticsForm.$submitted || tacticsForm.tacticsName.$touched ) && tacticsForm.tacticsName.$error.pattern "> Special characters are not allowed</div>
+									</div>
+
+									<div class="form-group">
+										<label for="field-1" class="control-label">Techniques</label> 
+										<selectize options='controller.allSavedTechniques' title="Select Category" config="controller.techniqueConfig" ng-model="controller.techniqueName">
+	                                        </selectize>
+									</div>
+									<div class="form-group">
+										<label for="field-1" class="control-label">Platform</label> 
+										<selectize options='controller.platForm' title="Select Category" config="controller.platformConfig" ng-model="controller.platforms">
+	                                        </selectize>
+									</div>
+									<div class="form-group">
+										<label for="field-1" class="control-label">Groups</label> 
+										<selectize options='controller.allExistgroups' title="Select Category" config="controller.groupsConfig" ng-model="controller.groups">
+	                                        </selectize>
+									</div>
+									<div class="form-group">
+										<div class="d-flex justify-content-between">
+											<label class="control-label">External Sources</label>
+											<a href="javascript:void('0');" ng-click="controller.addNewExternalSource()" class="btn btn-icon" ><i class="fa fa-plus"></i></a>
+										</div>
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Source Name</th>
+													<th>Source url</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="data in controller.externalReference">
+													<td><input type="text" class="form-control" autocomplete="off" ng-model="data.source_name"></td>
+													<td><input type="text" class="form-control" autocomplete="off" ng-model="data.url"></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!--Modal footer-->
+					<div class="modal-footer">
+						<button data-dismiss="modal" class="btn btn-secondary" type="button">Close</button>
+						<button class="btn btn-success" ng-disabled="tacticsForm.$invalid">Save changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="modal fade" id="techniques-modal" role="dialog"
+		tabindex="-1" aria-labelledby="spaces-modal" aria-hidden="true">
+
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form class="form-horizontal" role="form"
+					ng-submit="controller.addSingleTechnique()" name="techniquesForm" novalidate="novalidate">
+					<!--Modal header-->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Techniques</h4>
+					</div>
+
+					<!--Modal body-->
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in controller.tacticsMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="">
+							<div class="">
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label for="demo-inline-inputmail" class="control-label">Id *</label> 
+										<input type="text" class="form-control" ng-model="controller.technique.techniqueId" name="techniqueId" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.techniqueId.$touched ) && techniquesForm.techniqueId.$error.required ">Id is mandatory</div>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.techniqueId.$touched ) && techniquesForm.techniqueId.$error.pattern">Special characters are not allowed</div>
+									</div>
+
+									<div class="form-group">
+										<label for="demo-inline-inputmail" class="control-label">Technique *</label>
+										<input type="text" class="form-control"
+											ng-model="controller.technique.techniqueName" required="required" name="techniqueName" pattern="[a-zA-Z0-9\s-_]+" >
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.techniqueName.$touched ) && techniquesForm.techniqueName.$error.required ">Technique is mandatory</div>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.techniqueName.$touched ) && techniquesForm.techniqueName.$error.pattern">Special characters are not allowed</div>
+									</div>
+
+									<div class="form-group">
+										<label for="demo-inline-inputmail" class="control-label">Description *
+										</label>
+
+										<textarea class="form-control"
+											ng-model="controller.technique.description" name="description" cols="" required="required"></textarea>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.description.$touched ) && techniquesForm.description.$error.required ">Description is mandatory</div>
+									</div>
+
+
+									<div class="form-group">
+										<label for="demo-inline-inputmail" class="control-label">Platform
+										</label> <select class="form-control"
+											ng-model="controller.technique.paltform" name="platform" required="required">
+											<option value="Linux">Linux</option>
+											<option value="Windows">Windows</option>
+											<option value="macOS">macOS</option>
+										</select>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(techniquesForm.$submitted || techniquesForm.platform.$touched) && techniquesForm.platform.$error.required ">Platform is mandatory</div>
+									</div>
+
+
+								</div>
+							</div>
+						</div>
+						<br />
+
+
+					</div>
+
+					<!--Modal footer-->
+					<div class="modal-footer">
+						<button data-dismiss="modal" class="btn btn-secondary" type="button">Close</button>
+						<button class="btn btn-success" type="submit" ng-disabled="techniquesForm.$invalid">Save changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>

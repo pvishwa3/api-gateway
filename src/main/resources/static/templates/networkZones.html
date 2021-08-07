@@ -1,0 +1,139 @@
+<div ng-controller="networkZonesController as ctrl">
+    <div id="page-content">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div id="page-head">
+                        <div id="page-title">
+                            <h1 class="page-header text-overflow">Network Zones</h1>
+                        </div>
+                        <ol class="breadcrumb" ng-if="showHomeButton">
+								<li><a href="/configuration#!">Home</a></li>
+								<li class="active">Network Zones</li>
+			                 </ol>
+			                 <ol class="breadcrumb" ng-if="!showHomeButton">
+								<li><a href="/configuration#!">Home</a></li>
+								<li><a href="javascript:void('0')" ng-click="ctrl.goBack()">Network Zones</a></li>
+								<li class="active">New Network Zone</li>
+			                 </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row" style="padding-top: 20px; padding-right: 29px;">
+                    <div id="page-head">
+                        <div class="pull-right btn-group" ng-if="showHomeButton">
+                            <button class="btn btn-dark" ng-click="ctrl.newNetwork()">new Network</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-include src="templateUrl"></div>
+    </div>
+    
+    <script type="text/ng-template" id="networkZones.html">
+        
+        <div class="row">
+            <div class="panel panel-table">
+                <div class="panel-body-alt">
+                    <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>   
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Locations</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+							<tbody>
+    							<tr ng-repeat="data in ctrl.allNetworkZones track by $index">
+        							<td>{{data.company}}</td>
+        							<td><span ng-repeat="name in data.location track by $index"><label class="label label-default">{{name.name}}</label>&nbsp;&nbsp;</span></td>
+                                    <td>
+                                    	<a href="javascript:void('0')" ng-click="ctrl.editZone(data)"> Edit</a>&nbsp;
+                                        <a href="javascript:void('0')" ng-click="ctrl.deleteZone(data.id)"> Delete</a>&nbsp;
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="newNetworkZone.html">
+        <div class="panel">
+    <div class="panel-body" style="border:none" id="panel-body">
+        <div class="col-md-12">
+            <div class="content-wrapper">
+                <div class="panel-body" style="padding-top:12px;border:none;" id="panel-body">
+                    <form class="form-horizontal" name="networkForm" novalidate ng-submit="networkForm.$valid && ctrl.saveNetworkDetails()">
+                        <div class="form-group">
+                            <label class="control-label col-md-3"> Company <span class="text-danger"></span></label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" ng-model="ctrl.network.company" disabled>
+                            </div>
+                        </div>
+                        <fieldset class="form-group">
+                            <label class="col-md-3 control-label">Add Location
+                            <a href="javascript:void('0')" class="btn btn-link" ng-click="ctrl.addLocation()"><i
+                                    class="fa fa-plus"></i></a><label>
+                        </fieldset>
+
+                        <div ng-repeat="data in ctrl.network.location">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Location</label>
+                                <div class="col-md-7">
+                                    <input type="text" ng-model="data.name" class="form-control"/>
+                                </div>
+                            </div>
+                            <div ng-if="data.name">
+                                <fieldset>
+                                    Enter Details for {{data.name}}
+                                </fieldset>
+                                <table class="table table-striped  dataTable no-footer dtr-inline">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-4">Domain</th>
+                                            <th class="col-md-4">CIDR</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="data1 in data.details track by $index">
+                                            <td class="clonetd col-md-4">
+                                                <input type="text" class="form-control" ng-model="data1.domain">
+                                            </td>
+                                            <td class="clonetd col-md-4">
+                                                <ui-select multiple tagging tagging-label="" ng-model="data1.cidr"
+                                                    theme="bootstrap" title="Choose a Location">
+                                                    <ui-select-match placeholder="Select Location...">{{$item}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in ctrl.temp | filter:$select.search">
+                                                        {{data}}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </td>
+                                            <td class="clonetd col-md-3">
+                                                <a href="javascript:void('0')" ng-click="ctrl.addDetails($parent.$index)"
+                                                    class="btn btn-icon"><i class="fa fa-plus"></i></a>&nbsp;&nbsp;
+                                                <a ng-if="data.details.length > 1" href="javascript:void('0')" ng-click="ctrl.removeDetails($parent.$parent.$index,$index)"
+                                                    class="btn btn-icon"><i class="fa fa-minus"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+						<br><hr>
+                        </div>
+                        <div class="from-group control-label">
+                            <input type="submit" class="btn btn-dark" value="save" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </script> 
+</div>

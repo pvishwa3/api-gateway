@@ -1,0 +1,505 @@
+<div id="content-container" ng-controller="reportingController as reporting" ng-init="init">
+	<div id="page-content" style="padding-bottom: 100px;">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Reports</h1>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr>
+
+
+		<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+		<div uib-alert ng-repeat="alert in reporting.generalAlerts"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+		<div class="panel pad-top" id="panel-body">
+				<div class="col-md-6">
+						<input type="text" class="form-control mar-lft" ng-model="reporting.searchReport" ng-change="reporting.filterReports(reporting.searchReport)" >		
+				</div>		
+				<div class="col-md-6">
+				<div class="btn-group dropdown">
+					<button
+						class="btn btn-active-pink dropdown-toggle dropdown-toggle-icon btn-dark"
+						data-toggle="dropdown" aria-expanded="false">
+						<span ng-if="categoryDisplayText != ''">{{categoryDisplayText}}</span> <span ng-if="categoryDisplayText == ''">All</span> <span class="caret"></span>
+					</button>
+						
+
+
+					<ul class="dropdown-menu dropdown-menu-left">
+						<li>
+							<a href="javascript:void(0)" ng-click="filterCategory('')" style="font-size: 12px">All</a>
+							<a ng-repeat="data in reporting.categoryTypes" href="javascript:void(0)" ng-click="filterCategory(data.categoryType)" style="font-size: 12px">{{data.categoryType}}</a>
+						</li>
+					</ul>
+					</div>
+				<div class="btn-group dropdown">
+					<button
+						class="btn btn-active-pink dropdown-toggle dropdown-toggle-icon btn-dark"
+						data-toggle="dropdown" aria-expanded="false">
+						<span ng-if="complianceDisplayText != ''">{{complianceDisplayText}}</span> <span ng-if="complianceDisplayText == ''">All</span> <span class="caret"></span>
+					</button>
+						
+
+
+					<ul class="dropdown-menu dropdown-menu-left">
+
+
+
+						<li>
+						<a href="javascript:void(0)" ng-click="filterData('')" style="font-size: 12px">All</a>
+						<a ng-repeat="data in reporting.complianeTypes"  href="javascript:void(0)" ng-click="filterData(data.complianceType)" style="font-size: 12px">{{data.complianceType}}</a> 
+						</li>
+
+					</ul>
+</div>
+					<button ng-click="reporting.showReportingTemplate()"
+						class="btn btn-dark" title="To Create Report Template">Create
+						Report Template</button>
+						
+					<button ng-click="reporting.openScheduledReportsModal()"
+						class="btn btn-dark" title="To Modify the scheduled reports">Scheduled Reports</button>
+
+
+
+				</div>
+		<br><br><br>
+		
+			<div class="panel-body" style="border:none" id="panel-body">
+				<div class="reportContainer"
+					dir-paginate="data in reportData | itemsPerPage:5 ">
+					<div class="clearfix reportContainerHeader">
+
+						<div class="pull-left">
+							<h5  style="font-weight: normal;">{{data.title}} -
+								{{data.description}}.</h5>
+						</div>
+						<div class="pull-right" style="margin-top: 12px">
+							<a class="btn-link" href="javascript:void('0')"
+								ng-click='generateReport(data.id)'
+								style="border-right: 2px solid #2a5075; padding-right: 5px">Generate
+								Report</a> <a class="btn-link" href="javascript:void('0')"
+								ng-click='editReport(data.id)'
+								style="border-right: 2px solid #2a5075; padding-right: 5px">Edit
+								Report</a> <a class="btn-link" href="javascript:void('0')"
+								ng-click='showSchedulers(data.id,data.title)'>Schedule
+								Reports</a>
+						</div>
+
+
+
+
+					</div>
+
+					<div class="separator"></div>
+
+					<div class="reportContet">
+						<div class="reportHeader">Requirement</div>
+						<div>{{data.req}}</div>
+
+					</div>
+
+
+
+
+
+				</div>
+			</div>
+
+			<dir-pagination-controls max-size="5" direction-links="true"
+				boundary-links="true"> </dir-pagination-controls>
+
+		</div>
+
+
+		<div id="scheduler-template-modal" class="modal fade">
+			<div class="modal-dialog modal-lg modal-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Scheduled Reports</h4>
+					</div>
+					
+					<form class="form-horizontal" role="form"
+						ng-submit="saveReportScheduler()" name="alertsForm">
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in reporting.reportingMessages"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+
+							<div class="panel-control">
+								<a class="btn-link" href="javascript:void('')"
+									ng-show="schedulerTables" ng-click="addSchedulers()">Add
+									schedule </a> <a class="btn-link" href="javascript:void('')"
+									ng-show="schedulerForm" ng-click="goBackToTables()">Back </a>
+							</div>
+
+							<br /> <br />
+
+
+							<div class="row" ng-show="schedulerTables">
+
+								<table class="table">
+									<thead style="background: transparent;">
+										<tr>
+											<th>Schedule Name</th>
+											<th>Frequency</th>
+											<th>Email Address</th>
+											<th>Action</th>
+										</tr>
+
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="data in reportSchedulers">
+											<td>{{data.scheduleName}}</td>
+											<td>{{data.frequency}}</td>
+											<td>{{data.emailAddress}}</td>
+											<td><a href="javascript:void('0')" ng-click="reportId=data.reportId;;displaySchedulerForEdit(data.id)"> Edit</a>&nbsp;&nbsp; 
+												<a ng-click="reportId=data.reportId;deleteCondition(data.scheduleName,data.id)">Delete</a>&nbsp;&nbsp;
+												<a href="javascript:void('0')" ng-if="data.status == 'Enable'" ng-click="reportId=data.reportId;reporting.disableReport(data.id,data.reportId)">Disable&nbsp;&nbsp;</a> 
+												<a href="javascript:void('0')" ng-if="data.status == 'Disable'" ng-click="reportId=data.reportId;reporting.enableReport(data.id,data.reportId)">Enable&nbsp;&nbsp;</a> 
+											</td>
+										</tr>
+
+									</tbody>
+
+								</table>
+
+
+							</div>
+							<div class="row" ng-show="schedulerForm">
+							<div class="nano nano-content" style="height:450px">
+						<div class="nano-content" style="right:-17px"> 
+								<div class="form-group">
+									<label for="field-1" class="col-lg-3 control-label">Schedule
+										Name *</label>
+
+									<div class="col-lg-9">
+										<input type="text" ng-model="schedule.scheduleName"
+											class="form-control" required="required">
+									</div>
+
+
+								</div>
+
+
+
+								<div class="form-group">
+									<label for="field-1" class="col-lg-3 control-label">Email
+										Address *</label>
+
+									<div class="col-lg-9">
+										<input type="text" ng-model="schedule.emailAddress"
+											placeholder="Use comma(,) to separate mutliple email address"
+											class="form-control" required="required">
+									</div>
+
+
+								</div>
+
+								<div class="form-group">
+									<label for="field-1" class="col-lg-3 control-label">Email
+										Subject *</label>
+
+									<div class="col-lg-9">
+										<input type="text" ng-model="schedule.emailSubject"
+											class="form-control" required="required">
+									</div>
+
+
+								</div>
+
+								<div class="form-group">
+									<label for="field-1" class="col-lg-3 control-label">Export
+										Time Range *</label>
+
+									<div class="col-lg-9">
+
+										<select ng-model="schedule.reportFormat" class="form-control"
+											required="required">
+											<option value="last1Hour">Last 1 Hour</option>
+											<option value="today">Today</option>
+											<option value="yesterday">Yesterday</option>
+											<option value="last7days">Last 7 Days</option>
+											<option value="last30days">Last 30 Days</option>
+											<option value="thismonth">This Month</option>
+											<option value="lastmonth">Last Month</option>
+										</select>
+
+
+									</div>
+
+
+								</div>
+
+								<div class="form-group">
+									<label for="field-1" class="col-lg-3 control-label">Frequency
+										*</label>
+
+									<div class="col-lg-9">
+										<cron-gen ng-model="schedule.frequency" options="cronOptions"
+											name="cron"> </cron-gen>
+									</div>
+
+
+								</div>
+								</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="modal-footer" ng-show="schedulerForm">
+							<button type="submit" class="btn btn-dark">Save
+								changes</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+		<div id="report-template-modal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="mySmallModalLabel">Report
+							Template</h4>
+					</div>
+						 
+					<form class="form-horizontal" role="form"
+						ng-submit="saveOrUpdateReport()" name="alertsForm">
+								<div class="modal-body">
+						<div style="height: 500px;overflow-x: hidden;overflow-y: scroll;" >
+						<div class="" >
+							<div uib-alert ng-repeat="alert in reporting.fieldAlerts"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="row">
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label for="field-1" class="col-lg-2 control-label">Report
+											Name *</label>
+
+										<div class="col-lg-10">
+											<input type="text" ng-model="reports.reportingTitle" title="Enter Report name"
+												class="form-control" ng-class="(reports.reportingTitle=='' || reports.reportingTitle == undefined) && alertsForm.$submitted ? 'border-danger' : ''">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(reports.reportingTitle=='' || reports.reportingTitle == undefined) && alertsForm.$submitted">Report name is mandatory</div>	
+										</div>
+
+
+									</div>
+
+
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Report
+											Description *</label>
+										<div class="col-lg-10">
+											<input type="text" ng-model="reports.reportingDescription"
+												class="form-control" title="Enter Report name" ng-class="(reports.reportingDescription=='' || reports.reportingDescription == undefined) && alertsForm.$submitted ? 'border-danger' : ''">
+												<div class="text-danger text-bold help-block with-errors" ng-show="(reports.reportingDescription=='' || reports.reportingDescription == undefined) && alertsForm.$submitted">Report description is mandatory</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Compliance
+											Type *</label>
+										<div class="col-lg-10">
+										<selectize options="reporting.complianeTypes"  title=""  config="reporting.complienceTypeConfig" ng-model="reports.complianceType" ></selectize>
+<!-- 											<select class="form-control" title="Select Compliance type" -->
+<!-- 												ng-model="reports.complianceType" ng-class="(reports.complianceType=='' || reports.complianceType == undefined) && alertsForm.$submitted ? 'border-danger' : ''">  -->
+<!-- 												<option value="HIPAA">HIPAA</option> -->
+<!-- 												<option value="PCI">PCI</option> -->
+<!-- 												<option value="ISO">ISO</option> -->
+<!-- 												<option value="SOX">SOX</option> -->
+<!-- 												<option value="GDPR">GDPR</option> -->
+<!-- 												<option value="none">None</option> -->
+<!-- 											</select> -->
+											<div class="text-danger text-bold help-block with-errors" ng-show="(reports.complianceType=='' || reports.complianceType == undefined) && alertsForm.$submitted">Compliance type is mandatory</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Requirement
+											*</label>
+										<div class="col-lg-10">
+											<textarea rows="5" cols="5" class="form-control" title="Enter requirement"
+												ng-model="reports.requriment" ng-class="(reports.requriment=='' || reports.requriment == undefined) && alertsForm.$submitted ? 'border-danger' : ''"></textarea>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(reports.requriment=='' || reports.requriment == undefined) && alertsForm.$submitted">Requirement is mandatory</div>	
+										</div>
+									</div>
+
+
+
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Category
+											*</label>
+										<div class="col-lg-10">
+										{{reports.categoryTypes}}
+										<selectize options="reporting.categoryTypes"  title=""  config="reporting.categoryTypeConfig" ng-model="reports.category" ></selectize>
+
+										</div>
+									</div>
+
+
+
+
+
+									<div class="form-group">
+										<label class="col-lg-2 control-label">Date Range*</label>
+										<div class="col-lg-10" id="dateRangeId">
+											<select class="form-control" ng-model="reports.dateRange">
+												<option value="last15Minutes">Last 15 Minutes</option>
+												<option value="last30Minutes">last 30 Minutes</option>
+												<option value="last1Hour">last 1 Hours</option>
+												<option value="last3Hours">last 3 Hours</option>
+												<option value="last6Hours">last 6 Hours</option>
+												<option value="last12Hours">last 12 Hours</option>
+												<option value="last24Hours">last 24 Hours</option>
+												<option value="today">Today</option>
+												<option value="yesterday">Yesterday</option>
+												<option value="last2Days">Last 2 Days</option>
+												<option value="last7Days">Last 7 Days</option>
+												<option value="last30Days">Last 30 Days</option>
+											</select>
+										</div>
+									</div>
+
+
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Events
+											*</label>
+										<div class="col-lg-10">
+											<select class="form-control" title="Select one of the events"
+												ng-options="av.eventName for av in conditions track by av.id"
+												multiple="multiple" ng-model="reports.tempconditionId" ng-class="(reports.tempconditionId=='' || reports.tempconditionId == undefined) && alertsForm.$submitted ? 'border-danger' : ''"
+												bs-duallistbox  move-on-select="false" >
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(reports.tempconditionId=='' || reports.tempconditionId == undefined) && alertsForm.$submitted">Please select one of the events is mandatory</div>
+										</div>
+									</div>
+
+
+
+
+									<div class="form-group">
+										<label for="field-2" class="col-lg-2 control-label">Graphs
+											*</label>
+										<div class="col-lg-10">
+											<select class="form-control" title="Select one of the graphs"
+												ng-options="av.title for av in widgets track by av.id" move-on-select="false"
+												multiple="multiple" ng-model="reports.tempwidgetIds" ng-show="(reports.tempwidgetIds=='' || reports.tempwidgetIds == undefined) && alertsForm.$submitted ? 'border-danger' : ''"
+												bs-duallistbox move-on-select="false">
+
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(reports.tempwidgetIds=='' || reports.tempwidgetIds == undefined) && alertsForm.$submitted">Please select one of the graphs is mandatory</div>
+										</div>
+									</div>
+									
+									<div class="fom-group">
+										<label for="field-3" class="col-lg-2 control-label">Filter *</label>
+										<div class="col-lg-10">
+											<div data-elastic-builder="reporting.data"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+					</div>
+					</div>
+					</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-dark">{{buttonName}}
+								</button>
+							<button type="button" class="btn btn-default"
+								ng-click="deleteReport(reports.id,reports.reportingTitle)" ng-show ="showDelete==true">Delete</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+<div id="schedules_reports" class="modal fade">
+			<div class="modal-dialog modal-lg modal-centered" style="width: 85%;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Scheduled Reports</h4>
+					</div>
+
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in reporting.reportingMessages"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+
+							<div class="row">
+
+								<table class="table">
+									<thead style="background: transparent;">
+										<tr>
+											<th>Report Name</th>
+											<th>Schedule Name</th>
+											<th>Frequency</th>
+											<th>Status</th>
+											<th>Action</th>
+										</tr>
+
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="data in reporting.allScheduledReports">
+											<td>{{data.reportingTitle}}</td>
+											<td>{{data.scheduleName}}</td>
+											<td>{{data.frequency}}</td>
+											<td>{{data.status}}</td>
+											<td>
+												<a href="javascript:void('0')" ng-click="reportId=data.reportId;reporting.displayEdit(data)"> Edit</a> &nbsp;&nbsp;
+												<a href="javascript:void('0')" ng-click="reportId=data.reportId;deleteCondition(data.scheduleName,data.id)"> Delete</a> &nbsp;&nbsp;
+												<a href="javascript:void('0')" ng-if="data.status == 'Enable'" ng-click="reportId=data.reportId;reporting.disableReport(data.id,data.reportId)">Disable&nbsp;&nbsp;</a> 
+												<a href="javascript:void('0')" ng-if="data.status == 'Disable'" ng-click="reportId=data.reportId;reporting.enableReport(data.id,data.reportId)">Enable&nbsp;&nbsp;</a> 
+											</td>
+										</tr>
+
+									</tbody>
+
+								</table>
+
+
+							</div>
+
+						</div>
+						
+				</div>
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+
+</div>

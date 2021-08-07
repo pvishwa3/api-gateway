@@ -1,0 +1,206 @@
+<div id="content-container" ng-controller="settings as ctrl" class="content-wrapper">
+	
+	
+	<div class="row page-header d-flex justify-content-between">
+                 <div class="col-md-12">
+                        <h4 class="page-title">General Settings</h4>
+                 </div>
+      </div>
+<!-- 	<div class="page-header page-header-default"> -->
+<!-- 		<div class="page-header-content border-bottom border-bottom-success"> -->
+<!-- 			<div class="page-title"> -->
+<!-- 				<h4> -->
+<!-- 					<i class="icon-arrow-left52 position-left"></i> <span -->
+<!-- 						class="text-semibold">General Settings</span> -->
+
+<!-- 				</h4> -->
+<!-- 			</div> -->
+			
+<!-- 		</div> -->
+<!-- 	</div> -->
+	<div id="page-content">
+			<div class="panel">
+				<div class="panel-body">
+
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+	</div></div>
+	
+	<div id="change-password-modal" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none;">
+		
+		
+			<div class="modal-dialog">
+		<form class="form-horizontal" role="form" ng-submit="updatePassword()" name="alertsForm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true" ng-click="closeDailog()"></button>
+						<h4 class="modal-title">Change Password</h4>
+					</div>
+					<div class="modal-body">
+						
+					<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+						<div class="col-md-12">
+<!-- 							<div class="col-md-6"> -->
+<!-- 								<div class="col-md-12"> -->
+									<div class="form-group">
+										<label for="field-1" class="control-label">Current
+											Password</label> <input type="password"
+											ng-model="userSettings.password" class="form-control"
+											id="field-1" required="required">
+									</div>
+<!-- 								</div> -->
+<!-- 								<div class="col-md-12"> -->
+									<div class="form-group">
+										<label for="field-2" class="control-label">New
+											Password</label> <input type="password"
+											ng-model="userSettings.newPassword" class="form-control"
+											id="field-2" required="required">
+									</div>
+<!-- 								</div> -->
+
+
+<!-- 								<div class="col-md-12"> -->
+									<div class="form-group">
+										<label for="field-3" class="control-label">Confirm
+											Password</label> <input type="password"
+											ng-model="userSettings.confirmPassword" class="form-control"
+											id="field-3" required="required">
+									</div>
+<!-- 								</div> -->
+
+<!-- 							</div> -->
+						</div>
+
+					</div>
+					<div class="modal-footer">
+
+						<button type="submit"
+							class="btn btn-primary">Save
+							changes</button>
+					</div>
+				</div>
+		</form>
+			</div>
+	</div>
+	</div>
+	
+	<script type="text/ng-template" id="general-settings.html">
+		<form class="form-horizontal">
+			<fieldset>
+
+				<legend class="text-semibold" style="font-size:16px"><span class="text-warning"> User Settings</span> <span style="padding-left:12px">{{UserName}}</span></legend>
+
+							<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Username</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{UserName}}</p>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Password</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">
+										<a href="javascript:void('0')" ng-click="openPasswordDialog()">
+											Change Password</a>
+									</p>
+								</div>
+							</div>
+						
+			</fieldset>
+
+					<legend class="text-semibold" style="font-size:16px"><span class="text-warning"> Account Settings</span> <span style="padding-left:12px">{{ctrl.userDetails.companyName}}</span></legend>
+
+							<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Account's Token</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{ctrl.userDetails.accessToken}}</p>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Plan Type</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{ctrl.userDetails.planName}}</p>
+								</div>
+							</div>
+		<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Users</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{ctrl.userDetails.noOfUsersInCompany}}
+														of {{ctrl.userDetails.users}} Users Used</p>
+								</div>
+							</div>
+<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Daily Ingest</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{ctrl.userDetails.dailyIngest}}</p>
+								</div>
+							</div>
+<div class="form-group row">
+								<label class="col-sm-2 control-label" style="padding-top: 4px;">Retention</label>
+								<div class="col-sm-10">
+									<p class="form-control-static">{{ctrl.userDetails.retention}} Days</p>
+								</div>
+							</div>
+						
+			</fieldset>
+<div class="text-left">
+										<button type="button" class="btn btn-dark" ng-click='refreshFields()'>Refresh Mappings</button>
+									</div>
+					</div>
+</form>
+	</script>
+	
+	<script type="text/ng-template" id="users.html">
+		<div class="table-responsive">
+
+									<table class="table datatable-basic dataTable no-footer" >
+										<thead>
+											<tr>
+												<th>Username</th>
+												<th>Full Name</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="data in ctrl.allUsers">
+												<td>{{data.userName}}</td>
+												<td>{{data.firstName}}</td>
+												<td>{{data.status}}</td>
+
+												<td>
+													<button class="btn btn-link"
+														ng-click="displayUpdateUser(data.id)">
+														<i class="icon-pencil position-left" aria-hidden="true"></i>
+													</button>
+													<button ng-show=" data.role === 'ROLE_COMPANY_USER' "
+														class="btn btn-xs btn-danger"
+														ng-click="deleteUser(data.userName)">
+														<i class="icon-cross3 position-left" aria-hidden="true"></i>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+
+					<div class="text-left">
+			<button type="button"
+									ng-show="ctrl.userDetails.noOfUsersInCompany < 20"
+									class="btn btn-dark "
+									ng-click="displayCreateUserTemplate()">
+									<i class="icon-user-plus position-left"></i> Create User
+								</button>
+					</div>
+								</div>
+	</script>
+	
+</div>

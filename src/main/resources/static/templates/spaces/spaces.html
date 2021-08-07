@@ -1,0 +1,431 @@
+<div ng-controller="spaceController as controller"
+	ng-init="controller.init()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Spaces</h1>
+								</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<button ng-show='showHomeButton && canCreateGlobalSpace'
+								ng-click='controller.openSpaceModal()'
+								class="btn btn-dark pull-right">Create Space</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+		<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+
+		<uib-tabset active="active"> <uib-tab index="0"
+			heading="Publlic Spaces"> <uib-tab-heading>
+		Public Spaces </uib-tab-heading>
+			
+			
+		<div class="panel panel-table" >
+			<div class="panel-body-alt">
+				<div class="table-responsive">
+					<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="publicDtOptions" dt-instance="publicDtInstance"  width="100%"  dt-columns="publicDtColumns" dt-column-defs="publicDtColumnDefs">
+						<thead>
+							<tr>
+								<th class="col-sm-1" data-visible="true">Name</th>                 
+								<th class="col-sm-2">Description</th>
+								<th class="col-sm-2">Created</th>
+								<th class="col-sm-2">Created By</th>
+								<th class="col-sm-2">Last Updated</th>
+								<th class="col-sm-2">Last Updated By</th>
+								<th class="col-sm-1" data-visible="true">Action </th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="data  in controller.publicSpacesDetails">
+								<td>{{data.spaceName}}</td>
+								<td>{{data.description}}</td>
+								<td>{{data.spaceCreated | date:'medium'}}</td>
+								<td>{{data.spaceUpdatedBy}}</td>
+								<td>{{data.spaceUpdated | date:'medium'}}</td>
+								<td>{{data.spaceCreatedBy}}</td>
+								<td><a href="javascript:void('0')" class="btn-link" ng-click='controller.dispalyEditForPublicSpaces(data.id)' >Edit</a> 
+									<a href="javascript:void('0')" class="btn-link" ng-click='controller.deletePublicSpace(data.id,data.spaceName)' data-toggle="tooltip" title="Delete">Delete</a> 
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		</uib-tab> <uib-tab index="1"> <uib-tab-heading>
+		Private Spaces </uib-tab-heading> 
+		<div class="panel panel-table" >
+			<div class="panel-body-alt">
+				<div class="table-responsive">
+					<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="publicDtOptions" dt-instance="publicDtInstance"  width="100%"  dt-columns="publicDtColumns" dt-column-defs="publicDtColumnDefs">
+						<thead>
+							<tr>
+								<th class="col-sm-1" data-visible="true">Name</th>
+								<th class="col-sm-2">Description</th>
+								<th class="col-sm-2">Created</th>
+								<th class="col-sm-2">Created By</th>
+								<th class="col-sm-2">Last Updated</th>
+								<th class="col-sm-2">Last Updated By</th>
+								<th class="col-sm-1" data-visible="true">Action </th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="data  in controller.privateSpacesDetails">
+								<td>{{data.spaceName}}</td>
+								<td>{{data.description}}</td>
+								<td>{{data.spaceCreated | date:'medium'}}</td>
+								<td>{{data.spaceUpdatedBy}}</td>
+								<td>{{data.spaceUpdated | date:'medium'}}</td>
+								<td>{{data.spaceCreatedBy}}</td>
+								<td>
+									<a href="javascript:void('0')" class="btn-link" ng-click='controller.dispalyEditForPrivateSpaces(data.id)' >Edit</a> 
+									<a href="javascript:void('0')" class="btn-link" ng-click='controller.deletePrivateSpace(data.id,data.spaceName)'  data-toggle="tooltip" title="Delete">Delete</a>
+									<a href="javascript:void('0')" class="btn-link" ng-click='controller.sharePrivateSpace(data.id)' data-toggle="tooltip" title="Share">Share</a> 
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		
+		</uib-tab>
+		
+		
+		<uib-tab index="2"> <uib-tab-heading>
+		Shared Spaces </uib-tab-heading> 
+		<div class="panel panel-table" >
+			<div class="panel-body-alt">
+				<div class="table-responsive">
+					<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="publicDtOptions" dt-instance="publicDtInstance"  width="100%"  dt-columns="publicDtColumns" dt-column-defs="publicDtColumnDefs">
+						<thead>
+							<tr>
+								<th class="col-sm-1" data-visible="true">Name</th>
+								<th class="col-sm-2">Description</th>
+								<th class="col-sm-2">Created</th>
+								<th class="col-sm-2">Created By</th>
+								<th class="col-sm-2">Last Updated</th>
+								<th class="col-sm-2">Last Updated By</th>
+								<th class="col-sm-1" data-visible="true">Action</th>
+								
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="data  in controller.sharedSpaceDetails">
+								<td>{{data.spaceName}}</td>
+								<td>{{data.description}}</td>
+								<td>{{data.spaceCreated | date:'medium'}}</td>
+								<td>{{data.spaceUpdatedBy}}</td>
+								<td>{{data.spaceUpdated | date:'medium'}}</td>
+								<td>{{data.spaceCreatedBy}}</td>
+								<td ng-if = "data.permissions === 'read/write' ">  
+									<a href="javascript:void('0')" class="btn btn-link">Edit</a>
+									<a href="javascript:void('0')" class="btn btn-link" ng-click = "controller.promoteSpace(data.id,data.spaceName)" ng-if = "canPromoteSpace"> Promote Space</a>
+								</td>
+								
+								<td ng-if = "data.permissions != 'read/write' ">  
+									
+												<a href="javascript:void('0')" class="btn btn-link" ng-click = "controller.promoteSpace(data.id,data.spaceName)" ng-if = "canPromoteSpace"> Promote Space</a>
+								</td>
+
+								
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		
+		</uib-tab>
+		
+		
+		 </uib-tabset>
+	</div>
+
+
+
+	<div class="modal fade" id="spaces-modal" role="dialog" tabindex="-1"
+		aria-labelledby="spaces-modal" aria-hidden="true">
+		
+			<div class="modal-dialog">
+				<div class="modal-content">
+		<form class="form-horizontal" role="form" ng-submit="saveOrUpdateSpaces()"
+			name="alertsForm">
+					<!--Modal header-->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Create New Space</h4>
+					</div>
+
+					<!--Modal body-->
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in controller.spaceMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-8">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-1" class="control-label">Name *</label> <input
+											type="text" ng-model="spaceDetails.spaceName"
+											 class="form-control" required="required" ng-change="covnetToSpaceIndentifier()">
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-2" class="control-label">Identifier
+											*</label> <input type="text" ng-model="spaceDetails.spaceIdentifier"
+											class="form-control" required="required">
+
+									</div>
+								</div>
+
+
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-2" class="control-label">Description
+											*</label>
+
+										<textarea rows="" cols="" required="required" class="form-control"
+											ng-model="spaceDetails.description"></textarea>
+
+
+
+									</div>
+								</div>
+
+								<div class="col-md-12" ng-if = "action === 'insert' ">
+									<div class="form-group">
+										<label for="field-2" class="control-label">Type *</label> <select
+											class="form-control" ng-model="spaceDetails.spaceType">
+											<option value="public">Public</option>
+											<option value="private">private</option>
+
+										</select>
+
+
+
+									</div>
+								</div>
+								<div class="col-md-12">
+								</div>
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-2" class="control-label">Dashboards *</label> 
+	<ui-select multiple ng-model="controller.dashboardsModal" close-on-select="false" title="Select Dashboards" remove-selected="true">
+    	<ui-select-match placeholder="Select dashboard..." style="width:100%" >{{$item.name}}</ui-select-match>
+    	<ui-select-choices repeat="data  in controller.dashboards | filter: $select.search">
+      		<div ng-bind-html="data.name | highlight: $select.search"></div>
+    	</ui-select-choices>
+  	</ui-select>
+
+
+									</div>
+								</div>
+								
+								
+								
+
+
+							</div>
+						</div>
+					</div>
+
+					<!--Modal footer-->
+					<div class="modal-footer">
+						<button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
+						<button class="btn btn-dark">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		
+	</div>
+	
+	
+	<div class="modal fade" id="shares-modal" role="dialog" tabindex="-1"
+		aria-labelledby="spaces-modal" aria-hidden="true">
+		
+			<div class="modal-dialog">
+				<div class="modal-content">
+<form class="form-horizontal" role="form" ng-submit="shareSpace()" name="alertsForm">
+					<!--Modal header-->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Shares</h4>
+					</div>
+
+					<!--Modal body-->
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in controller.spaceMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-8">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-1" class="control-label">Share Type</label> 
+										
+										<select ng-model = "shareDetails.shareType" required="required" ng-change="loadDataBasedonShareType()"  class="form-control">
+											<option value="group">Group</option>
+											<option value="user">User</option>
+											<option value="public">Public</option>
+											<option value="company">Company</option>
+										</select>
+										
+									</div>
+								</div>
+								
+								
+								<div class="col-md-12" ng-if = "shareDetails.shareType === 'company' ">
+									<div class="form-group" >
+										<label for="field-2" class="control-label" > Company</label> 
+										<select ng-model = "shareDetails.param2" required="required" ng-change="loadDataBasedonComapnyName()" class="form-control">
+											<option ng-repeat = "data in controller.companies" value="{{data.name}}">{{data.name}}</option>
+										</select>
+									</div>
+									
+									
+								</div>
+								
+								<div class="col-md-12" ng-if = "shareDetails.shareType === 'company' ">
+									<div class="form-group" >
+										<label for="field-2" class="control-label" >Group</label> 
+										<select ng-model = "shareDetails.subCompanyshareType" required="required"  class="form-control">
+											<option value="group">Group</option>
+											<option value="user">User</option>
+											
+										</select>
+									</div>
+								</div>
+								
+								<div class="col-md-12" ng-if = "shareDetails.subCompanyshareType === 'group' ">
+									<div class="form-group" >
+										<label for="field-2" class="control-label" > Groups</label> 
+										
+										<ui-select multiple ng-model="controller.groupModel" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="false" style="width: 325px;" title="Choose a person">
+										  <ui-select-match placeholder="Select group...">{{$item.name}}</ui-select-match>
+										  <ui-select-choices repeat="data  in controller.groups | filter: $select.search">
+										    <div ng-bind-html="data.name | highlight: $select.search"></div>
+										    
+										  </ui-select-choices>
+										</ui-select>
+										
+									</div>
+									
+									
+								</div>
+								
+								<div class="col-md-12" ng-if = "shareDetails.subCompanyshareType === 'user' ">
+									<div class="form-group" >
+										<label for="field-2" class="control-label" >Users</label> 
+										<ui-select multiple ng-model="controller.usersModel" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="false" style="width: 325px;" title="Choose a person">
+									    <ui-select-match placeholder="Select users...">{{$item.userName}}</ui-select-match>
+									    <ui-select-choices repeat="data  in controller.userDetails | filter: $select.search">
+									      <div ng-bind-html="data.userName | highlight: $select.search"></div>
+									      
+									    </ui-select-choices>
+									  </ui-select>	
+									</div>
+									
+									
+								</div>
+								
+								<div class="col-md-12">
+									<div class="form-group" ng-if = "shareDetails.shareType === 'group'">
+										<label for="field-2" class="control-label" > Groups </label> 
+										<ui-select multiple ng-model="controller.groupModel" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="false" style="width: 325px;" title="Choose a person">
+									    <ui-select-match placeholder="Select group...">{{$item.name}}</ui-select-match>
+									    <ui-select-choices repeat="data  in controller.groups | filter: $select.search">
+									      <div ng-bind-html="data.name | highlight: $select.search"></div>
+									      
+									    </ui-select-choices>
+									  </ui-select>
+									</div>
+									
+									<div class="form-group" ng-if = "shareDetails.shareType === 'user'">
+										<label for="field-2" class="control-label" >Users</label> 
+										<ui-select multiple ng-model="controller.usersModel" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="false" style="width: 325px;" title="Choose a person">
+									    <ui-select-match placeholder="Select users...">{{$item.userName}}</ui-select-match>
+									    <ui-select-choices repeat="data  in controller.userDetails | filter: $select.search">
+									      <div ng-bind-html="data.userName | highlight: $select.search"></div>
+									      
+									    </ui-select-choices>
+									  </ui-select>
+									</div>
+									
+								</div>
+								
+								<div class="col-md-12">			
+									<div class="form-group">
+										<label for="field-2" class="control-label" >Permissions</label> 
+										<select class="form-control" ng-model = "shareDetails.permissions">
+									
+											<option value="read"> Read Only</option>
+											<option value="read/write">Read/Write</option>
+										</select>
+									</div>
+							 </div>	
+
+							</div>
+						</div>
+					</div>
+
+					<!--Modal footer-->
+					<div class="modal-footer">
+						<button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
+						<button class="btn btn-dark">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		
+	</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+

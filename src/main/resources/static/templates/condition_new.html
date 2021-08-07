@@ -1,0 +1,595 @@
+<div ng-controller="conditionController as controller"  ng-init="controller.loadAllConditions()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="row">
+						<div id="page-head">
+							<div id="page-title">
+								<h1 class="page-header text-overflow">Manage Events</h1>
+								<br><br>
+							<a ng-show="showHomeButton"  href="javascript:void('0');" ng-click="controller.historyBack();"><i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;Back</a>
+							</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-8 pull-right">
+				<div class="row">
+						<div id="page-head">
+							<div id="page-title">
+							
+							<form class="form-inline pull-right" ng-show='showHomeButton'>
+							
+							<div class="form-group">
+								<label for="demo-inline-inputmail" >Event Category</label> 
+								<select ng-model="fieldData.eventCategory" class="form-control" ng-change="controller.filterBasedOnEventCategory()">
+<!-- 									<option selected="selected" disabled="disabled" value="">Select Log Device</option> -->
+									<option selected="selected" value="">All</option>
+									<option ng-repeat="data in controller.conditionDetails | unique:'categoryName' ">{{data.categoryName}}</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="demo-inline-inputmail" >Log Device</label> 
+								<select ng-model="fieldData.logDevice" class="form-control" ng-change="controller.getDataBasedOnLogDevice()">
+<!-- 									<option selected="selected" disabled="disabled" value="">Select Log Device</option> -->
+									<option selected="selected" value="">All</option>
+									<option ng-repeat="data in logDevices">{{data}}</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="demo-inline-inputpass" >Log Type</label> 
+								<select ng-model="fieldData.logType" class="form-control" ng-change="controller.getDataBasedOnLogType()">
+<!-- 									<option selected="selected" disabled="disabled" value="">Select Log Type</option> -->
+									<option selected="selected" value="">All</option>
+									<option ng-repeat="data in logType">{{data}}</option>
+								</select>
+								
+							</div>
+							<div class="form-group">
+							<button ng-show='showHomeButton'
+					ng-click='controller.openCreateCategoryPage()'
+					class="btn btn-dark pull-right mar-ver">Create New Event</button>
+					<button ng-show="!showHomeButton"  ng-click="controller.goBack();" class=" btn btn-default btn-arrow-left">Back To Events</button>
+</div>
+						</form>
+							
+								
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+
+		<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+
+		<div id="filterModal" class="modal fade bs-example-modal-lg in"
+			tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+			aria-hidden="true" style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+						<h4 class="modal-title" id="myLargeModalLabel">Event Builder</h4>
+					</div>
+					<div class="modal-body">
+						<query-builder group="filter.group"></query-builder>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default waves-effect"
+							data-dismiss="modal">Close</button>
+						<button type="button" ng-click="controller.saveFilter()"
+							class="btn btn-dark waves-effect waves-light">Save
+							Filter</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+		<div id="createCondition" class="modal fade bs-example-modal-lg in"
+			tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+			aria-hidden="true" style="display: none; padding-left: 0px;">
+			<form class="form-horizontal group-border-dashed"
+				ng-submit="controller.saveCategory()">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">�</button>
+							<h4 class="modal-title" id="myLargeModalLabel">Event
+								Category</h4>
+						</div>
+						<div class="modal-body">
+							<div class="panel panel-flat">
+
+
+
+								<div class="panel-body">
+									<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+									<div uib-alert
+										ng-repeat="alert in controller.conditionMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Category Name</label>
+										<div class="col-sm-3">
+											<input type="text" class="form-control" required=""
+												placeholder="" ng-model="controller.category.categoryName">
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default waves-effect"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Save</button>
+						</div>
+
+					</div>
+
+				</div>
+			</form>
+		</div>
+
+
+
+
+		<div id="conditionType" class="modal fade bs-example-modal-lg in"
+			tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+			aria-hidden="true" style="display: none; padding-left: 0px;">
+			<form class="form-horizontal group-border-dashed"
+				ng-submit="controller.saveCustomType()">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">�</button>
+
+							<h4 class="modal-title" id="myLargeModalLabel">Event Type</h4>
+						</div>
+						<div class="modal-body">
+							<div class="panel panel-flat">
+								<div class="panel-body">
+
+
+									<div uib-alert
+										ng-repeat="alert in controller.conditionMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+
+
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Event Type</label>
+										<div class="col-sm-3">
+											<input type="text" class="form-control" required=""
+												placeholder=""
+												ng-model="controller.conditionTypedata.typeName">
+										</div>
+									</div>
+
+
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default waves-effect"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Save</button>
+						</div>
+
+					</div>
+					
+
+				</div>
+			</form>
+		</div>
+
+
+
+	</div>
+
+
+	<script type="text/ng-template" id="viewCategories.html">
+
+		<div class="row">
+			<div class="panel panel-table" ng-init="controller.showButtons=true;showFilter = false">
+					    <div class="panel-body-alt">
+					        <div class="table-responsive">
+                           <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                                <thead>
+                                    <tr>
+                                        <th class="col-sm-2">Event Name</th>
+										<th class="col-sm-2">Device</th>
+										<th class="col-sm-2">Log Type</th>
+										<th class="col-sm-2">Category</th>
+ 									   	<th class="col-sm-3">Description</th>
+										<th class="col-sm-2">Created By</th>
+										<th class="col-sm-2">Updated At</th>
+										<th class="col-sm-2">Updated By</th>
+								   		<th class="col-sm-1">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr ng-repeat = "data  in controller.filterConditions track by $index">
+                                        <td>{{data.conditionName}}</td>
+									  
+									    <td>{{data.logDevice}}</td>
+										 <td>{{data.logType}}</td>
+ 										<td>{{data.categoryName}}</td>
+  										<td>{{data.description}}</td>
+										<td>{{data.createdBy}}</td>
+										<td><mydate>{{data.updatedAt | date:'yyyy-MM-dd h:mm:ss a'}}</mydate></td>
+                                    	<td>{{data.updatedBy}}</td>
+                                        <td class="text-center">
+ 											<div class="dropdown">
+                                      			<button class="dropdown-toggle btn btn-icon" data-toggle="dropdown" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></button>
+
+                                       				<ul class="dropdown-menu dropdown-menu-right">
+														<li><a href="javascript:void('0')" ng-show="rule.canUpdateRule" ng-click="rule.displayForEdit(data.correlationName) ;rule.showFilters(data);"> Edit</a></li>
+                                            			<li><a href = "javascript:void('0')" class="btn-link" ng-click = 'controller.editCondition(data.id)'  ng-show ='canEditCondition' >Edit</a> </li>
+                                        				<li><a href = "javascript:void('0')" class="btn-link" ng-click = 'controller.deleteCondition(data.id,data.conditionName)'  ng-show ='canDeleteCondition' data-toggle="tooltip" title="Delete">Delete</a> </li>
+														<li><a href = "javascript:void('0')" class="btn-link" ng-click = 'controller.cloneConditionDetails(data.id)'  ng-show ='canDeleteCondition' data-toggle="tooltip" title="clone">Clone</a></li>
+													</ul>
+											</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+</div>
+                        </div>
+                        </div>
+                        </div>
+
+				
+			  </script>
+
+
+
+	<script type="text/ng-template" id="createCategory.html"
+		ng-show='canCreateCondition'>
+				
+<div class="panel">
+				
+			<div class="panel-body" id="panel-body">
+
+				<form class="form-horizontal " ng-submit="controller.submitData()" name="newEvent" >
+					
+						<fieldset>
+
+						<legend class="text-semibold">
+
+							Event Information 
+						
+						</legend>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Event Name <span class="text-danger">*</span></label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" title="Enter event name"
+									placeholder="" ng-model="controller.condition.conditionName" title="Enter event name"ng-class="((controller.condition.conditionName == '' || controller.condition.conditionName == undefined ) && newEvent.$submitted) ? 'border-danger':'' ">
+								<div class="text-danger text-bold help-block with-errors" ng-show="(controller.condition.conditionName=='' || controller.condition.conditionName == undefined) && newEvent.$submitted">Event name is mandatory</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Description <span class="text-danger">*</span></label>
+							<div class="col-sm-3">
+								<textarea class="form-control" rows="2" title="Enter description"
+									ng-model="controller.condition.description"title="Enter description"ng-class="((controller.condition.description == '' || controller.condition.description == undefined ) && newEvent.$submitted) ? 'border-danger':'' " ></textarea>
+								<div class="text-danger text-bold help-block with-errors" ng-show="(controller.condition.description=='' || controller.condition.description == undefined) && newEvent.$submitted">Description is mandatory</div>
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label class="control-label col-sm-3">Category <span class="text-danger">*</span></label>
+							<div class="col-sm-3">
+
+							<selectize  options='controller.conditionCategories' title="Select category" config="controller.conditionCategoryConfig" ng-model="controller.condition.categoryId" title="Select category"ng-class="((controller.condition.categoryId == '' || controller.condition.categoryId == undefined ) && newEvent.$submitted) ? 'border-danger':'' "   ></selectize>
+							<div class="text-danger text-bold help-block with-errors" ng-show="(controller.condition.categoryId=='' || controller.condition.categoryId == undefined) && newEvent.$submitted">Category is mandatory</div>
+							</div>
+							</div>
+
+						<div class="form-group">
+							<label class="control-label col-sm-3">Sub Category <span class="text-danger">*</span></label>
+							<div class="col-sm-3">
+
+							<selectize  options='controller.conditionSubCategories' title="Select sub category" config="controller.conditionSubCategoryConfig" ng-model="controller.condition.subCategoryId" title="Select sub category" ng-class="((controller.condition.subCategoryId == '' || controller.condition.subCategoryId == undefined ) && newEvent.$submitted) ? 'border-danger':'' "   ></selectize>
+							<div class="text-danger text-bold help-block with-errors" ng-show="(controller.condition.subCategoryId=='' || controller.condition.subCategoryId == undefined) && newEvent.$submitted">Sub Category is mandatory</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label col-sm-3">Tags</label>
+							<div class="col-sm-3">
+
+							<selectize  options='controller.tagDetails' title="Select Tags" config="controller.tagConfig" ng-model="controller.tags" ></selectize>
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Filter</label>
+							<div class="col-sm-8">
+							<p class="form-control-static" ng-show="controller.condition.filterQuery == ''">
+									<a class="btn-link" href="javascript:void('0')" ng-click='controller.openFilterForm()'>Create Filter</a>
+							</p>
+							<p class="form-control-static" ng-show="controller.condition.filterQuery != ''">
+									<a class="btn-link" href="javascript:void('0')" ng-click='controller.openFilterForm()'>{{controller.condition.displayFilter}}</a>
+							</p>
+							
+							<!--	<p class="form-control-static" ng-show = "controller.operationType=='add'">
+									<a  class="btn-link" href="javascript:void('0')" ng-click='controller.openFilterForm()'>create filter</a>
+								</p>
+								<p class="form-control-static" ng-show = "controller.operationType=='update'">
+									<a class="btn-link" href="javascript:void('0')"
+										ng-click='controller.openFilterForm()'>{{controller.condition.filterQuery}}</a>
+								</p> -->	
+							</div>
+						</div>
+					</fieldset>
+
+
+					<fieldset>
+
+						<legend class="text-semibold">
+
+							Event Fields <a class="panel-control"
+								href="javascript:void('0')" ng-click="controller.addFiled()"">
+								<i class="ion-plus"></i>
+							</a>
+						</legend>
+
+						<div class="form-group" style="margin-left:1%;margin-right:1%">
+
+							<table class="table cloneTable table-borderless pad-all" id="lookupdetails">
+
+								<thead>
+									<tr>
+										<th class="col-md-4">Log Device</th>
+										<th class="col-md-4">Log Field </th>
+										<th class="col-md-4">Display Name</th>
+									</tr>
+	
+								</thead>
+
+
+								<tr ng-repeat="data in controller.lookupdetails">
+									<td class="clonetd col-md-4" ><select ng-model="data.logType" title="Select logtype" ng-class="((data.logType == '' || data.logType == undefined ) && newEvent.$submitted) ? 'border-danger':'' " 
+										class="form-control" title = "Log Type" ng-change = "controller.getGetFileds($index)">
+											<option ng-repeat="data in controller.logTypes "
+												value="{{data}}">{{data}}</option>
+
+									</select>
+									<div class="text-danger text-bold help-block with-errors" ng-show="(data.logType=='' || data.logType == undefined) && newEvent.$submitted">Logtype is mandatory</div>
+									</td>
+									<td class="clonetd col-md-4">
+												<ui-select  title = "Event Fields" ng-model="data.elasticseachFields" theme="bootstrap" title="Select fields">
+          									   		<ui-select-match placeholder="Select">{{$select.selected}}</ui-select-match>
+           											<ui-select-choices  repeat="item in controller.elasticsearchFields | filter: $select.search">
+              											<span ng-bind-html="item | highlight: $select.search"></span>
+            										</ui-select-choices>
+        										  </ui-select>
+										<div class="text-danger text-bold help-block with-errors" ng-show="(data.elasticseachFields=='' || data.elasticseachFields == undefined) && newEvent.$submitted">Log fields is mandatory</div>
+									</td>
+
+									<td class="clonetd col-md-3"><input type="text" placeholder = "Display Name" class="form-control"  placeholder="" ng-model="data.displayName" title="Display name"ng-class="((data.displayName == '' || data.displayName == undefined ) && newEvent.$submitted) ? 'border-danger':'' ">
+									<div class="text-danger text-bold help-block with-errors" ng-show="(data.displayName=='' || data.displayName == undefined) && newEvent.$submitted">Display name is mandatory</div>
+									</td>
+									<td class="clonetd col-md-1" ><a href="javascript:void('0')" class="on-default remove-row btn " ng-click='controller.deleteRow($index)'><i class="fa fa-minus-circle"></i></a></td>
+
+								</tr>
+							</table>
+						</div>
+
+					</fieldset>
+
+
+
+
+					<fieldset>
+
+						<legend class="text-semibold">
+
+							Reporting Fields
+ 	<a class="panel-control" href="javascript:void('0')" ng-click="controller.addReportingFields()""> <i class="ion-plus"></i></a>
+  <a class="panel-control" ng-if="controller.lookupdetails.length > 0" style="padding-right:10px" title="clone Event Fields" class="control-arrow" href="javascript:void('0')" ng-click="controller.clone()""> <i class="fa fa-clone"></i></a> 
+						</legend>
+						<div class="form-group" style="margin-left:1%;margin-right:1%">
+
+							<table class="table cloneTable table-borderless">
+								<thead>
+									<tr>
+										<th class="col-md-4">Log Type</th>
+										<th class="col-md-4">Log Field</th>
+										<th class="col-md-4">Display Name</th>
+									</tr>
+	
+								</thead>
+								<tr ng-repeat="data in controller.reportingFields">
+								<td class="clonetd col-md-4" ><select ng-model="data.logType" title="Select logtype" ng-class="((data.logType == '' || data.logType == undefined ) && newEvent.$submitted) ? 'border-danger':'' "
+										class="form-control select-size-xs" ng-change = "controller .getFieldsForReporting($index)">
+											<option ng-repeat="data in controller.logTypes "
+												value="{{data}}">{{data}}</option>
+
+									</select>
+									<div class="text-danger text-bold help-block with-errors" ng-show="(data.logType=='' || data.logType == undefined) && newEvent.$submitted">Logtype is mandatory</div>
+									</td>
+									<td class="clonetd col-md-4">
+										<ui-select  ng-model="data.elasticseachFields" title="Select fields">
+            <ui-select-match placeholder="Select">{{$select.selected}}</ui-select-match>
+            <ui-select-choices  repeat="item in controller.elasticsearchFields | filter: $select.search">
+              <span ng-bind-html="item | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select><div class="text-danger text-bold help-block with-errors" ng-show="(data.elasticseachFields=='' || data.elasticseachFields == undefined) && newEvent.$submitted">Log fields is mandatory</div>
+										</td>
+
+									<td class="clonetd col-md-3" ><input type="text" class="form-control" 
+										placeholder="" ng-model="data.displayName"title="Display name"ng-class="((data.displayName == '' || data.displayName == undefined ) && newEvent.$submitted) ? 'border-danger':'' ">
+									<div class="text-danger text-bold help-block with-errors" ng-show="(data.displayName=='' || data.displayName == undefined) && newEvent.$submitted">Display name is mandatory</div>
+									</td>
+									<td class="clonetd col-md-1" ><a href="javascript:void('0')"
+										class="on-default remove-row btn "
+										ng-click='controller.deleteReportingFeilds($index)'><i
+											class="fa fa-minus-circle"></i></a></td>
+
+								</tr>
+							</table>
+						</div>
+					</fieldset>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-dark">Save</button>
+					    <button type="button" ng-click = "controller.goBack()" class="btn btn-default"> Cancel</button>
+					</div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>			
+
+
+				
+			  </script>
+
+
+
+
+
+	<script type="text/ng-template" id="queryBuilderDirective.html">
+    <div class="alert-group">
+       
+		<table class="table cloneTable">
+			<tr>
+				<td class="clonetd" style="width:10%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td>
+				<td class="clonetd" style="width:10%"><button style="margin-left: 5px" ng-click="addCondition(1)" class="btn  btn-default"><i class="icon-plus22"></i> Add Condition</button></td>
+           		<td class="clonetd" style="width:10%"> <button style="margin-left: 5px" ng-click="addGroup(1)" class="btn  btn-default"><i class="icon-plus22"></i> Add Group</button></td>
+				<td class="clonetd" style="width:5%"><button style="margin-left: 5px" ng-click="removeGroup()" class="btn btn-default "><span class="icon-minus2"></span> Remove Group</button></td>
+			 </tr>
+		</table>
+		
+        <div class="group-conditions">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        
+						<table class="table cloneTable">
+							<tr>
+			<td  class="clonetd" style="width:25%"><select ng-model="rule.logType" title = "Log Type"
+										class="form-control select-size-xs" ng-change = "getFieldsForRule($index)">
+											<option ng-repeat="data in logtypes "
+												value="{{data}}">{{data}}</option>
+
+									</select>
+									<div class="text-danger text-bold help-block with-errors" ng-show="(rule.logType=='' || rule.logType== undefined) && newEvent.$submitted">Logtype is mandatory</div>
+									</td>
+								<td  class="clonetd" style="width:25%"> 
+		<ui-select  ng-model="rule.field"  theme="bootstrap" style="width:100%"> title = "Fields" on-select="controller.onSelected($item)">
+            <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices  repeat="t in fields | filter: $select.search">
+              <span ng-bind-html="t.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>	
+								
+									
+                                 </td>
+ 								<td class="clonetd" style="width:25%">
+									
+								<select   ng-model="rule.condition" class="form-control input-sm">
+									<option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option
+								</select>
+								</td class="clonetd" style="width:20%">
+								<td class="clonetd"><input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/></td>
+								<td class="clonetd" style="width:5%"><a ng-click="removeCondition($index)" class="btn btn-link "><i class="ion-trash-a"></span></i></a></td>
+							</tr>	
+                        
+						</table>
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </script>
+
+</div>
+
+
+
+
+<!-- <script type="text/ng-template" id="queryBuilderDirective.html"> -->
+<!-- <div class="alert-group"> -->
+<!--     <table class="table table-condensed"> -->
+<!--         <tr> -->
+<!--             <td style="width:25%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td> -->
+<!--             <td style="width:25%"><button ng-click="addCondition()" class="btn btn-xs btn-dark"><i class="icon-plus22"></i> -->
+<!--                     Add Condition</button></td> -->
+<!--             <td style="width:25%"> <button ng-click="addGroup()" class="btn btn-xs btn-dark"><i class="icon-plus22"></i> -->
+<!--                     Add Group</button></td> -->
+<!--             <td style="width:25%"><button  ng-click="removeGroup()" class="btn btn-xs btn-default"><span class="icon-minus2"></span> -->
+<!--                     Remove Group</button></td> -->
+<!--         </tr> -->
+<!--     </table> -->
+<!--     <div class="group-conditions"> -->
+<!--         <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition"> -->
+<!--             <div ng-switch="rule.hasOwnProperty('group')"> -->
+<!--                 <div ng-switch-when="true"> -->
+<!--                     <query-builder group="rule.group"></query-builder> -->
+<!--                 </div> -->
+<!--                 <div ng-switch-default="ng-switch-default"> -->
+<!--                     <table class="table table-condensed"> -->
+<!--                         <tr> -->
+<!--                             <td style="width:25%"> -->
+<!-- 								<select ng-model="rule.logType" title="Log Type" class="form-control select-size-xs" ng-change="getFieldsForRule($index)">                                   	 -->
+<!-- 										 <option ng-repeat="data in logtypes " value="{{data}}">{{data}}</option> -->
+<!--                                 </select> -->
+<!-- 							</td> -->
+<!--                             <td style="width:25%"> -->
+<!--                                  <ui-select ng-model="rule.fields" theme="bootstrap" style="width:100%"> title = "Fields" -->
+<!--                                     <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match> -->
+<!--                                     <ui-select-choices repeat="t in fields | filter: $select.search"> -->
+<!--                                         <span ng-bind-html="t.name | highlight: $select.search"></span> -->
+<!--                                     </ui-select-choices> -->
+<!--                                 </ui-select>   -->
+<!--                             </td> -->
+<!--                             <td style="width:25%"> -->
+<!--                                 <select ng-model="rule.condition" class="form-control input-sm"> -->
+<!--                                     <option ng-repeat="  c in conditions" value="{{c.value}}">{{c.name}}</option>  -->
+<!-- 								</select> -->
+<!--                             </td>  -->
+<!-- 							<td style="width:20%"> -->
+<!-- 								<input type="text" ng-model="rule.data" class="form-control input-sm" /> -->
+<!-- 							</td> -->
+<!--                             <td style="width:5%"><button ng-click="removeCondition($index)" class="btn btn-link btn-sm "><span -->
+<!--                                         class="icon-minus2"></span></button> -->
+<!-- 							</td> -->
+<!--                         </tr> -->
+<!--                     </table>  -->
+<!--                 </div> -->
+<!--             </div> -->
+<!--         </div> -->
+<!--     </div> -->
+<!-- </div>	 -->
+<!--  </script> -->

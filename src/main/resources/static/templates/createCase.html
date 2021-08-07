@@ -1,0 +1,101 @@
+<div class="row" ng-controller="createCaseController as ctrl">
+	<div class="page-header page-header-default">
+		<div class="page-header-content border-bottom border-bottom-success">
+			<div class="page-title">	
+				<h4>
+					<i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Cases</span>
+				</h4>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<form class="form-horizontal" ng-submit="ctrl.createCase()">
+			<fieldset>
+				<legend class="text-semibold">Create New Case</legend>
+				<div class="form-group">
+            			<label class="col-sm-3 control-label"> Case Template </label>
+            			<div class="col-sm-3">
+							<select class="form-control" ng-model="ctrl.newCaseTemplate" ng-change="ctrl.changeCaseDetails(ctrl.newCaseTemplate)">
+								<option ng-repeat="template in ctrl.allTemplates" value="{{template}}">{{template.name}}</option>
+							</select>
+            			</div>
+<!-- 						<span class="label"><a href="javascript:void('0')" ng-click='ctrl.openNewCaseTemplate()'>Create New Template</a></span> -->
+         		</div>
+         	
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Title</label>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" ng-model="ctrl.newCase.title" ng-required="true">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">source</label>
+					<div class="col-sm-3">
+						<select ng-model="ctrl.newCase.source" class="form-control">
+							<option>manual</option>
+							<option>Thread intel</option>
+							<option>Alerts</option>
+						</select>
+					</div>  
+				</div>
+				<div class="form-group" ng-init="ctrl.newCase.severity = 2">
+					<label class="col-sm-3 control-label">Severity</label>
+					<div class="col-sm-3">
+						<span class="pointer" ng-class="ctrl.newCase.severity == 1 ? 'label label-info' : 'label label-default'" ng-click=" ctrl.newCase.severity=1">L</span>
+						<span class="pointer" ng-class="ctrl.newCase.severity == 2 ? 'label label-warning' : 'label label-default'" ng-click="ctrl.newCase.severity=2">M</span>
+						<span class="pointer" ng-class="ctrl.newCase.severity == 3 ? 'label label-danger' : 'label label-default'" ng-click="ctrl.newCase.severity=3">H</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Tags</label>
+					<div class="col-sm-3">
+						<ui-select multiple tagging="ctrl.tagTransform" ng-model="ctrl.newCase.tags" sortable="true">
+							<ui-select-match>{{$item}}</ui-select-match>
+							<ui-select-choices repeat="tag in ctrl.newCase.tags | filter:$select.search">{{tag}}</ui-select-choices>
+						</ui-select>
+					</div>
+				</div>
+				<div class="form-group" ng-init="ctrl.newCase.tlp = 3">
+					<label class="col-sm-3 control-label">TLP</label>
+					<div class="col-sm-3">
+						<span class="pointer" ng-class="ctrl.newCase.tlp == 1 ? 'label label-info' : 'label label-default'" ng-click="tlp=1; ctrl.newCase.tlp=1">WHITE</span>
+						<span class="pointer" ng-class="ctrl.newCase.tlp == 2 ? 'label label-success' : 'label label-default'" ng-click="tlp=2; ctrl.newCase.tlp=2">GREEN</span>
+						<span class="pointer" ng-class="ctrl.newCase.tlp == 3 ? 'label label-warning' : 'label label-default'" ng-click="tlp=3; ctrl.newCase.tlp=3">AMBER</span>
+						<span class="pointer" ng-class="ctrl.newCase.tlp == 4 ? 'label label-danger' : 'label label-default'" ng-click="ctrl.newCase.tlp=4">RED</span>
+					</div>
+				</div>
+				<!-- <div class="form-group">
+					<label class="col-sm-3 control-label"> Date </label>
+					<div class="col-sm-3">
+						<input type="text" name="startDate" ng-model="ctrl.newCase.startDate" class="form-control" datepicker />
+
+						 <input type="datetime-local" class="form-control" ng-model="ctrl.newCase.startDate"  min="01-01-2000: 00:00 00" max="01-01-2090 00:00 00" > 
+					</div>
+				</div>-->
+				<div class="form-group">
+					<label class="col-sm-3 control-label"> Description</label>
+					<div class="col-sm-3">
+						<textarea rows="4" cols="50" class="form-control" ng-model="ctrl.newCase.description"></textarea>
+					</div>
+				</div>
+				<fieldset>
+					<legend class="text-semibold">Case Task</legend>
+					<div class="form-group">
+						<div class="col-md-5">
+							<div class="input-group">
+								<input type="text" class="form-control" ng-model="taskname">
+								<span class="input-group-btn"><button type="button" class="btn btn-default form-control  btn-xs" ng-click="ctrl.addTask(taskname);taskname=''"><i class="icon-checkmark3"></i></button></span>
+							</div>
+							<div ng-repeat="task in ctrl.newCase.tasks" style="padding-top:10px;">
+								<span type="button" class="btn" ng-click="ctrl.removeTaskName(task)"><i class="icon-cross"></i></span>&nbsp;&nbsp;&nbsp;{{task}}
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<div class="text-right">
+					<button type="submit" class="btn btn-dark  btn-xs">Create</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>

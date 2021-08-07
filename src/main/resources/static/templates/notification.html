@@ -1,0 +1,158 @@
+<div
+	ng-controller="notificationController as ctrl">
+	<div id="page-content">
+		<div class="row">
+
+			<div class="col-md-10">
+				<div id="page-head">
+					<div id="page-title">
+						<h1 class="page-header text-overflow">Threat Config</h1>
+						</div>
+					
+<!-- 					<ol class="breadcrumb"> -->
+<!-- 						<li><a href="/configuration#!">Home</a></li> -->
+<!-- 						<li><a href="javascript:void('0')">Threat</a></li> -->
+<!-- 						<li class="active">Threat Config</li> -->
+<!-- 					</ol> -->
+				</div>
+			</div>
+		</div>
+		<hr>
+
+
+
+
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+		<div class="panel">
+			<div class="panel-body" style="border:none" id="panel-body">
+				<form ng-submit="ctrl.saveRule()" class="form-horizontal"
+					name="saveRule">
+					<div class="form-group">
+						<label class="control-label col-md-4">Threat Score</label>
+						<div class="col-md-6">
+							<input type="number" class="form-control"
+								placeholder="Threat Score"
+								ng-model="ctrl.notification.threatScore" max="100" min="-100"
+								ng-class="((ctrl.notification.threatScore == ''|| ctrl.notification.threatScore == undefined) && saveRule.$submitted) ? 'border-danger':''">
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.threatScore == ''|| ctrl.notification.threatScore == undefined) && saveRule.$submitted)">Threat
+								score is mandatory</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-md-4">Source Count</label>
+						<div class="col-md-6">
+							<input type="number" class="form-control"
+								placeholder="Source Count"
+								ng-model="ctrl.notification.sourceCount" min="1"
+								ng-class="((ctrl.notification.sourceCount == ''|| ctrl.notification.sourceCount == undefined) && saveRule.$submitted) ? 'border-danger':''">
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.sourceCount == ''|| ctrl.notification.sourceCount == undefined) && saveRule.$submitted)">Source
+								count is mandatory</div>
+						</div>
+					</div>
+
+<!-- 					<div class="form-group"> -->
+
+<!-- 						<div class="checkbox col-md-8 pull-right"> -->
+<!-- 							<label><input type="checkbox" -->
+<!-- 								ng-model="ctrl.notification.caseCreation">CreateCase</label> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+
+					<div class="form-group">
+						<div class="checkbox col-md-8 pull-right">
+							<label><input type="checkbox"
+								ng-model="ctrl.notification.notification">Notification</label>
+
+						</div>
+					</div>
+
+<!-- 					<div class="form-group" ng-if="ctrl.notification.caseCreation"> -->
+<!-- 						<label class="control-label col-md-4">Case Template</label> -->
+<!-- 						<div class="col-md-6"> -->
+<!-- 							<selectize options='ctrl.allCases' config="ctrl.caseTypeConfig" -->
+<!-- 								ng-model="ctrl.notification.caseTemplate" required='true' -->
+<!-- 								ng-change="ctrl.showCaseInvestigation()" -->
+<!-- 								placeholder="please select a case"></selectize> -->
+<!-- 							<div class="text-danger text-bold" -->
+<!-- 								ng-show="((ctrl.notification.caseTemplate == '' ||  ctrl.notification.caseTemplate == undefined) && saveRule.$submitted)">Case -->
+<!-- 								template is mandatory</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+
+					<div class="form-group" ng-if="ctrl.notification.notification">
+						<label class="control-label col-md-4">Email Address</label>
+						<div class="col-md-6">
+							<input type="email" class="form-control"
+								ng-model="ctrl.notification.emailAddress"
+								placeholder="Email Address"
+								ng-class="((ctrl.notification.emailAddress == '' ||ctrl.notification.emailAddress == undefined)&& saveRule.$submitted) ? 'border-danger':'' " />
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.emailAddress == '' ||ctrl.notification.emailAddress == undefined)&& $saveRule.$submitted)">Email
+								address is mandatory</div>
+						</div>
+					</div>
+					<div class="form-group" ng-if="ctrl.notification.notification">
+						<label class="control-label col-md-4">Subject</label>
+						<div class="col-md-6">
+							<input type="text" class="form-control"
+								ng-model="ctrl.notification.subject" placeholder="Subject"
+								ng-class="((ctrl.notification.subject == '' ||ctrl.notification.subject == undefined)&& saveRule.$submitted) ? 'border-danger':'' " />
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.subject == '' ||ctrl.notification.subject == undefined)&& $saveRule.$submitted)">Subject
+								is mandatory</div>
+
+						</div>
+					</div>
+					
+					<div class="form-group" ng-if="ctrl.notification.notification">
+						<label class="control-label col-md-4">Message</label>
+						<div class="col-md-6">
+							<textarea cols="5" rows="5" class="form-control"
+								ng-model="ctrl.notification.message" placeholder="Message"
+								ng-class="((ctrl.notification.message == '' ||ctrl.notification.message == undefined)&& saveRule.$submitted) ? 'border-danger':'' "></textarea>
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.message == '' ||ctrl.notification.message == undefined)&& $saveRule.$submitted)">Message
+								is mandatory</div>
+						</div>
+					</div>
+					<hr>
+					<div class="form-group pad-top">
+						<label class="control-label col-md-4">TI Lookup Threshold</label>
+						<div class="col-md-3">
+							<input type="number" class="form-control"
+								ng-model="ctrl.notification.tinumber" 
+								ng-class="((ctrl.notification.tinumber == '' ||ctrl.notification.tinumber == undefined)&& saveRule.$submitted) ? 'border-danger':'' "></textarea>
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.tinumber == '' ||ctrl.notification.tinumber == undefined)&& $saveRule.$submitted)">Threshold
+								is mandatory</div>
+						</div>
+						<div class="col-md-3">
+								 <select class="form-control" ng-model="ctrl.notification.tiunits" placeholder="Message"
+								ng-class="((ctrl.notification.tiunits == '' ||ctrl.notification.tiunits == undefined)&& saveRule.$submitted) ? 'border-danger':'' ">
+											<option value="h">Hour</option>
+											<option value="d">Day</option>
+											<option value="m">Month</option>
+										</select>
+										
+							<div class="text-danger text-bold"
+								ng-show="((ctrl.notification.tiunits == '' ||ctrl.notification.tiunits == undefined)&& $saveRule.$submitted)">Units
+								is mandatory</div>
+						</div>
+					</div>
+					
+					<div class="text-right">
+						<input class="btn btn-dark" type="submit" value="Save">
+					</div>
+				</form>
+
+			</div>
+		</div>
+		<!-- 	</script> -->
+	</div>
+</div>

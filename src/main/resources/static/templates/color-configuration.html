@@ -1,0 +1,108 @@
+<div ng-controller="colorConfigurationController as ctrl"
+	class="content-wrapper">
+
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Color Configuration</h4>
+			</div>
+		</div>
+
+	</div>
+	<hr />
+
+
+	<div class="col-md-12">
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-'+(alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+		<br>
+		<form class="form-horizontal">
+			<fieldset >
+				<legend class="text-semibold" style="font-size: 16px">
+					<span class="text-primary"> Status</span>
+				</legend>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Open</label>
+					<div class="col-sm-8">
+						<input type="text" ng-model="ctrl.colorConf.color.status.open"
+							minicolors='toprightsettings' placeholder="Choose Color"
+							class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">In
+						progress</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.status.inprogress"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Closed</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.status.closed"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Resolved</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.status.resolved"
+							placeholder="Choose Color">
+					</div>
+				</div>
+
+				<legend class="text-semibold" style="font-size: 16px">
+					<span class="text-primary">Priority</span>
+				</legend>
+
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Critical</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.priority.critical"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">High</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.priority.high"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Medium</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.priority.medium"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="open">Low</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control"
+							minicolors='toprightsettings'
+							ng-model="ctrl.colorConf.color.priority.low"
+							placeholder="Choose Color">
+					</div>
+				</div>
+				<div class="col-sm-10 pull-right">
+					<input type="submit" ng-click="ctrl.saveStatus()"
+						class="btn btn-dark" value="Save">
+			</fieldset>
+		</form>
+	</div>
+</div>

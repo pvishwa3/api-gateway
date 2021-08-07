@@ -1,0 +1,401 @@
+
+<div ng-controller="ilmController as controller"
+     ng-init="controller.init()" class="content-wrapper">
+    <div class="row page-header">
+        <div class="col-sm-10">
+            <h4 class="page-title text-overflow">Data Management</h4>
+        </div>
+        <div class="col-sm-2">
+                <button class="btn btn-primary" ng-click = "openRepoRegistry()">Register Repo</button>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+    <div uib-alert ng-repeat="alert in controller.conditionMessagesModal"
+         class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+         close="closeAlert($index)">{{alert.msg}}</div>
+
+    <uib-tabset active="active">
+        <uib-tab index="0" heading="Configuration">
+
+
+
+            <form class="form-horizontal group-border-dashed card card-body"
+                  ng-submit="controller.saveActiveDirectoryDetails()"
+                  name="activeDirectoryForm">
+                <div class="modal-body">
+
+
+
+                    <h4>Raw  Data</h4>
+
+
+                    <table class="table">
+                        <thead>
+                            <th>Storage Location</th>
+                            <th>Retention Period</th>
+                            <th>Store</th>
+                            <th>Enable/Disable</th>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+
+
+
+                            <td style="width:2%">
+                                <select class="form-control" ng-model = "rawMessagesStorage.location" >
+                                    <option ng-repeat = "data in controller.repoRegisterDetails | filter:{storageFor:'Raw Messages'}" value="{{data.id}}">{{data.name}}</option>
+                                </select>
+                            </td>
+
+                            <td style="width:3%">
+                                <input type="number" class="form-control col-md-5" ng-model = "rawMessagesStorage.retentionPeriod"/>
+                                <select class="form-control col-md-5" ng-model = "rawMessagesStorage.retentionPeriodUnit">
+                                    <option value="days">Days</option>
+                                    <option value="months">Months</option>
+                                    <option value="years">Years</option>
+                                </select>
+                            </td>
+                            <td style="width:3%">
+                                <select class="form-control col-md-5"  ng-model = "rawMessagesStorage.storageOption">
+                                    <option value="collector">Collector</option>
+                                    <option value="core">Core</option>
+                                </select>
+                            </td>
+                            <td style="width:3%">
+                                <input type="checkbox" value="active" ng-model = "rawMessagesStorage.enableOrDisable">
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                    <div class="modal-footer" style="border-top-color: #252c46">
+                        <button type="button" ng-click="saveRawStoreate()"
+                                class="btn btn-primary">Save Configuration</button>
+
+                    </div>
+                </div>
+            </form>
+
+
+            <form class="form-horizontal group-border-dashed card card-body"
+                  ng-submit="controller.saveActiveDirectoryDetails()"
+                  name="activeDirectoryForm">
+                <div class="modal-body">
+
+
+
+                    <h4>Index Storage</h4>
+
+
+                    <table class="table">
+                        <thead>
+
+                        <th>Storage Type</th>
+                        <th>Hot</th>
+                        <th>Warm</th>
+                        <th>Storage Location</th>
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat = "data in controller.ilmData">
+                            <td>{{data.indexType}} - Index </td>
+                            <td>
+                                <input type="number" class="form-control col-md-2" ng-model = "data.hotStorage"/>
+                                <select class="form-control col-md-2" ng-model = "data.hotStorageUnitType">
+                                    <option value="minutes">Minutes</option>
+                                    <option value="hours">Hours</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <input type="number" class="form-control col-md-2" ng-model = "data.warmStorage"/>
+                                <select class="form-control col-md-2" ng-model = "data.warmStorageUnitType">
+                                    <option value="minutes">Minutes</option>
+                                    <option value="hours">Hours</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" ng-model = "data.location" >
+                                   <option ng-repeat = "data in controller.repoRegisterDetails | filter:{storageFor:'Indexed Data'}" value="{{data.id}}">{{data.name}}</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                    <div class="modal-footer" style="border-top-color: #252c46">
+                        <button type="button" ng-click="controller.save()"
+                                class="btn btn-primary">Save Configuration</button>
+
+                    </div>
+                </div>
+            </form>
+
+
+
+        </uib-tab>
+
+        <uib-tab index="1" heading="Data Stats" >
+            <form class="form-horizontal group-border-dashed card card-body ng-pristine ng-valid ng-scope"  name="activeDirectoryForm">
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <h6>Raw Data Storage</h6>
+                    <br/>
+
+
+                    <div id = "rawStorageSizeGrid" class="{{theme}}" style="height: 500px;">
+
+                    </div>
+
+
+                    <br/> <br/>
+                    <hr/>
+
+                    <h6>Data Allocation (Hot)</h6>
+
+                    <br/>
+
+                    <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng"  style="width:100%">
+                        <thead>
+                        <th>Index</th>
+                        <th>Size</th>
+                        <th>Node</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="data in dataStats.hot">
+                            <td>{{data.index}}</td>
+                            <td>{{data.store}}</td>
+                            <td>{{data['node']}}</td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+
+                    <hr/>
+                    <h6>Data Allocation (Warm)</h6>
+                    <br/>
+
+                    <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng"  style="width:100%">
+                        <thead>
+                        <th>Index</th>
+                        <th>Size</th>
+                        <th>Node</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="data in dataStats.warm">
+                            <td>{{data.index}}</td>
+                            <td>{{data.store}}</td>
+                            <td>{{data['node']}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+            </form>
+
+
+
+
+
+        </uib-tab>
+
+        <uib-tab index="2" heading="Backup & Restore" select="getAllRawsStorageSize()">
+
+            <form class="form-horizontal group-border-dashed card card-body ng-pristine ng-valid ng-scope"  name="activeDirectoryForm">
+                <div class="modal-body">
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h6>Restore Raw Data</h6>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="javascript:void('0')" ng-click = "openRawConfiguration()" class="btn btn-link pull-right"><i class="fa fa-download"></i> </a>
+                        </div>
+
+                    </div>
+                    <br/>
+
+
+
+
+                <div class="col-md-12">
+
+
+                    <div id = "rawStorage" class="{{theme}}" style="height: 500px;">
+
+                    </div>
+
+                </div>
+
+         <br/>
+                    <h6>Restore indexed data</h6>
+            <hr/>
+
+
+
+
+                <div class="col-md-12">
+                    <a href="javascript:void('0')" ng-click = "openSnapshotConfiguration()" class="btn btn-link pull-right"><i class="fa fa-download"></i> </a>
+                </div>
+
+                <table class="table table-striped  dataTable no-footer dtr-inline"
+                       datatable="ng"  style="width:100%">
+                    <thead>
+                    <th></th>
+                    <th>Snapshot ID</th>
+                    <th>Indices</th>
+                    <th>Date Created</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="data in snapshotDetails">
+                        <td><input type="checkbox" ng-click="setSnapshotDetails(data)" ng-model="data.select"> </td>
+                        <td>{{data.name}}</td>
+                        <td>{{data.indices}}</td>
+                        <td>{{data.startDate}}</td>
+                        <td>{{data.duration}}</td>
+                        <td ng-if = "data.state"><label class="badge badge-success">Completed</label></td>
+                        <td ng-if = "!data.state"><label class="badge badge-warning">Pending</label></td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </form>
+
+
+
+
+            <div id="openSnaphotReopConfig" class="modal fade" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Configure Retention Period</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+
+                        <form class="form-horizontal">
+
+
+
+                            <div class="modal-body">
+
+                                <div uib-alert ng-repeat="alert in controller.repoMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-12 control-label">Retention Period(In Days)</label>
+                                    <div class="col-sm-12">
+                                        <input type="number" class="form-control" placeholder=""   required="required" ng-model="sanpshotRequest.retnetionPeirod" name="name" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button"  ng-click = "restoreSnapshot()" class="btn btn-success">Restore Snapshot</button>
+                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </uib-tab>
+
+
+
+        <uib-tab index="3"  heading="Snapshots Progress" select="getSnapshotHistoryDetails()">
+
+            <div class="row card-body" style="border-bottom:0px solid #383e5d">
+                <table class="table table-striped  dataTable no-footer dtr-inline"
+                       datatable="ng"  style="width:100%">
+                    <thead>
+                    <th>Requested Snapshot</th>
+                    <th>Retention(Days)</th>
+                    <th>Requested By</th>
+                    <th>Requested Date</th>
+                    <th>Status</th>
+                    <th>Completion Date</th>
+
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="data in sanpshotHistoryDetails">
+                        <td>{{data.indexName}}</td>
+                        <td>{{data.rententionPeriod}}</td>
+                        <td>{{data.requestedBy}}</td>
+                        <td>{{data.requestedDate}}</td>
+                        <td>{{data.restoreStatus}}</td>
+                        <td>{{data.completedDate}}</td>
+
+
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+
+
+<div id="repoRegistry" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Register Repo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <form class="form-horizontal">
+
+
+
+                <div class="modal-body">
+
+                    <div uib-alert ng-repeat="alert in controller.repoMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+
+                    <div class="pull-right">
+                        <a href="javascript:void('0')" ng-click = "openRegisterRepo()" class="btn btn-link" title="Create new repo"  ng-if = "!isBack"><i class="fa fa-plus-circle"></i></a>
+                        <a href="javascript:void('0')" ng-click = "backToRepos()" class="btn btn-link" title="Back to repos" ng-if = "isBack"><i class="ti-arrow-left"></i></a>
+                    </div>
+                    <br/>
+                    <div class="col-md-12" style="padding-top:1%">
+                        <div ng-include="repoFileName"></div>
+                    </div>
+
+
+
+
+
+                </div>
+            </form></div>
+    </div>
+
+</div>
+</div>
+
+
+
+

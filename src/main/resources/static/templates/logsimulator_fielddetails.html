@@ -1,0 +1,118 @@
+<div ng-controller="logsimulationController as ls"
+	ng-init="ls.loadFieldDetailsPage();templateUrl = 'logsimulation-savedfielddetails.html';showHomeButton = true" class="content-wrapper">
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Manage Fields</h4>
+			</div>
+		</div>
+		<div class="col-sm-4 pull-right">
+			<button ng-click="ls.openNewFieldModal();newField.$setPristine()"
+				class="btn btn-dark pull-right">New Field</button>
+		</div>
+	</div>
+	<hr />
+
+	<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+	<!--  <div uib-alert ng-repeat="alert in rule.ruleAlertMessagaes"
+            class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+            close="closeAlert($index)">{{alert.msg}}</div> -->
+	<div class="banners">
+		<div ng-repeat="baner in ls.alertMessages"
+			class="alert {{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+		</div>
+	</div>
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+	<script type="text/ng-template"
+		id="logsimulation-savedfielddetails.html">
+                <div class="card">
+            <div class="card-body" ng-init="rule.showButtons=false">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="fieldOptions" dt-instance="vm.dtInstance"   dt-column-defs="vm.dtColumnDefs">
+                        <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Field Value</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.allSavedFields">
+                            <td>{{data.fieldName}}</td>
+                            <td style="word-break: break-word;">{{data.fieldValue}}</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a href = "javascript:void('0')" class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></a>
+                                    <ul class="dropdown-menu dropdown-menu-bottom">
+                                        <li><a href="javascript:void('0')" class="btn-link" ng-click='ls.editFieldById(data.id)' data-toggle="tooltip" title="Edit"> Edit</a></li>
+                                        <li><a href="javascript:void('0')" class="btn-link" ng-click='ls.deleteFieldById(data.id)' data-toggle="tooltip" title="Delete"> Delete</a></li>
+                                        <li><a href="javascript:void('0')" class="btn-link" ng-click='ls.cloneFieldDetails(data)' data-toggle="tooltip" title="Edit"> Clone</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div>
+            <div>
+    </script>
+	<div id="newFieldModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">New Field</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					ng-submit="ls.saveNewFieldDetails()" name="newField">
+
+					<div class="banners">
+						<div ng-repeat="baner in ls.alertMessages"
+							class="alert {{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+						</div>
+					</div>
+					<fieldset>
+						<!--                                     <legend class="text-semibold">Enter New Field -->
+						<!--                                         Information</legend> -->
+						<div class="form-group">
+							<label class="col-sm-5 control-label"> Field Name <span
+								class="text-danger">*</span></label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" title="Enter field name"
+									ng-model="ls.newField.fieldName"
+									ng-class="((ls.newField.fieldName == '' || ls.newField.fieldName == undefined ) && newField.$submitted) ? 'border-danger':'' ">
+								<div class="text-danger text-bold help-block with-errors"
+									ng-show="(ls.newField.fieldName=='' || ls.newField.fieldName == undefined) && newField.$submitted">Field
+									name mandatory</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-5 control-label"> Field Value <span
+								class="text-danger">*</span></label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									title="Enter field values" ng-model="ls.newField.fieldValue"
+									ng-class="((ls.newField.fieldValue == '' || ls.newField.fieldValue == undefined ) && newField.$submitted) ? 'border-danger':'' ">
+								<div class="text-danger text-bold help-block with-errors"
+									ng-show="(ls.newField.fieldValue=='' || ls.newField.fieldValue == undefined) && newField.$submitted">Field
+									value mandatory</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="modal-footer" style="border: none;">
+						<button type="submit" class="btn btn-dark">Save</button>
+						<button type="reset" class="btn btn-default waves-effect m-l-5">
+							Reset</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,136 @@
+<div class="col-md-12">
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" placeholder=""   required="required" ng-model="controller.repo.name" name="name" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Type</label>
+        <div class="col-sm-6">
+            <select class="form-control" ng-model = "controller.repo.type">
+                <option type = "fs">fs</option>
+                <option type = "s3">s3</option>
+                <option type = "azure">azure</option>
+                <option type = "gcs">gcs</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Repo For</label>
+        <div class="col-sm-6">
+            <select class="form-control" ng-model = "controller.repo.storageFor">
+                <option vale = "Raw Messages">Raw Messages</option>
+                <option value = "Indexed Data">Indexed Data</option>
+
+            </select>
+        </div>
+    </div>
+    <div ng-if = "controller.repo.type === 's3'">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Bucket</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder=""   required="required" ng-model="config.bucket" name="bucket" />
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Base Path</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder=""   required="required" ng-model="config.base_path" name="base_path" />
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Storage Class</label>
+            <div class="col-sm-6">
+
+                <select class="form-control" ng-model = "config.storage_class">
+                    <option type = "standard">standard</option>
+                    <option type = "reduced_redundancy">reduced_redundancy</option>
+                    <option type = "standard_ia">standard_ia</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">ACL</label>
+            <div class="col-sm-6">
+
+                <select class="form-control" ng-model = "config.canned_acl">
+                    <option type = "private">private</option>
+                    <option type = "public-read">public-read</option>
+                    <option type = "public-read-write">public-read-write</option>
+                    <option type = "authenticated-read">authenticated-read</option>
+                    <option type = "log-delivery-write">log-delivery-write</option>
+                    <option type = "bucket-owner-read">bucket-owner-read</option>
+                    <option type = "bucket-owner-full-control">bucket-owner-full-control</option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Region</label>
+            <div class="col-sm-6">
+                <select class="form-control" ng-model = "config.regionName">
+                    <option name="us-gov-west-1">us-gov-west-1</option>
+                    <option name="us-east-1">us-east-1</option>
+                    <option name="us-east-2">us-east-2</option>
+                    <option name="us-west-1">us-west-1</option>
+                    <option name="us-west-2">us-west-2</option>
+                    <option name="eu-west-1">eu-west-1</option>
+                    <option name="eu-west-2">eu-west-2</option>
+                    <option name="eu-west-3">eu-west-3</option>
+                    <option name="eu-central-1">eu-central-1</option>
+                    <option name="ap-south-1">ap-south-1</option>
+                    <option name="ap-southeast-1">ap-southeast-1</option>
+                    <option name="ap-southeast-2"ap-southeast-2</option>
+                    <option name="ap-northeast-1">ap-northeast-1</option>
+                    <option name="ap-northeast-2">ap-northeast-2</option>
+                    <option name="sa-east-1">sa-east-1</option>
+                    <option name="cn-north-1">cn-north-1</option>
+                    <option name="cn-northwest-1">cn-northwest-1</option>
+                    <option name="ca-central-1">ca-central-1</option>
+
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Username</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" ng-model = "config.userName"/>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" ng-model = "config.password"/>
+            </div>
+
+        </div>
+    </div>
+    <div ng-if = "controller.repo.type === 'fs'">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Location</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder=""   required="required" ng-model="config.location" name="location" />
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="modal-footer">
+        <button type="button"  ng-click = "verifyRepo()" class="btn btn-success">Verify</button>
+        <button type="button"  ng-click = "registerRepo()" class="btn btn-success">Submit</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+    </div>
+
+</div>

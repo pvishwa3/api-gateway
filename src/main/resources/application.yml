@@ -1,0 +1,95 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.cloud: DEBUG
+    org.springframework.web: WARN
+
+spring:
+  application:
+    name: api-gateway
+  #resources:
+  # cache:
+  #   cachecontrol:
+  #     max-age: 604800
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    ip-address: true
+    
+
+
+server:
+  port: 8081
+  session:
+   timeout: 1000
+  compression:
+   enabled: true 
+   mime-types:  text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+   min-response-size: 1024
+  
+
+  
+
+
+
+zuul:
+  sensitive-headers: Cookie,Set-Cookie
+  routes:
+    
+    resource:
+      path: /resource/**
+      url: http://localhost:8082/
+    siem:
+      path: /siem/**
+      url: http://localhost:8081/
+      sensitive-headers: Cookie,Set-Cookie,Authorization
+    case:
+      path: /case/**
+      serviceId: case-management
+      sensitive-headers: Cookie,Set-Cookie,Authorization
+    oauth:
+      path: /oauth/**
+      url: http://localhost:8899/userauth/oauth
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:  
+          enabled: false
+
+   
+
+api-gateway:
+  ribbon:
+    ReadTimeout: 500000
+    
+siem-core:
+  ribbon:
+    ReadTimeout: 500000
+
+case-management:
+  ribbon:
+    ReadTimeout: 1000000
+
+feed-management:
+  ribbon:
+    ReadTimeout: 1000000
+
+
+
+security:
+  oauth2:
+    client:
+      accessTokenUri: http://ec2-34-205-159-10.compute-1.amazonaws.com:8010/auth/realms/technominds/protocol/openid-connect/token
+      userAuthorizationUri: http://ec2-34-205-159-10.compute-1.amazonaws.com:8010/auth/realms/technominds/protocol/openid-connect/auth
+      clientId: SIEM
+      clientSecret: 0f082b91-890a-4255-bc77-3ac821d2662e
+      registered-redirect-uri: http://localhost:8080/
+    resource:
+      userInfoUri: http://ec2-34-205-159-10.compute-1.amazonaws.com:8010/auth/realms/technominds/protocol/openid-connect/userinfo
+      preferTokenInfo: false
+  sessions: ALWAYS

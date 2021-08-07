@@ -1,0 +1,200 @@
+<div id="content-container" ng-controller="caseTemplateController as ctrl" ng-init="showHomeButton= true">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+						<div id="page-head">
+							<div id="page-title">
+								<h1 class="page-header text-overflow">Case Template</h1>
+							</div>
+							<ul class="breadcrumb" ng-show="showHomeButton">
+			<li><a href="/configuration#!">Home</a></li>
+			<li class="active">Templates</li>
+		</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2 pull-right">
+					<div class="row" style="padding-top: 20px;">
+						<div id="page-head">
+							<div id="page-title">
+								  <a class="btn btn-dark" ng-click="ctrl.clearForm()"><b>New Template</b></a>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+
+
+
+		<div class="panel">
+			<div class="panel-body">
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+					<div class="col-md-3">
+					<div class="nano has-scrollbar" style="height: 500px">
+						<div class="nano-content" tabindex="0" style="right: -17px;">
+						<table class="table table-borderless">
+							<tr class="text-center" >
+									<th colspan="2" style="border:none;background: none;" class="text-center"><input type="text" class="form-control"  placeholder="Search Template" ng-model="searchInput" /></th>
+							</tr>
+							<tr ng-repeat="template in ctrl.allTemplates | filter : searchInput">
+								<td style="border:none;">{{template.name}}</td>
+								<td  style="border:none;">
+									<span style="cursor: pointer" class="btn-icon pull-right" ng-click="ctrl.deleteTemplate(template._id,template.name)"><i class="fa fa-trash" title="delete"></i></span>
+									<span style="cursor: pointer" class="btn-icon pull-right" ng-click="ctrl.displayTemplateDetails(template)"><i class="fa fa-edit"></i></span>
+								</td>
+							</tr>
+						</table>
+						</div>
+						</div>
+					</div>
+					<div class="col-md-8 bord-lft">
+
+						<form class="form-horizontal" ng-submit="ctrl.createTemplate()" name="caseTemplate">
+								<div class="form-group">
+									<label class="col-md-3 control-label">Template Name *</label>
+									<div class="col-md-9">
+										<input type="text" ng-model="ctrl.newCaseTemplate.name" class="form-control" ng-class="((ctrl.newCaseTemplate.name =='' || ctrl.newCaseTemplate.name == undefined) && caseTemplate.$submitted) ? 'border-danger' :''">
+										<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.name == '' || ctrl.newCaseTemplate.name == undefined) && caseTemplate.$submitted">Template name is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Title Prefix *</label>
+									<div class="col-md-9">
+										<input type="text" ng-model="ctrl.newCaseTemplate.titlePrefix" class="form-control" ng-class="((ctrl.newCaseTemplate.titlePrefix == '' || ctrl.newCaseTemplate.titlePrefix == undefined) && caseTemplate.$submitted) ? 'border-danger':''">
+										<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.titlePrefix == '' || ctrl.newCaseTemplate.titlePrefix == undefined) && caseTemplate.$submitted">Title prefix name is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Severity *</label>
+									<div class="col-md-9">
+										<span class="pointer"
+											ng-class="ctrl.newCaseTemplate.severity == 1 ? 'label label-info' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.severity = 1">L</span> <span
+											class="pointer"
+											ng-class="ctrl.newCaseTemplate.severity == 2 ? 'label label-warning' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.severity = 2">M</span> <span
+											class="pointer"
+											ng-class="ctrl.newCaseTemplate.severity == 3 ? 'label label-danger' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.severity = 3">H</span>
+									<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.severity == 0 || ctrl.newCaseTemplate.severity == undefined) && caseTemplate.$submitted">Severity is manadatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Tlp *</label>
+									<div class="col-md-9">
+										<span class="pointer"
+											ng-class="ctrl.newCaseTemplate.tlp == 1 ? 'label label-info' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.tlp = 1">WHITE</span> <span
+											class="pointer"
+											ng-class="ctrl.newCaseTemplate.tlp == 2 ? 'label label-success' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.tlp = 2">GREEN</span> <span
+											class="pointer"
+											ng-class="ctrl.newCaseTemplate.tlp == 3 ? 'label label-warning' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.tlp = 3">AMBER</span> <span
+											class="pointer"
+											ng-class="ctrl.newCaseTemplate.tlp == 4 ? 'label label-danger' : 'label label-default'"
+											ng-click="ctrl.newCaseTemplate.tlp = 4">RED</span>
+									<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.tlp == 0 || ctrl.newCaseTemplate.tlp == undefined) && caseTemplate.$submitted">TLP is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Tags *</label>
+									<div class="col-md-9">
+										<ui-select multiple tagging tagging-label="false" style="margin-left:0px" ng-model="ctrl.newCaseTemplate.tags" theme="bootstrap" ng-disabled="false" title="Choose a tags" > 
+											<ui-select-match >{{$item}}</ui-select-match>
+											<ui-select-choices repeat="tag in ctrl.newCase.tags | filter:$select.search"> {{tag}} </ui-select-choices> 
+										</ui-select>
+									<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.tags == [] || ctrl.newCaseTemplate.tags == undefined) && caseTemplate.$submitted">Tags is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Description *</label>
+									<div class="col-md-9">
+										<textarea cols="20" rows="5" ng-model="ctrl.newCaseTemplate.description" class="form-control" ng-class="((ctrl.newCaseTemplate.description == 0 || ctrl.newCaseTemplate.description == undefined) && caseTemplate.$submitted) ? 'border-danger':''"></textarea>
+										<div class="text-danger text-bold" ng-show="(ctrl.newCaseTemplate.description == 0 || ctrl.newCaseTemplate.description == undefined) && caseTemplate.$submitted">Description is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 control-label">Tasks</label>
+									<div class="col-md-9">
+										<div class="input-group">
+											<input type="text" class="form-control" ng-model="taskname">
+											<span class="input-group-btn"><button type="button"
+													class="btn btn-default form-control "
+													ng-click="ctrl.addTask(taskname);taskname=''">
+													<i class="fa  fa-check"></i>
+												</button></span>
+										</div>
+										<div ng-repeat="task in ctrl.newCaseTemplate.tasks"
+											style="padding-top: 10px;">
+											<a class="btn-link" ng-click="ctrl.removeTaskName(task)"><i
+												class="fa fa-close"></i></a>&nbsp;&nbsp;&nbsp;{{task}}
+										</div>
+									</div>
+								</div>
+							<div class="form-group">
+								<div class="pull-right" style="padding-right:17px">
+									<input type="reset" value="Reset" class="btn3 btn-default" title="reset template" ng-click="ctrl.reset()">
+									<button class="btn btn-dark" title="Template submition">Submit</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="taskModel" class="modal fade" role="dialog">
+				<div class="modal-dialog  modal-lg">
+					<div class="modal-content">
+						<div class="modal-header border-bottom  ">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">Add task</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal" ng-submit="ctrl.addNewTask()">
+								<div class="form-group">
+									<label class="col-md-4 control-label">Task title</label>
+									<div class="col-md-8">
+										<input type="text" class="form-control"
+											ng-model="ctrl.newTask.title">
+									</div>
+								</div>
+								<div class="form-group" ng-init="isEditor = true;">
+									<label class="col-md-4 control-label">Task description</label>
+									<div class="col-md-8">
+										<ul class="nav nav-tabs tabs" id="alertTabs">
+											<li class="tab active"><a href="javascript:void('0');"
+												ng-click='openActiveTab("collection");isEditor=true'
+												data-toggle="tab" aria-expanded="false"> <i
+													class="fa fa-bell"></i> Editor
+											</a></li>
+											<li class="tab"><a href="javascript:void('0');"
+												data-toggle="tab"
+												ng-click='openActiveTab("collection");isEditor=false'
+												aria-expanded="false"> <i class="fa fa-filter"></i>
+													Preview
+											</a></li>
+										</ul>
+										<div class="row" ng-show="isEditor">
+											<textarea class="form-control" cols="20" rows="5"
+												ng-model="ctrl.newTask.description"></textarea>
+										</div>
+										<div class="row" ng-show="!isEditor">
+											<div ng-bind-html="ctrl.newTask.description"></div>
+										</div>
+									</div>
+								</div>
+								<div class="pull-right">
+									<button type="button" class="btn3 btn-default pull-left" >Close</button>
+									<input type="submit" class="btn btn-dark pull-right" value="save" >
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

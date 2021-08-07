@@ -1,0 +1,653 @@
+
+<div ng-controller="deviceController as controller"
+	ng-init="controller.loadCollectors()" class="content-wrapper">
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-sm-2">
+			<h4 class="page-title">Manage Collectors</h4>
+		</div>
+		<div class="col-sm-10 pull-right">
+
+			<button ng-click='controller.openCreateCollector()'
+				class="btn btn-primary btn-fw pull-right" title="New Device">
+				<i class="fa fa-plus-circle"></i>Add New Collector
+			</button>
+
+
+		</div>
+	</div>
+
+	<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+	<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+	<script type="text/ng-template" id="viewCollectors.html">
+
+	<div class="row">
+	<div class = "col-lg-12 grid-margin stretch-card">
+			<div class="card" ng-init="rule.showButtons=false">
+					    <div class="card-body">
+					        <div class="table-responsive">
+			 <table class="table table-striped  dataTable no-footer dtr-inline"   width="100%" >
+				<thead>
+					<tr>
+
+					
+						<th>Name</th>
+						<th>Type</th>
+						<th>Runing</th>
+						<th>Number of Soruces</th>
+						<th>Number of Messages</th>
+						<th>First Seen</th>
+						<th>Last Seen</th>
+						<th>Status</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>
+
+
+				<tbody>
+					<tr ng-repeat="data  in controller.collectorAllDetails">
+
+						
+						<td>{{data.collectorName}}</td>
+						<td>{{data.collectorType}}</td>
+						<td ng-if = "!data.collectroHeartBeat"><i style = 'color:red' class = 'ion-alert-circled'></i> </td>
+						<td ng-if = "data.collectroHeartBeat"><i  style = 'color:green' class = 'ion-checkmark-circled'></i> </td>
+						<td>{{data.devicesList.length}}</td>
+						<td>{{data.numberOfMessage}}</td>
+						<td>{{data.firstSeen}}</td>
+						<td>{{data.lastSeen}}</td>
+						<td>{{data.collectorStatus}}</td>
+	
+						
+						<td class="text-center">
+									<button href= "javascript:void('0')"  class="btn btn-danager btn-sm"  ng-click='enableOrDisable(data.id)'>Enable/Disable</button> 
+									<button href= "javascript:void('0')"  class="btn btn-danager btn-sm"  ng-click='controller.editCollector(data)'><i class  = 'fa fa-pencil-square-o'></i></button> 
+                            		<button  href= "javascript:void('0')" class="btn btn-danager btn-sm"  ng-click='controller.deleteCollector(data.id,data.collectorName)'><i class  = 'fa fa-trash-o'></i></button> &nbsp;
+						</td>
+					</tr>
+
+					
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+				</tbody>
+			</table>
+</div>
+		</div>
+		</div>
+	</div>
+	</div>
+</script>
+
+
+
+	<script type="text/ng-template" id="createCollectors.html">
+	<div class="row grid-margin">
+
+	
+
+		<div class="col-lg-12">
+			<div class="card-body">
+				<h4 class="card-title">Create New Collector</h4>
+				<form class="cmxform group-border-dashed"
+					ng-submit="controller.saveCollector()" name="conditionCategory">
+					<fieldset>
+						<div uib-alert
+							ng-repeat="alert in controller.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Device Name</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder="" ng-keyup = "controller.generateKey()"
+									required="required"
+									ng-model="controller.collectorDetails.collectorName">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">IP</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									required="required"
+									ng-model="controller.collectorDetails.collectorIp">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Host Name</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									required="required"
+									ng-model="controller.collectorDetails.hostName">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Macaddress</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									required="required"
+									ng-model="controller.collectorDetails.macAddress">
+							</div>
+						</div>
+
+						<div class = "from-group">
+							<label class="col-sm-3 control-label">Key</label>		
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									required="required"
+									ng-model="controller.collectorDetails.collectorKey">
+							</div>	
+	
+						</div>
+
+						<div class = "from-group">
+							<label class="col-sm-3 control-label">Key</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									   required="required"
+									   ng-model="controller.collectorDetails.collectorInstallationType">
+							</div>
+
+						</div>
+
+
+						<div class = "from-group">
+							<label class="col-sm-3 control-label">Company</label>		
+							<div class="col-sm-6">
+
+								<select class="form-control" ng-model="controller.collectorDetails.companyName">
+									<option value = "data.companyName" ng-repeat = "data in controller.companyDetails">{{data.companyName}}</option>
+								</select>
+								
+							</div>	
+	
+						</div>
+
+
+
+
+
+						<button type="submit" class="btn btn-primary">Save</button>
+
+						<button type="button" class="btn btn-secondary"
+							ng-click="controller.cancelCollector()">Cancel</button>
+
+					</fieldset>
+				</form>
+			</div>
+
+		</div>
+
+</script>
+
+	<div id="sourceModel" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Configure
+						Source</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					ng-submit="saveS3Configuration()" name="conditionCategory">
+
+					<div class="modal-body"background-color:#fcfcfb">
+						<div uib-alert ng-repeat="alert in ctrl.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<div
+							ng-repeat="type in cloudConnectors | filter : {category: category} | filter : {subcategory : subcategory} | filter : {name : searchType}"
+							style="width: 14%; float: left; padding: 0px 0px 10px 10px; height: 145px"
+							ng-if="showSources">
+							<div class="panel" style="height: 100%; box-shadow: none">
+								<div class="text-center" style="padding: 10px;">
+									<a href="javascript:void('0');"
+										ng-click="viewType(type.name,type.logType)">
+										<div>
+											<div ng-bind-html="type.imgPath"></div>
+										</div>
+										<p class="text-lg text-semibold mar-no text-main">{{type.name}}</p>
+									</a>
+								</div>
+
+
+
+
+
+							</div>
+						</div>
+
+						<div class="row" style="padding: 10px;" ng-if="!showSources">
+
+
+
+							<fieldset>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Name <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="controller.aws.name">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Description</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											ng-model="controller.aws.description">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">S3 Regions</label>
+									<div class="col-sm-6">
+										<select class="form-control"
+											ng-model="controller.aws.s3Region">
+
+											<option value="ap-south-1">Asia Pacific (Mumbai)</option>
+											<option value="ap-northeast-3">Asia Pacific
+												(Osaka-Local)</option>
+											<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+											<option value="ap-southeast-1">Asia Pacific
+												(Singapore)</option>
+											<option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+											<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+											<option value="ca-central-1">Canada (Central)</option>
+											<option value="cn-north-1">China (Beijing)</option>
+											<option value="cn-northwest-1">China (Ningxia)</option>
+											<option value="eu-central-1">EU (Frankfurt)</option>
+											<option value="eu-west-1">EU (Ireland)</option>
+											<option value="eu-west-2">EU (London)</option>
+											<option value="eu-west-3">EU (Paris)</option>
+											<option value="eu-north-1">EU (Stockholm)</option>
+											<option value="sa-east-1">South America (Sao Paulo)</option>
+											<option value="us-east-1">US East (N. Virginia)</option>
+											<option value="us-east-2">US East (Ohio)</option>
+											<option value="us-west-1">US West (Oregon)</option>
+
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Bucket Name <span
+										style="color: red">*</span></label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="controller.aws.bucketName">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Path Expression <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="controller.aws.pathExpression">
+
+										<small class="help-block"> Path expression to match
+											one or more S3 objects.</small> <small class="help-block">For
+											example: ABC*.log or ABC.log</small> <small class="help-block">NOTE:
+											Make sure the path does NOT start with a leading slash. </small>
+									</div>
+									s
+								</div>
+							</fieldset>
+
+							<p class="bord-btm pad-ver text-main text-bold">AWS Access</p>
+
+							<fieldset>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Access Key ID <span
+										style="color: red">*</span></label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="controller.aws.accessId">
+										<small class="help-block"> Your AWS Access Key ID </small>
+									</div>
+
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Secret Access Key
+										<span style="color: red">*</span>
+									</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="controller.aws.accessKey">
+										<small class="help-block"> Your AWS Secret Access Key
+										</small>
+									</div>
+
+								</div>
+							</fieldset>
+
+							<p class="bord-btm pad-ver text-main text-bold">Log File
+								Discovery</p>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">SNS Subscription
+									EndPoint</label>
+								<div class="col-sm-6">
+									<div class="col-md-6">
+										<p class="form-control-static"
+											ng-if="controller.aws.token === ''">All fields will be
+											saved when you create a URL and OBELUS will start the
+											scanning process.</p>
+										<div class="form-control-static"
+											ng-if="controller.aws.url !='' "
+											style="background-color: #f1f4f5; border: 1px solid #e9f5fc; padding: 8px; display: flex; width: 260px; height: 46px;">
+											<div style="white-space: nowrap; overflow-x: auto; flex: 1;">
+												{{controller.aws.url}}</div>
+
+										</div>
+
+									</div>
+									<div class="col-md-6">
+										<button type="button" class="btn btn-primary"
+											ng-click="generateSubScriptionLink()">Create URL</button>
+
+									</div>
+
+								</div>
+							</div>
+
+							<div class="form-group"
+								ng-if="singleCloudConnector === 'Amazon S3' ">
+								<label class="col-sm-3 control-label">Log Type</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" placeholder=""
+										required="required" ng-model="controller.aws.logType">
+								</div>
+							</div>
+
+							<div class="from-group">
+								<label class="col-sm-3 control-label">Company</label>
+								<div class="col-sm-6">
+
+									<select class="form-control"
+										ng-model="controller.collectorDetails.companyName">
+										<option value="data.companyName"
+											ng-repeat="data in controller.companyDetails">{{data.companyName}}</option>
+									</select>
+
+								</div>
+
+							</div>
+
+
+
+
+						</div>
+
+					</div>
+
+					<div class="modal-footer">
+						<button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+						<button class="btn btn-primary" type="submit">Save</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+	<div id="deviceCollector" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Select
+						Collector Type</h4>
+				</div>
+
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in ctrl.conditionMessagesModal"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<div id="select-collector-type-dialog"
+						class="ui-dialog-content ui-widget-content"
+						ng-if="controller.collectorDetails.collectorType===''"
+						style="display: block; width: auto; min-height: 68px; padding-top: 39px; height: auto;"
+						scrolltop="0" scrollleft="0">
+						<div class="prada" id="select-collector-type-view">
+							<table id="collector-type-table">
+								<tbody>
+									<tr>
+										<td class="collector-type-box-holder"
+											ng-click="selectCollectorType('installed')"
+											style="padding: 7px 5px 5px 0; width: 40%; vertical-align: top;">
+											<div id="local-type" class="collector-type-box"
+												style="cursor: pointer; padding: 20px; border-radius: 2px; border: 1px solid #383e5d;">
+												<table class="collector-type-box-table" style="width: 100%;">
+													<tbody>
+														<tr>
+															<td class="collector-type-icon-holder"
+																style="text-align: center;"><img
+																src="assets/images/iconfinder_install_1600.png"
+																width="32" height="32"></td>
+														</tr>
+														<tr>
+															<td class="collector-type-title"
+																style="padding-top: 16px; text-align: center; font-size: 16px; padding-right: 10px;">Installed
+																Collector</td>
+														</tr>
+														<tr>
+															<td class="collector-type-desc"
+																style="text-align: center;">Install a collector in
+																your deployment.</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+
+										<td class="collector-type-box-holder"
+											ng-click="selectCollectorType('cloud')"
+											style="padding: 7px 5px 5px 0; width: 40%; vertical-align: top;">
+											<div id="local-type" class="collector-type-box"
+												style="cursor: pointer; padding: 20px; border-radius: 2px; border: 1px solid #383e5d;">
+												<table class="collector-type-box-table" style="width: 100%;">
+													<tbody>
+														<tr>
+															<td class="collector-type-icon-holder"
+																style="text-align: center;"><img
+																src="assets/images/iconfinder_icon-130-cloud-upload_314715.png"
+																width="32" height="32"></td>
+														</tr>
+														<tr>
+															<td class="collector-type-title"
+																style="padding-top: 16px; text-align: center; font-size: 16px; padding-right: 10px;">
+																Cloud Or API Collector</td>
+														</tr>
+														<tr>
+															<td class="collector-type-desc"
+																style="text-align: center;">Install a collector in
+																your deployment.</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="row">
+					
+						<div uib-alert ng-repeat="alert in controller.collectorErrorMessages"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+						<form class="col-12 forms-sample"
+							ng-if="controller.collectorDetails.collectorType==='installed'"
+							ng-submit="controller.saveCollector()" name="conditionCategory">
+
+							<div uib-alert
+								ng-repeat="alert in controller.conditionMessagesModal"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="form-group">
+								<label class="col-sm-12 control-label">Device Name</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" placeholder=""
+										ng-keyup="generateKey()" required="required"
+										ng-model="controller.collectorDetails.collectorName">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-12 control-label">IP</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" placeholder=""
+										ng-disabled="!controller.collectorDetails.canEdit"
+										required="required"
+										ng-model="controller.collectorDetails.collectorIp">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-12 control-label">Host Name</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" placeholder=""
+										ng-disabled="!controller.collectorDetails.canEdit"
+										required="required"
+										ng-model="controller.collectorDetails.hostName">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-12 control-label">Macaddress</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" placeholder=""
+										ng-disabled="!controller.collectorDetails.canEdit"
+										required="required"
+										ng-model="controller.collectorDetails.macAddress">
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<label class="col-sm-12 control-label">Collector Key</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" placeholder=""
+										ng-disabled="!controller.collectorDetails.canEdit"
+										required="required"
+										ng-model="controller.collectorDetails.collectorKey">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-12 control-label">Company</label>
+								<div class="col-sm-12">
+									<select class="form-control"
+										ng-model="controller.collectorDetails.companyName">
+										<option value="{{data.companyName}}"
+											ng-repeat="data in controller.companyDetails">{{data.companyName}}</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="modal-footer">
+
+								<button type="submit" class="btn btn-primary">Save</button>
+
+							</div>
+						</form>
+
+						<form class="col-12 forms-sample group-border-dashed"
+							ng-if="controller.collectorDetails.collectorType==='cloud'"
+							ng-submit="controller.saveCollector()" name="conditionCategory">
+							<div class="modal-body">
+								<div uib-alert
+									ng-repeat="alert in controller.conditionMessagesModal"
+									class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+									close="closeAlert($index)">{{alert.msg}}</div>
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Name</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-keyup="generateKey()" required="required"
+											ng-model="controller.collectorDetails.collectorName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Description</label>
+									<div class="col-sm-12">
+										<textarea rows="5" cols="5" class="form-control"
+											ng-model="controller.collectorDetails.description"></textarea>
+
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Collector Key</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required"
+											ng-model="controller.collectorDetails.collectorKey">
+									</div>
+								</div>
+								
+								
+							<div class="from-group">
+								<label class="col-sm-12 control-label">Company</label>
+								<div class="col-sm-12">
+
+									<select class="form-control"
+										ng-model="controller.collectorDetails.companyName">
+										<option value="{{data.companyName}}"
+											ng-repeat="data in controller.companyDetails">{{data.companyName}}</option>
+									</select>
+
+								</div>
+
+							</div>
+
+
+
+
+							</div>
+							<div class="modal-footer">
+
+								<button type="submit" class="btn btn-primary">Save</button>
+
+							</div>
+						</form>
+
+
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+

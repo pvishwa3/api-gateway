@@ -1,0 +1,261 @@
+<div ng-controller="alertsController as ctrl" ng-init="ctrl.init()"
+	class="content-wrapper">
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-4">
+			<h4 class="page-title ">Manage Alerts</h4>
+		</div>
+		<div class="col-md-8">
+			<button class="btn btn-primary pull-right mar-rgt" ng-click="openAlert()">Create Alert</button>
+			<button id="viewButton" class="btn btn-primary pull-right mar-rgt" ng-click="ctrl.editAlert(ctrl.alertsId[0])">Edit</button>
+			<button id="deleteButton" class="btn btn-danger pull-right mar-rgt" ng-click="ctrl.deleteAlert(ctrl.alertsId[0])">Delete</button>
+		</div>
+	</div>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+	<div class="card">
+		<div class="card-body">
+			<div id="alertsContent" class="{{theme}}"
+				style="height: 500px;"></div>
+		</div>
+	</div>
+	<div id="createNewAlert" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Create Alert</h4>
+				</div>
+				<div class="modal-body">
+				<div uib-alert ng-repeat="alert in ctrl.alertMessagaes1" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+					<form class="form-horizontal" ng-submit="ctrl.savealerts()">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Alert Name</label>
+							<div class="col-md-12">
+								<input type="text" class="form-control"
+									ng-model="alertModel.alertName" required="required">
+							</div>	
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">Priority</label>
+							<div class="col-md-12">
+								<select class="form-control" ng-model="alertModel.priority" required="required">
+									<option value="high">High</option>
+									<option value="medium">Medium</option>
+									<option value="low">Low</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">Type</label>
+							<div class="col-md-12">
+								<select class="form-control" ng-model="alertModel.alertType" required="required">
+									<option>Compliance</option>
+									<option>Predefined Alerts</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group" ng-if="!edit">
+							<label class="col-md-3 control-label">Select Rules</label>
+							<div class="col-md-12">
+								<selectize options="customEvents" title="Select Rules"
+									config="ctrl.ruleConfig" ng-model="alertModel.rule">
+								</selectize>
+							</div>
+						</div>
+						
+						<div class="form-group" ng-if="edit">
+							<label class="col-md-3 control-label">Select Rules</label>
+							<div class="col-md-12">
+								{{ruleName}}
+							</div>
+						</div>
+
+						<div class="form-group">
+							<ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+								<li class="nav-item"><a class="nav-link active"
+									id="home-tab" data-toggle="tab" href="javascript:void('0')"
+									data-target="#whoweare" role="tab" aria-controls="whoweare"
+									aria-selected="true">Email</a></li>
+								<li class="nav-item"><a class="nav-link" id="profile-tab"
+									data-toggle="tab" href="javascript:void('0')"
+									data-target="#ourgoal" role="tab" aria-controls="ourgoal"
+									aria-selected="false">Notable</a></li>
+								<li class="nav-item"><a class="nav-link" id="contact-tab"
+									data-toggle="tab" href="javascript:void('0')"
+									data-target="#history" role="tab" aria-controls="history"
+									aria-selected="false">Ticket</a></li>
+							</ul>
+							<br>
+							<div class="tab-content tab-content-basic ">
+								<div class="tab-pane fade show active row" id="whoweare"
+									role="tabpanel" aria-labelledby="home-tab">
+									<div class="form-group">
+										<label class="control-label"><input type="checkbox"
+											ng-model="ctrl.email.enabled">&nbsp;&nbsp;Enable
+											Email Notification</label>
+									</div>
+									<div ng-if="ctrl.email.enabled">
+										<div class="card-body">
+											<div class="col-md-12">
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">To</label>
+													<div class="col-sm-9">
+														<textarea class="form-control"
+															placeholder="Comma separated list of email addresses."
+															ng-model="ctrl.email.to" name="to" required="true"
+															pattern="[a-zA-Z0-9@_.,]+"></textarea>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Subject</label>
+													<div class="col-sm-9">
+														<textarea class="form-control" placeholder="Subject"
+															ng-model="ctrl.email.subject" required="true"
+															name="subject"></textarea>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Message</label>
+													<div class="col-sm-9">
+														<textarea class="form-control"
+															ng-model="ctrl.email.message" placeholder="Message"
+															required="true" name="message"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade row" id="ourgoal" role="tabpanel"
+									aria-labelledby="profile-tab">
+									<div class="form-group">
+										<label class="control-label"><input type="checkbox"
+											ng-model="ctrl.notable.enabled"> &nbsp;&nbsp;Create
+											Notable</label>
+									</div>
+									<div ng-if="ctrl.notable.enabled">
+										<div class="card-body">
+											<div class="col-md-12">
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Title</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.notable.title" required="true"
+															pattern="[a-zA-Z0-9\s_-]+" />
+
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Description</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.notable.description" required="true" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Message</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.notable.message" required="true"
+															pattern="[a-zA-Z0-9\s-_]+" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Drill-down
+														Name</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.notable.drillDownName" required="true" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Drill-down
+														search</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.notable.drillDownDownSearch"
+															required="true" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">IRP</label>
+													<div class="col-sm-9">
+														<selectize options='ctrl.irps' title="Select Tags"
+															config="ctrl.irpConfig"
+															ng-model="ctrl.notable.irpTemplate"> </selectize>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade row" id="history" role="tabpanel"
+									aria-labelledby="contact-tab">
+									<div class="form-group">
+										<label class="control-label"><input type="checkbox"
+											ng-model="ctrl.ticket.enabled"> &nbsp;&nbsp;Create
+											Ticket</label>
+									</div>
+									<div ng-if="ctrl.ticket.enabled">
+										<div class="card-body">
+											<div class="col-md-12">
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Title</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.ticket.title" required="true"
+															name="tickerTitle" pattern="[a-zA-Z0-9\s_]+" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Description</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.ticket.description" required="true"
+															name="ticketDescription" />
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Priority</label>
+													<div class="col-sm-9">
+														<select class="form-control"
+															ng-model="ctrl.ticket.priority" name="priority"
+															required="required">
+															<option value="Critical">Critical</option>
+															<option value="High">High</option>
+															<option value="Medium">Medium</option>
+															<option value="Low">Low</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-3 control-label">Assignee
+														search</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control"
+															ng-model="ctrl.ticket.assignee" name="assignee"
+															required="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="border: none;">
+							<input type="submit"  class="btn btn-primary" value="save">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

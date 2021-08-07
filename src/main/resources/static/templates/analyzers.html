@@ -1,0 +1,171 @@
+<div ng-controller="analyzersController as jobs"
+	ng-init="jobs.getAllAnalyzers(); jobs.getAllIntelligences(); showHomeButton= true">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Analyzers</h1>
+						</div>
+						<ol class="breadcrumb" ng-show="showHomeButton">
+							<li><a href="/configuration#!">Home</a></li>
+							<li class="active">All Analyzers</li>
+						</ol>
+						<ol class="breadcrumb" ng-show="showWatchEventButton">
+							<li><a href="/configuration#!">Home</a></li>
+							<li><a href="javascript:void('0')"
+								ng-click='jobs.backToAnalyzers()'>All Analyzers</a></li>
+							<li class="active">watch</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 ">
+				<div class="row" style="padding-top: 20px;">
+					<div id="page-head">
+						<div id="page-title">
+							<button ng-click="jobs.openNewAnalyzerForm()"
+								class="btn btn-dark pull-right">
+								<i class="md md-add"></i> New Analyzer
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+		<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+		<div uib-alert ng-repeat="alert in rule.ruleAlertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+			
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+		<script type="text/ng-template" id="analyzers.html">
+
+		<div class="row">
+			<div class="panel panel-table">
+				 <div class="panel-body ">
+					   <div class="table-responsive">
+                           <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1">Id</th>
+                            <th class="col-sm-3">Analyzer Name</th>
+                            <th class="col-sm-2">Intelligence Type</th>
+                            <th class="col-sm-1">Status</th>
+                            <th class="col-sm-1">Trust Score</th>
+                            <th class="col-sm-1 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data in jobs.allAnalyzers">
+                            <td>{{data.id}}</td>
+                            <td>{{data.analyzerName}}</td>
+                            <td>{{data.analyzerCoreIntelligence}}</td>
+                            <td>{{data.analyzerStatus}}</td>
+                            <td>{{data.analyzerTrustScore}}</td>
+                            <td class="text-center">
+
+    	<a href="javascript:void('0')" ng-click="jobs.editAnalyzer(data.id)"> Edit</a> &nbsp;
+		<a href="javascript:void('0')" ng-click="jobs.deleteAnalyzer(data.id)"> Delete</a> &nbsp;
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+		</div>
+    </script>
+
+		<!--  modal to create new analyzer -->
+		<div id="createAnalyzer" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+			style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">New Analyzer</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="jobs.saveAnalyzer()" name="analyzer" >
+						<div class="modal-body">
+							<div class="panel panel-flat">
+								<div class="panel-body">
+									<div uib-alert ng-repeat="alert in jobs.alertMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+									<div class="form-group">
+											<label class="control-label col-sm-3">Analyzer Name <span class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" title="Enter Analyzer Name"
+												placeholder="" ng-model="jobs.newAnalyzer.analyzerName" ng-class="(jobs.newAnalyzer.analyzerName=='' || jobs.newAnalyzer.analyzerName == undefined) && analyzer.$submitted ? 'border-danger' : ''">
+												<div class="text-danger text-bold help-block with-errors"
+												ng-show="(jobs.newAnalyzer.analyzerName=='' || jobs.newAnalyzer.analyzerName == undefined) && analyzer.$submitted">Analyzer name
+												 is mandatory</div>	
+										</div>
+									</div>
+									<!-- <div class="form-group">
+									<label class="col-sm-3 control-label">Intelligence Type</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" required=""
+											placeholder="" ng-model="jobs.newAnalyzer.analyzerCoreIntelligence">
+									</div>
+								</div> -->
+									<div class="form-group">
+										<label class="control-label col-sm-3">Intelligence
+											Type <span class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<select class="form-control" title="Select Intelligence Type"
+												ng-model="jobs.newAnalyzer.analyzerCoreIntelligence" ng-class="(jobs.newAnalyzer.analyzerCoreIntelligence=='' || jobs.newAnalyzer.analyzerCoreIntelligence == undefined) && analyzer.$submitted ? 'border-danger' : ''">
+												<option ng-repeat="data in jobs.allIntelligences"
+													value="{{data.intelligenceType}}">{{data.intelligenceType}}</option>
+											</select>
+											<div class="text-danger text-bold help-block with-errors"
+												ng-show="(jobs.newAnalyzer.analyzerCoreIntelligence=='' || jobs.newAnalyzer.analyzerCoreIntelligence == undefined) && analyzer.$submitted">Intelligence type
+												 is mandatory</div>	
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-3">Analyzer Trust
+											Score <span class="text-danger">*</span></label>	
+										<div class="col-sm-6">
+											<input type="text" class="form-control" title="Analyzer trust score"
+												placeholder=""
+												ng-model="jobs.newAnalyzer.analyzerTrustScore" >
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-3">Status <span class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<select class="form-control" title="Select status"
+												ng-model="jobs.newAnalyzer.analyzerStatus" ng-class="(jobs.newAnalyzer.analyzerStatus=='' || jobs.newAnalyzer.analyzerStatus == undefined) && analyzer.$submitted ? 'border-danger' : ''">
+												<option ng-repeat="data in jobs.statuses" value="{{data}}">{{data}}</option>
+											</select>
+											<div class="text-danger text-bold help-block with-errors"
+											ng-show="(jobs.newAnalyzer.analyzerStatus =='' || jobs.newAnalyzer.analyzerStatus == undefined) && analyzer.$submitted">Status
+											 is mandatory</div>	
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Save
+								Analyzer</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

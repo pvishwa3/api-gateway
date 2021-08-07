@@ -1,0 +1,17 @@
+
+
+
+
+<div class="panel resize-drag" adf-id="{{definition.wid}}" adf-widget-type="{{definition.type}}">
+
+	<div class="panel-heading"  ng-if="!widget.frameless || editMode"> 
+		 <div ng-include src="definition.titleTemplateUrl"></div>
+		<h3 class="panel-title text-capitalize" title="{{definition.title}}">{{definition.title}}</h3>
+	</div>
+	
+	<div class="panel-body"  ng-class="{'':!widget.frameless || editMode}" uib-collapse="widgetState.isCollapsed">
+		<adf-widget-content adf-model="adfModel" model="definition" content="widget" />
+
+	</div>
+
+</div>

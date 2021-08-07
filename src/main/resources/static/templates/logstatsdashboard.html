@@ -1,0 +1,184 @@
+
+<div ng-controller="logstatsdashboardController as contoller">
+
+
+
+
+
+
+	<div class="dashboard-container" id="dashboard-container">
+
+		<div class="row">
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Host Count</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="container-fluid">
+						<div class="row"></div>
+					</div>
+
+					<div class="position-relative" id="hostCountPerSec"
+						style="height: 240px" ng-click="contoller.showHostDetails()"></div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- Sales stats -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Volume by Host </h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="position-relative" id ="topHostByVolume"  ng-click="contoller.showTopHostByVolume()" style="height: 258px">
+						
+					</div>
+
+				</div>
+			</div>
+			<div class="col-lg-4">
+
+				<!-- Sales stats -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Volume by type</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="position-relative" id="topVolumeByType"  ng-click="contoller.showTopHostByType()" style="height: 258px">
+						
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Log Count By Host</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="container-fluid">
+						<div class="row"></div>
+					</div>
+
+					<div class="position-relative"  id="topCountByHost"
+							ng-click="contoller.showTopCountByHost()" style="height: 240px">
+
+						
+
+					</div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Log Count By Type</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="container-fluid">
+						<div class="row"></div>
+					</div>
+
+					<div class="position-relative" id="topCountByType"
+							ng-click="contoller.showTopCountByType()" style="height: 240px">
+
+						
+
+					</div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Log Count By Type</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="container-fluid">
+						<div class="row"></div>
+					</div>
+
+					<div class="position-relative" style="height: 240px">
+
+						<canvas id="topTenHostOverTheTime" height="200" width="500"></canvas>
+
+					</div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+
+		</div>
+
+	</div>
+
+
+	<div class="row" ng-show="contoller.showInfoTable">
+		<div class="col-lg-12">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6 class="panel-title">
+						{{contoller.tableName}}<a class="heading-elements-toggle"><i
+							class="icon-more"></i></a>
+					</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a href="javascript:void('0')"
+								ng-click='contoller.closeTable()' data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<table class="table datatable-pagination">
+						<thead>
+							<tr>
+								<th ng-repeat="data in contoller.tableResponse.headers">{{data}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in contoller.tableResponse.rows">
+								<td>{{data.hostname}}</td>
+								<td>{{data.count}}</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+
+</div>
+
+

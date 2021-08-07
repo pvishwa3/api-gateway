@@ -1,0 +1,53 @@
+<div class="row" ng-controller="casemetricsController as ctrl">
+  <div class="page-header page-header-default">
+    <div class="page-header-content border-bottom border-bottom-success">
+      <div class="page-title">
+        <h4>
+          <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Case metrics management</span>
+        </h4>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <form class="form-horizontal" ng-submit="ctrl.submitMetric()">
+      <div class="form-group col-md-3" style="margin-left:5px">
+        <label for="usr">Name</label>
+        <input type="text" class="form-control" ng-model="ctrl.newmetrics.name">
+      </div>
+      <div class="form-group col-md-3" style="margin-left:5px">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" ng-model="ctrl.newmetrics.title">
+      </div>
+      <div class="form-group col-md-4" style="margin-left:5px">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" ng-model="ctrl.newmetrics.description">
+      </div>
+      <div class="form-group col-md-1" style="margin-left:5px;margin-top:8px;">
+        <label for="button"></label>
+        <input type="submit" class="btn btn-dark" value="Add metric" >
+      </div>
+    </form>
+  </div>
+
+  <hr>
+  <div class="row">
+    <table class="table table-hover" datatable="ng">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="metric in ctrl.allMetrics">
+          <td>{{metric.name}}</td>
+          <td>{{metric.title}}</td>
+          <td>{{metric.description}}</td>
+          <td><i class="btn icon-cross"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

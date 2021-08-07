@@ -1,0 +1,131 @@
+<!--
+  ~ /*
+  ~  * Licensed to OBELUS under one or more contributor
+  ~  * license agreements. See the NOTICE file distributed with
+  ~  * this work for additional information regarding copyright
+  ~  * ownership.you may
+  ~  * not use this file except in compliance with the License.
+  ~  * You may obtain a copy of the License at
+  ~  *
+  ~
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing,
+  ~  * software distributed under the License is distributed on an
+  ~  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  * KIND, either express or implied.  See the License for the
+  ~  * specific language governing permissions and limitations
+  ~  * under the License.
+  ~  */
+  -->
+<form class="form-horizontal" ng-submit =  "saveConfig()">
+ <div class="row pull-right" >
+     <button ng-if = "canShow" class="btn btn-primary pull-right" ng-click = "saveALCSConfig()"> Save </button>
+     <button ng-if = "canShow" class="btn btn-dark pull-right" ng-click = "goBack()"> Back </button>
+ </div>
+  <br/>
+<div class="row" style="
+    margin-top: 15px;
+">
+    <div class="card">
+
+        <div class="card-body">
+
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Name</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" placeholder=""
+                               required="required"
+                               ng-model="acl.policyName">
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Type</label>
+                    <div class="col-sm-6">
+                       <select class="form-control" required="required" ng-model = "acl.aclType">
+                        <option value="User to Assets">User -> Asset</option>
+                        <option value="User to Location">User -> Location</option>
+                        <option value="Assets to Assets">Asset -> Asset</option>
+                        <option value="Location to Location">Location -> Location</option>
+
+                       </select>
+
+                    </div>
+                </div>
+
+                <hr/>
+                <a href="javascript:void('0')" class="btn btn-link pull-right" ng-click = "addData()">Add </a>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Source Type</th>
+                            <th>Value</th>
+                            <th>Destination Type</th>
+                            <th>Value</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat = "data in aclDetails">
+
+
+                            <td>
+                                <select class = "form-control" ng-model = "data.aclSourceType" ng-change = "getValuesBasedOnType(data)">
+                                    <option value="group">Group</option>
+                                    <option value="value">Value</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <select class = "form-control" ng-model = "data.aclSourceValue" ng-if = "data.aclSourceType === 'group'">
+                                    <option value="{{refSets.id}}" ng-repeat = "refSets in data.sourceCurrentRiskFactors">  {{refSets.referenceSetName}}</option>
+
+                                </select>
+                                <input type="text" class="form-control" ng-model = "data.aclSourceValue"  ng-if = "data.aclSourceType === 'value'">
+
+                            </td>
+
+
+
+
+                            <td>
+                                <select class = "form-control" ng-model = "data.aclDestinationType" ng-change = "getValuesBasedOnDestinationType(data)">
+                                    <option value="group">Group</option>
+                                    <option value="value">Value</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <select class = "form-control" ng-model = "data.aclDestinationValue" ng-if = "data.aclDestinationType === 'group'">
+                                    <option value="{{refSets.id}}" ng-repeat = "refSets in data.destinationCurrentRiskFactors">
+                                        {{refSets.referenceSetName}}</option>
+
+                                </select>
+                                <input type="text" class="form-control" ng-model = "data.aclDestinationValue"  ng-if = "data.aclDestinationType === 'value'">
+
+                            </td>
+                            <td>
+                                <a href="javascript:void('0')" ng-click = "deleteAclRow()" class="btn btn-link"><i class="fa fa-trash-o"></i>  </a>
+
+                            </td>
+
+
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+
+        </div>
+
+    </div>
+
+</div>
+</form>

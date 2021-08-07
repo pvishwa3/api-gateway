@@ -1,0 +1,193 @@
+<div ng-controller="assetController as ctrl" class="content-wrapper">
+	<div class="row page-header">
+		<div class="col-sm-10">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Assets</h4>
+			</div>
+		</div>
+		<div class="col-sm-2 pull-right">
+			<button id="deleteAsset"
+				ng-click="ctrl.deleteAsset(ctrl.selectedAssets[0].assertId, ctrl.selectedAssets[0].macAddress)"
+				class="btn btn-danger">
+				<i class="demo-pli-cross"></i></button>
+			<button class="btn btn-dark  mar-hor" id="editAsset"
+				ng-click="ctrl.editAsset(ctrl.selectedAssets[0])">
+				<i class="fa fa-edit"></i>
+			</button>
+
+			<button class="btn btn-primary mar-hor" id="addAsset"
+				ng-click="ctrl.newAsset()">
+				<i class="fa fa-plus"></i>
+			</button>
+
+			<button class="btn btn-dark" ng-click="ctrl.uploadAsset()"
+				id="uploadAssest">
+				<i class="fa fa-upload"></i>
+
+			</button>
+		</div>
+	</div>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessages" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+
+	<div class="col-md-12">
+		<div id="asset-grid" style="height: 500px;" class="{{theme}}"></div>
+
+	</div>
+
+
+
+
+
+	<div class="modal  fade" id="upload_csv_files" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<form ng-submit="uploadAssetsFile()">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+
+
+
+						<h4 class="modal-title" id="myModalLabel2">Upload Assests</h4>
+
+
+					</div>
+
+					<div class="modal-body">
+
+						<div uib-alert ng-repeat="alert in controller.alertNoteMessagaes"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<div class="form-group">
+
+							<input type="file" file-model="caseFiles" accept=".csv" />
+
+						</div>
+
+
+
+
+					</div>
+
+					<div class="panel-footer text-right">
+						<button class="btn btn-success" type="submit">Save</button>
+					</div>
+				</form>
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+	<div class="modal  fade" id="create_new_assets" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+
+
+
+					<h4 class="modal-title" id="myModalLabel2">Create Assests</h4>
+
+
+				</div>
+
+				<div class="modal-body">
+
+
+
+										<div uib-alert ng-repeat="alert in ctrl.alertModalMessages"
+											class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+											close="closeAlert($index)">{{alert.msg}}</div>
+										<form class="form-horizontal" name="assetForm"
+											ng-submit="ctrl.saveAsset()" novalidate>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">Source IP</label>
+												<div class="col-md-7">
+													<input type="text" class="form-control"
+														ng-model="ctrl.newasset.ipAddress" required
+														ng-class="((ctrl.newasset.sourceIp == '' || ctrl.newasset.sourceIp == undefined ) && assetForm.$submitted) ? 'border-danger' : ''" />
+													<div class="text-danger text-bold"
+														ng-show="((ctrl.newasset.ipAddress == '' || ctrl.newasset.ipAddress == undefined ) && assetForm.$submitted)">Source
+														IP is mandatory</div>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">Hostname</label>
+												<div class="col-md-7">
+													<input type="text" class="form-control"
+														ng-model="ctrl.newasset.hostname"
+														ng-class="((ctrl.newasset.hostname == '' || ctrl.newasset.hostname == undefined ) && assetForm.$submitted) ? 'border-danger' : ''" />
+													<div class="text-danger text-bold"
+														ng-show="((ctrl.newasset.hostname== '' || ctrl.newasset.hostname == undefined ) && assetForm.$submitted)">Hostname
+														is mandatory</div>
+
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">MAC Address</label>
+												<div class="col-md-7">
+													<input type="text" class="form-control"
+														ng-model="ctrl.newasset.macAddress"
+														ng-class="((ctrl.newasset.macAddress == '' || ctrl.newasset.macAddress == undefined ) && assetForm.$submitted) ? 'border-danger' : ''" />
+													<div class="text-danger text-bold"
+														ng-show="((ctrl.newasset.macAddress== '' || ctrl.newasset.macAddress == undefined ) && assetForm.$submitted)">MAC
+														address is mandatory</div>
+
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">Operating System</label>
+												<div class="col-md-7">
+													<input type = "text" ng-model = "ctrl.newasset.opreatingSystem" class="form-control"/>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">Critical</label>
+												<div class="col-md-7">
+													<input type = "number" ng-model = "ctrl.newasset.criticality" class="form-control"/>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-md-3 control-label">Group</label>
+												<div class="col-md-7">
+													<selectize options='ctrl.assertGroups' title="Select Group" config="ctrl.assestGroupConfig" ng-model="ctrl.temp.field">
+
+
+
+													</selectize>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<div class="col-md-10 control-label">
+													<input type="button" class="btn btn-secondary" value="Cancel"
+														data-dismiss="modal" /> <input type="reset"
+														class="btn btn-dark" value="Reset" /> <input
+														type="submit" class="btn btn-success" value="Save" />
+												</div>
+											</div>
+										</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

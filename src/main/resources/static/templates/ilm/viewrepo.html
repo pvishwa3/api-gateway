@@ -1,0 +1,29 @@
+<div class="col-md-12">
+
+    <table  class="table table-striped  dataTable no-footer dtr-inline"
+           datatable="ng">
+        <thead>
+        <tr>
+            <th>Repo name</th>
+            <th>Type</th>
+            <th>Storage Type</th>
+            <th>Created by</th>
+            <th>Created Date</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat = "data in controller.repoRegisterDetails">
+            <td>{{data.name}}</td>
+            <td>{{data.type}}</td>
+            <td>{{data.storageFor}}</td>
+            <td>{{data.createdBy}}</td>
+            <td>{{data.createdDate}}</td>
+            <td><a href="javascript:void('0')" ng-click = "deleteRepo(data.id)" class="btn btn-link">Delete</a> </td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>

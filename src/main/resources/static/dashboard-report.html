@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="siem">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SiEM</title>
+
+
+
+
+<link rel="apple-touch-icon" sizes="57x57"
+	href="assets/css/icons/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60"
+	href="assets/css/icons/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72"
+	href="assets/css/icons/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76"
+	href="assets/css/icons/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114"
+	href="assets/css/icons/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120"
+	href="assets/css/icons/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144"
+	href="assets/css/icons/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152"
+	href="assets/css/icons/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180"
+	href="assets/css/icons/favicon/apple-icon-180x180.png">
+
+
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage"
+	content="assets/css/icons/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="assets/css/slick.css" />
+<link href='assets/css/mapbox-gl.css' rel='stylesheet' />
+
+<link href="assets/css/fonts.css" rel="stylesheet">
+<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="assets/css/ui-grid.css" type="text/css">
+
+<link href="plugins/jstree/style.min.css" rel="stylesheet">
+
+<link href="assets/css/ui-layout.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/angular-gridster.min.css" />
+<link href="assets/css/nifty.css" rel="stylesheet">
+<link href="plugins/switchery/switchery.min.css" rel="stylesheet">
+<link href="assets/css/demo/nifty-demo-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="plugins/bootstrap-daterangepicker/daterangepicker.css" />
+<link href="plugins/bootstrap-datepicker/bootstrap-datepicker.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="/plugins/datatables/extensions/Buttons/css/buttons.dataTables.css">
+<link href="assets/css/demo/nifty-demo.min.css" rel="stylesheet">
+<link href="assets/css/borderLayout.css" rel="stylesheet">
+<link href="plugins/ionicons/css/ionicons.min.css" rel="stylesheet">
+<link href="plugins/datatables/media/css/dataTables.bootstrap.css"
+	rel="stylesheet">
+<link
+	href="plugins/datatables/extensions/Responsive/css/responsive.dataTables.min.css"
+	rel="stylesheet">
+<link href="assets/css/gridstack-extra.css" rel="stylesheet">
+<link href="assets/css/gridstack.css" rel="stylesheet">
+<link href="assets/css/jquery.minicolors.css" rel="stylesheet">
+<link href="assets/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="plugins/select2/select2.css" rel="stylesheet">
+<link href="assets/css/cases.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/select2.css">
+<link rel="stylesheet" href="assets/css/structure-preview.css">
+<link href="assets/js/plugins/selectize/selectize.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/angular-dashboard-framework.css">
+<link href="assets/css/angular-confirm.min.css" rel="stylesheet">
+<link href="assets/css/summernote.css" rel="stylesheet">
+<link href="assets/js/plugins/selectize/remove_buttons_selectize.css">
+<link href="assets/js/plugins/selectize/selectize.css" rel="stylesheet">
+<link href="plugins/font-awesome/css/font-awesome.min.css"
+	rel="stylesheet">
+<link href="plugins/css-loaders/css/css-loaders.css" rel="stylesheet">
+<link href="plugins/css-loaders/css/spinkit.min.css" rel="stylesheet">
+<link href="/assets/css/extract_fields.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/split-pane.css" />
+<link rel="stylesheet" href="assets/css/pretty-split-pane.css" />
+<link href="/assets/css/angular-confirm.min.css" rel="stylesheet">
+<link href="assets/css/cases.css" rel="stylesheet">
+<link href="assets/css/themes/type-c/theme-navy.css" rel="stylesheet">
+<link href="{{themePath}}" rel="stylesheet" id="theme1">
+
+<link
+	href="https://jgraph.github.io/mxgraph/javascript/examples/grapheditor/www/styles/grapheditor.css"
+	rel="stylesheet">
+
+<!-- /global stylesheets -->
+
+<!-- Core JS files -->
+
+<script type="text/javascript"
+	src="assets/js/core/libraries/jquery.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/core/libraries/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="assets/js/charts/easy_charts/easy-pie-chart.js"></script>
+
+
+<script type="text/javascript"
+	src="assets/js/core/libraries/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/loaders/blockui.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/ui/nicescroll.min.js"></script>
+<script type="text/javascript" src="assets/js/plugins/ui/drilldown.js"></script>
+<script src="plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<!-- /core JS files -->
+
+<script type="text/javascript" src="assets/js/individual/sockjs.min.js"></script>
+<script type="text/javascript" src="assets/js/individual/stomp.js"></script>
+<!-- Theme JS files -->
+<script type="text/javascript"
+	src="assets/js/plugins/visualization/d3/d3.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/visualization/d3/d3_tooltip.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/forms/styling/switchery.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/ui/moment/moment.min.js"></script>
+
+<script type="text/javascript"
+	src="assets/js/plugins/pickers/daterangepicker.js"></script>
+<script type="text/javascript"
+	src="assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+
+<script type="text/javascript" src="assets/js/individual/jspdf.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/html2pdf.bundle.min.js"></script>
+
+
+
+
+<!-- /theme JS files -->
+
+<script type="text/javascript" src="assets/js/individual/sockjs.min.js"></script>
+<script type="text/javascript" src="assets/js/individual/stomp.js"></script>
+<script type="text/javascript" src="js/angular.js"></script>
+
+<script type="text/javascript" src="js/angular-stomp.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/angular-datatables.min.js"></script>
+
+<script src="assets/js/individual/jquery.dataTables.min.js"></script>
+<script src="plugins/datatables/media/js/dataTables.bootstrap.js"></script>
+<script
+	src="plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js"></script>
+
+
+<script src='assets/js/individual/angular-moment.min.js'></script>
+
+<script type="text/javascript"
+	src="assets/js/individual/dataTables.fixedHeader.min.js"></script>
+
+<script
+	src="/plugins/datatables/extensions/Buttons/js/angular-datatables.bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="js/angular-datatables.fixedheader.js"></script>
+<script src="plugins/datatables/extensions/Buttons/js/buttons.colVis.js"></script>
+<script
+	src="assets/js/plugins/tables/datatables/extensions/angular-datatables.buttons.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/plugins/forms/selects/select2.min.js"></script>
+
+
+<script type="text/javascript" src="js/angular-route.js"></script>
+<script src="js/angular-resource.min.js"></script>
+<script type="text/javascript" src="js/ngStorage.js">
+	
+</script>
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/nv.d3.js"></script>
+
+<script type="text/javascript"
+	src="assets/js/plugins/forms/inputs/duallistbox.min.js"></script>
+
+<script src="assets/js/plugins/selectize/selectize.js"></script>
+<script src="assets/js/plugins/selectize/angular-selectize.js"></script>
+<!-- 	<script src="assets/js/plugins/angular.scroll.min.js"></script> -->
+
+<script src="assets/js/individual/FileSaver.js"></script>
+
+
+<script
+	src="/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js"></script>
+<script src="assets/js/individual/buttons.flash.min.js"></script>
+<script src="assets/js/individual/jszip.min.js"></script>
+<script src="assets/js/individual/pdfmake.min.js"></script>
+<script src="assets/js/individual/vfs_fonts.js"></script>
+<script src="assets/js/individual/buttons.html5.min.js"></script>
+<script src="assets/js/individual/buttons.print.min.js"></script>
+
+<script src='assets/js/individual/mapbox-gl.js'></script>
+
+
+<script type="text/javascript" src="js/mxGraph/Init.js"></script>
+<script type="text/javascript" src="js/mxGraph/pako.min.js"></script>
+<script type="text/javascript" src="js/mxGraph/base64.js"></script>
+<script type="text/javascript" src="js/mxGraph/jscolor.js"></script>
+<script type="text/javascript" src="js/mxGraph/sanitizer.min.js"></script>
+<script type="text/javascript" src="js/mxGraph/mxClient.js"></script>
+<script type="text/javascript" src="js/mxGraph/EditorUi.js"></script>
+<script type="text/javascript" src="js/mxGraph/Editor.js"></script>
+<script type="text/javascript" src="js/mxGraph/Sidebar.js"></script>
+<script type="text/javascript" src="js/mxGraph/Graph.js"></script>
+<script type="text/javascript" src="js/mxGraph/Format.js"></script>
+<script type="text/javascript" src="js/mxGraph/Shapes.js"></script>
+<script type="text/javascript" src="js/mxGraph/Actions.js"></script>
+<script type="text/javascript" src="js/mxGraph/Menus.js"></script>
+<script type="text/javascript" src="js/mxGraph/Toolbar.js"></script>
+<script type="text/javascript" src="js/mxGraph/Dialogs.js"></script>
+
+
+<script src="js/jstree.js"></script>
+<script src="js/ngJsTree.js"></script>
+
+<script type="text/javascript" src="js/angular-nvd3.js"></script>
+<script src="js/angular-animate.js"></script>
+<script src="js/angular-sanitize.js"></script>
+
+<script src="assets/js/individual/angular-cookies.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/ui-bootstrap-tpls.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/checklist-model.js"></script>
+<script type="text/javascript" src="js/rangy-core.js"></script>
+
+<script type="text/javascript" src="js/datetimepicker.js"></script>
+<script type="text/javascript" src="js/datetimepicker.templates.js"></script>
+<script type="text/javascript" src="js/angular-recursion.js"></script>
+<script type="text/javascript" src="js/dateTimeInput.js"></script>
+<script type="text/javascript" src="js/angular-dropdown-multiselect.js"></script>
+<script type="text/javascript" src="js/angular-elastic-builder.js"></script>
+<script type="text/javascript" src="js/select.js"></script>
+<script type="text/javascript" src="js/adf.module.js"></script>
+<script type="text/javascript" src="js/base.js"></script>
+<script type="text/javascript" src="js/adf.locale.module.js"></script>
+<script type="text/javascript" src="js/bootstrap-duallistbox.js"></script>
+<script type="text/javascript" src="js/adf.locale.constants.js"></script>
+<script type="text/javascript" src="js/dashboard.provider.js"></script>
+<script type="text/javascript" src="js/services/adf-utils.service.js"></script>
+<script type="text/javascript" src="js/services/widget.service.js"></script>
+<script type="text/javascript"
+	src="js/services/adf-dashboard.service.js"></script>
+<script type="text/javascript"
+	src="js/services/adf-structure-preview.service.js"></script>
+<script type="text/javascript"
+	src="js/filters/adf-order-by-object-key.filter.js"></script>
+
+
+
+<script type="text/javascript"
+	src="js/directives/adf-structure-preview.directive.js"></script>
+<script type="text/javascript"
+	src="js/directives/adf-dashboard-column.directive.js"></script>
+<script type="text/javascript"
+	src="js/directives/adf-dashboard-row.directive.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/angular-local-storage.js"></script>
+<script type="text/javascript" src="js/angular-fullscreen.js"></script>
+<script type="text/javascript"
+	src="plugins/summernote/src/js/summernote.js"></script>
+<script src="assets/js/individual/angular-summernote.min.js"></script>
+
+<script src="plugins/switchery/switchery.min.js"></script>
+
+<Script type="text/javascript" src="js/angular-confirm.min.js"></Script>
+
+<script type="text/javascript" src="js/angular-downloadsvg-directive.js"></script>
+
+<script type="text/javascript" src="plugins/pickers/pickadate/picker.js"></script>
+<script type="text/javascript" src="assets/js/plugins/clipboard.min.js"></script>
+<script type="text/javascript" src="assets/js/ngclipboard.js"></script>
+
+<script type="text/javascript"
+	src="plugins/pickers/pickadate/picker.date.js"></script>
+<script type="text/javascript"
+	src="plugins/pickers/pickadate/picker.time.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/kendo.all.min.js"></script>
+
+<script type="text/javascript"
+	src="assets/js/individual/jquery.minicolors.js"></script>
+
+<script src='assets/js/plugins/textAngular/textAngular-rangy.min.js'></script>
+<script src='assets/js/plugins/textAngular/textAngular-sanitize.min.js'></script>
+<script src='assets/js/plugins/textAngular/textAngular.min.js'></script>
+
+<script src="assets/js/individual/angular-file-upload.min.js"></script>
+<!-- ACE Plugin -->
+<script src="plugins/ace/ace.js"></script>
+<script src="plugins/ace/cb-complete-list.js"></script>
+<script type="text/javascript" src="plugins/ace/ext-language_tools.js"></script>
+<script src="plugins/ui-ace/ui-ace.js"></script>
+<script src="js/angular-drag-and-drop-lists.js"></script>
+<script src="js/angular-translate.js"></script>
+<script src="lib/numbro.min.js"></script>
+<script src="js/angular-translate-loader-partial.js"></script>
+<script src="lib/underscore-min.js"></script>
+<script type="text/javascript" src="js/chart-settings.js"></script>
+<script src="js/angular-minicolors.js"></script>
+<script src="js/split-pane.js"></script>
+<script src="js/angular-split-pane.js"></script>
+<script src="js/checklist-model.js"></script>
+<script type="text/javascript" src="js/DashboardLayout/gridstack.js"></script>
+<script type="text/javascript"
+	src="js/DashboardLayout/gridstack.controller.js"></script>
+<script type="text/javascript"
+	src="js/DashboardLayout/gridstack.directive.js"></script>
+<script type="text/javascript"
+	src="js/DashboardLayout/gridstackitem.directive.js"></script>
+
+<script src="assets/js/individual/angular-aria.js"></script>
+<script src="assets/js/individual/vis-network.min.js"></script>
+<script src="assets/js/individual/ag-grid-enterprise.min.js"></script>
+<script src="assets/js/individual/slick.min.js"></script>
+<script type="text/javascript"
+	src="assets/js/individual/angular-slick.js"></script>
+
+<script type="text/javascript" src="js/app.js"></script>
+
+
+<script type="text/javascript" src="js/router.js"></script>
+<script type="text/javascript" src="lib/angular-ui-router.min.js"></script>
+<script type="text/javascript" src="js/Sortable.js"></script>
+<script type="text/javascript" src="js/BodyController.js"></script>
+<script type="text/javascript" src="js/auth-factory.js">
+	
+</script>
+<script type="text/javascript" src="js/router.js">
+	
+</script>
+<script type="text/javascript" src="js/kibana-factory.js">
+	
+</script>
+<script type="text/javascript" src="js/kibana.js">
+	
+</script>
+<script type="text/javascript" src="js/settings-factory.js">
+	
+</script>
+<script type="text/javascript" src="js/settings.js">
+	
+</script>
+
+<script type="text/javascript" src="js/permission-directive.js">
+	
+</script>
+<script type="text/javascript" src="js/navigation-contoller.js">
+	
+</script>
+<script type="text/javascript" src="js/livetrail-factory.js">
+	
+</script>
+<script type="text/javascript" src="js/livetail-controller.js">
+	
+</script>
+<script type="text/javascript" src="js/jquery.newsTicker.js"></script>
+<script type="text/javascript" src="js/logShipper_controllers.js"></script>
+<script type="text/javascript" src="js/plan-settings-factory.js"></script>
+<script type="text/javascript" src="js/plan-settings.js"></script>
+<script type="text/javascript" src="js/DashboardLayout/panel.js"></script>
+<script type="text/javascript" src="js/bootstrap-colorpicker-module.js"></script>
+<script type="text/javascript" src="js/alertDashboardFactory.js"></script>
+<script type="text/javascript" src="js/alertDashboardController.js"></script>
+
+<script type="text/javascript" src="js/alertsfactory.js"></script>
+<script type="text/javascript" src="js/alerts.js"></script>
+
+<script type="text/javascript" src="js/CorrelationFactory.js"></script>
+<script type="text/javascript" src="js/correlation.js"></script>
+
+<script type="text/javascript" src="js/Conditionfactory.js"></script>
+
+
+<script type="text/javascript" src="js/colorController.js"></script>
+<script type="text/javascript" src="js/colorFactory.js"></script>
+
+<script type="text/javascript" src="js/condition-category-factory.js"></script>
+<script type="text/javascript" src="js/condition-category-controller.js"></script>
+
+<script type="text/javascript" src="js/condition-type-controller.js"></script>
+<script type="text/javascript" src="js/condition-type-factory.js"></script>
+
+
+
+<script type="text/javascript" src="js/incidents-controller.js"></script>
+
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/echarts-walden.js"></script>
+<!-- <script type="text/javascript" -->
+<!-- 	src="https://ecomfe.github.io/echarts-examples/public/vendors/echarts/map/js/world.js?_v_=1531420071835"></script> -->
+<script src="assets/js/individual/world.js"></script>
+<script src="js/grokdebuggerController.js"></script>
+<script src="js/grokdebuggerFactory.js"></script>
+<script src="js/logsOnboardingController.js"></script>
+<script src="js/logsOnboardingFactory.js"></script>
+
+<script type="text/javascript" src="js/alertdashboardController.js"></script>
+
+<script type="text/javascript" src="js/logstatsdashboardController.js"></script>
+<script type="text/javascript" src="js/dashboardFactory.js"></script>
+<script type="text/javascript" src="lib/raphael-2.1.4.min.js"></script>
+<script type="text/javascript" src="lib/justgage.js"></script>
+
+<script type="text/javascript" src="js/collection-controller.js"></script>
+<script type="text/javascript" src="js/collection-factory.js"></script>
+<script type="text/javascript" src="js/FusionCharts/FusionCharts.js"></script>
+<script type="text/javascript" src="js/chart.min.js"></script>
+<script type="text/javascript" src="js/angular-chart.js"></script>
+
+
+<script type="text/javascript" src="js/FiledExtractorFactory.js"></script>
+<script type="text/javascript" src="js/FieldExtractorController.js"></script>
+<script type="text/javascript" src="js/wdiget-controller.js"></script>
+<script type="text/javascript" src="js/widgetService.js"></script>
+<script type="text/javascript" src="js/dataset/dataset-controller.js"></script>
+<script type="text/javascript" src="js/dataset/dataset-factory.js"></script>
+<!-- <script type="text/javascript" src="js/createCaseController.js"></script> -->
+<script type="text/javascript" src="js/caseFactory.js"></script>
+
+<script type="text/javascript" src="js/cortex-jobsFactory.js"></script>
+<script type="text/javascript" src="js/cortex-jobsController.js"></script>
+
+<script type="text/javascript" src="js/widgetService.js"></script>
+<script type="text/javascript" src="js/logsimulation-controller.js"></script>
+<script type="text/javascript" src="js/logsimulation-factory.js"></script>
+
+<script type="text/javascript" src="js/ReportingService.js"></script>
+
+<script type="text/javascript" src="js/dirPagination.js"></script>
+<!-- <script type="text/javascript" src="js/newCaseController.js"></script> -->
+<script type="text/javascript" src="js/caseTemplateController.js"></script>
+<script type="text/javascript" src="js/caseTemplateFactory.js"></script>
+<!-- <script type="text/javascript" src="js/casenewController.js"></script> -->
+
+<script type="text/javascript" src="js/caseController.js"></script>
+<script type="text/javascript" src="js/casemetricsController.js"></script>
+<!-- <script type="text/javascript" src="js/observablesController.js"></script> -->
+<script type="text/javascript" src="js/myTasksController.js"></script>
+<script type="text/javascript" src="js/waitingTasksController.js"></script>
+<script type="text/javascript" src="js/caseCustomFieldsController.js"></script>
+
+<script type="text/javascript" src="js/analyzers-controller.js"></script>
+<script type="text/javascript" src="js/analyzers-factory.js"></script>
+
+<script type="text/javascript" src="js/investigationController.js"></script>
+
+
+<script type="text/javascript" src="js/core-intelligence-controller.js"></script>
+<script type="text/javascript" src="js/core-intelligence-factory.js"></script>
+
+<script type="text/javascript" src="js/feed-controller.js"></script>
+<script type="text/javascript" src="js/feed-factory.js"></script>
+
+<script type="text/javascript" src="js/analyzers-controller.js"></script>
+<script type="text/javascript" src="js/analyzers-factory.js"></script>
+
+<script type="text/javascript" src="js/investigationController.js"></script>
+<script type="text/javascript" src="js/investigationFactory.js"></script>
+
+
+<script type="text/javascript" src="js/core-intelligence-controller.js"></script>
+<script type="text/javascript" src="js/core-intelligence-factory.js"></script>
+
+<script type="text/javascript" src="js/feed-controller.js"></script>
+<script type="text/javascript" src="js/feed-factory.js"></script>
+
+
+<script type="text/javascript" src="js/irpFactory.js"></script>
+
+<script type="text/javascript" src="js/tiController.js"></script>
+<script type="text/javascript" src="js/tiFactory.js"></script>
+
+<script type="text/javascript" src="js/highcharts/highcharts.js"></script>
+<script src="js/highcharts/modules/funnel.js"></script>
+<script src="js/highcharts/modules/wordcloud.js"></script>
+<script src="js/highcharts/modules/sankey.js"></script>
+<script src="js/highcharts/modules/accessibility.js"></script>
+<script type="text/javascript"
+	src="js/highcharts/modules/offline-exporting.js"></script>
+<script src="js/highcharts/modules/heatmap.js"></script>
+<!-- <script src="https://code.highcharts.com/maps/modules/map.js"></script> -->
+<script type="text/javascript" src="js/highcharts/highcharts-more.js"></script>
+<script type="text/javascript" src="js/highcharts/modules/exporting.js"></script>
+<script type="text/javascript"
+	src="js/highcharts/modules/export-data.js"></script>
+<!-- <script src="https://code.highcharts.com/mapdata/custom/world.js"></script> -->
+
+<script type="text/javascript" src="js/highcharts/highcharts-themes.js"></script>
+
+
+
+<script src="assets/js/individual/solid-gauge.js"></script>
+
+
+
+
+<script src="js/util/CBoardEChartUtils.js"></script>
+
+<script src="js/util/CBoardEChartRender.js"></script>
+<script src="js/util/CBoardCommonUtils.js"></script>
+<script src="js/util/CBoardKpiRender.js"></script>
+<script src="js/util/CBoardTableRender.js"></script>
+<script src="js/util/CBoardMapRender.js"></script>
+<!--<script src="js/util/CBoardGisRender.js"></script>-->
+<script src="js/util/CBoardJsTreeUtils.js"></script>
+<script src="js/util/CBoardHeatMapRender.js"></script>
+<script src="js/util/CBoardBmapRender.js"></script>
+
+<script src="js/cron-gen.min.js"></script>
+
+<script src="plugins/crossTable/plugin.js"></script>
+<script src="plugins/echart/theme-fin1.js"></script>
+
+<script src="plugins/echart/echarts-wordcloud.min.js"></script>
+<script src="plugins/echart/echarts-liquidfill.min.js"></script>
+<script type="text/javascript" src="js/xeditable.js"></script>
+
+
+<script src="assets/js/individual/ng-tags-input.min.js"></script>
+
+<link href="assets/css/ng-tags-input.min.css" rel="stylesheet"
+	media="screen">
+
+<link href="assets/css/ng-tags-input.bootstrap.min.css" rel="stylesheet"
+	media="screen">
+<script type="text/javascript" src="assets/js/bootstrap-filestyle.js"></script>
+<script src="js/logShipper_controllers.js"></script>
+<script type="text/javascript" src="lib/cron-gen.min.js"></script>
+
+
+<script type="text/javascript" src="lib/angular-jsoneditor.js"></script>
+<script type="text/javascript" src="js/borderLayout.js"></script>
+
+<!-- AngularJS-->
+
+<!-- Highcharts -->
+
+
+
+
+
+<script src="js/service/dashboard/dashboardService.js"></script>
+
+<script src="js/service/data/dataService.js"></script>
+<script src="js/service/util/ModalUtils.js"></script>
+<script src="js/service/updater/updateService.js"></script>
+<script src="js/service/chart/chartDataProcess.js"></script>
+<script src="js/service/chart/chartFunnelService.js"></script>
+<script src="js/service/chart/chartKpiService.js"></script>
+<script src="js/service/chart/chartLineService.js"></script>
+<script src="js/service/chart/chartContrastService.js"></script>
+<script src="js/service/chart/chartPieService.js"></script>
+<script src="js/service/chart/chartSankeyService.js"></script>
+<script src="js/service/chart/chartRadarService.js"></script>
+<script src="js/service/chart/chartService.js"></script>
+<script src="js/service/chart/chartMapService.js"></script>
+<script src="js/service/chart/chartTableService.js"></script>
+<script src="js/service/chart/chartScatterService.js"></script>
+<script src="js/service/chart/chartGaugeService.js"></script>
+<script src="js/service/chart/chartWordCloudService.js"></script>
+<script src="js/service/chart/chartTreeMapService.js"></script>
+<script src="js/service/chart/chartAreaMapService.js"></script>
+
+<script src="js/service/chart/chartHeatMapCalendarService.js"></script>
+<script src="js/service/chart/chartHeatMapTableService.js"></script>
+<script src="js/service/chart/chartLiquidFillService.js"></script>
+<script src="js/service/chart/chartChinaMapService.js"></script>
+<script src="js/service/chart/chartChinaMapBmapService.js"></script>
+<script src="js/service/chart/chartRelationService.js"></script>
+<script src="js/service/chart/chartWorldMapService.js"></script>
+<script src="js/AlertHistory.js"></script>
+
+<script src="js/MetricsFactory.js"></script>
+<script src="js/metricscontroller.js"></script>
+<script src="js/interact.min.js"></script>
+
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
+
+<!-- <script -->
+<!-- 	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.min.js"></script> -->
+<script src="assets/js/individual/leaflet.js"></script>
+<link rel="stylesheet" href="assets/css/leaflet.css" />
+<script
+	src='assets/js/individual/angular-moment.min.js'></script>
+
+<script type="text/javascript" src="https://rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.js"></script>
+
+
+<script src="js/threatInteligenceController.js"></script>
+<script src="js/notificationController.js"></script>
+<script src="js/notificationFactory.js"></script>
+<script src="js/manageFeedController.js"></script>
+<script src="js/manageFeedFactory.js"></script>
+<script src="js/threatStatsController.js"></script>
+<script src="js/threatStatsFactory.js"></script>
+
+<script src="js/threatintel-whitelist-factory.js"></script>
+<script type="text/javascript"
+	src="js/ContentManagement/investigationpanel.js"></script>
+<script type="text/javascript"
+	src="js/ContentManagement/investigation-factory.js"></script>
+<script type="text/javascript"
+	src="js/ContentManagement/workbenchtab.js"></script>
+<script type="text/javascript" src="js/workbench/workbench.js"></script>
+
+
+<script type="text/javascript"
+	src="js/highcharts/modules/no-data-to-display.js"></script>
+
+<script type="text/javascript" src="assets/js/scrollabletabs/scrolling-tabs.js"></script>
+
+<script type="text/javascript" src="js/directives/workbench-tab.js"></script>
+
+
+<script type="text/javascript" src="js/loadmore.js"></script>
+<script type="text/javascript"
+	src="js/highcharts/modules/no-data-to-display.js"></script>
+
+<script type="text/javascript"
+	src="js/logsimulatorOnDemandGenController.js"></script>
+<script type="text/javascript"
+	src="js/logsimulationOndemadGenFactory.js"></script>
+
+<script type="text/javascript"
+	src="js/DashboardLayout/angular-gridster.js"></script>
+
+<script type="text/javascript" src="js/userSettingsController.js"></script>
+<script type="text/javascript" src="js/userSettingsFactory.js"></script>
+
+<script type="text/javascript" src="js/securityOverviewFactory.js"></script>
+
+<script type="text/javascript" src="js/securityOverviewFactory.js"></script>
+<!-- <script type="text/javascript" src="js/adminSettingsController.js"></script> -->
+<!-- <script type="text/javascript" src="js/adminSettingsFactory.js"></script> -->
+<script type="text/javascript" src="js/menuSettings.js"></script>
+
+<script type="text/javascript" src="js/homeController.js"></script>
+<script type="text/javascript" src="js/manualAssetController.js"></script>
+
+<script type="text/javascript" src="js/assetFactory.js"></script>
+<script src="assets/js/individual/canvg.min.js"></script>
+
+<script src="js/spaces/spaces-factory.js"></script>
+<script src="js/spaces/spaces-controller.js"></script>
+
+<script type="text/javascript" src="js/miter-factory.js"></script>
+<script type="text/javascript" src="js/miter-controller.js"></script>
+
+
+<script type="text/javascript" src="js/networkZonesController.js"></script>
+<script type="text/javascript" src="js/networkZonesFactory.js"></script>
+
+
+
+<script type="text/javascript" src="js/logDevicesController.js"></script>
+<script type="text/javascript" src="js/logDevicesFactory.js"></script>
+
+
+<script type="text/javascript" src="js/event_service.js"></script>
+<script type="text/javascript" src="js/papaparse.js"></script>
+<script type="text/javascript" src="js/CaseGroupService.js"></script>
+
+
+<script type="text/javascript" src="js/colorConfigurationController.js"></script>
+<script type="text/javascript" src="js/ColorConfigurationFactory.js"></script>
+
+
+
+<script type="text/javascript" src="js/DashboardReportController.js"></script>
+
+<style type="text/css">
+body {
+	min-width: 800px;
+}
+
+.frame {
+	min-width: 400px;
+	min-height: 300px;
+	position: absolute;
+}
+</style>
+
+
+<style media="print" type="text/css">
+@media print {
+	.table-container {
+		page-break-after: always;
+	}
+	body {
+		font-size: 14px;
+		font-family: sans-serif;
+	}
+}
+
+.dashboard-header {
+	height: 100px;
+	background-color: #2367A3 !important;
+}
+
+.logo {
+	padding-top: 15px;
+	height: -webkit-fill-available;
+    width: -webkit-fill-available;
+/* 	height: 72px; */
+/* 	width: 141px; */
+	padding-left: 10px;
+}
+
+.pad-lft-small {
+	color: #525659 !important;
+	padding-left: 3px;
+	font-weight: lighter !important;
+	font-size: 14px;
+}
+
+.report-label {
+	color: #525659 !important;
+	font-weight: 700 !important;
+	font-size: 14px;
+}
+
+.report-desc {
+	font-size: 12px !important;
+}
+
+.report-title {
+	margin: 3px;
+	font-size: 14px !important;;
+}
+
+#container .table th {
+	background-color: #e0e6ec !important;;
+}
+
+body {
+	
+}
+</style>
+<body>
+	<div id="container"
+		class="effect aside-float aside-bright push mainnav-out">
+
+
+
+
+
+
+		<div class="boxed" ng-controller="dashboardReportController as ctrl">
+
+
+
+
+			<div class="row"
+				style="border-top: 4px solid #2367A3; background: white; border-bottom: 2px solid #2367A3;">
+
+
+
+				<div class="col-md-2 dashboard-header">
+					<img class="logo"
+						alt="http://localhost:8081/assets/images/ozone_white.png"
+						src="http://localhost:8081/assets/images/ozone_white.png" />
+				</div>
+
+				<div class="col-md-10">
+
+					<p class="text-main text-semibold report-title" style="">{{name}}</p>
+					<p class="report-desc" style="margin: 0; font-size: 10px;">{{description}}</p>
+					<p style="margin-top: 10px">
+						<b>Generated By:</b> <span class="pad-lft-small"
+							style="font-weight: 300">System</span> | <b>Generated Time:</b>
+						<span class="pad-lft-small">{{currentDate| date:'medium' : 'UTC' }}</span>
+						| <b>Time Range:</b> <span class="pad-lft-small">{{startDate| date:"MM/dd/yyyy 'at' h:mma"}} to {{endDate| date:"MM/dd/yyyy 'at' h:mma"}}</span>
+					</p>
+				</div>
+
+
+
+			</div>
+
+
+
+			<div id="dashboardsWidgets" class="page-content dashbaord-container">
+
+
+
+
+
+				<div class="dashboard-panel-body" id="page-print"
+					style="background-color: white;">
+
+
+
+
+
+					<div class="row key-indicators-container"
+						ng-if="kpiWidgets.length>0" style="margin-top: 3%">
+
+						<div class="key-indicators splunk-view KeyIndicatorsView">
+
+							<div class="KP-main" ng-repeat="data in kpiWidgets">
+
+
+
+
+								<div class="indicator splunk-view KeyIndicatorView">
+
+									<div
+										class="KP-holder up non-inverted no-threshold KP-quantitative">
+
+										<div class="KP-value-description"
+											ng-if="!widget.frameless || editMode">
+											<div class="panel-control">
+
+
+
+
+												&nbsp; <a href="javascript:void('0')"
+													class="btn-link btn-link-white"
+													ng-click="removeKpi($index)" ng-if="editMode"
+													title="Delete">&nbsp;<i class="ion-trash-b"></i>&nbsp;
+												</a> <a
+													href="/configuration#!/menusettings?action=editWidget&widgetId={{data.id}}"
+													class="btn-link btn-link-white"
+													ng-click="editWidget($index)" ng-if="editMode" title="Edit">&nbsp;<i
+													class="fa fa-pencil"></i>&nbsp;
+												</a>
+
+
+											</div>
+											<h3 class="dashboard-panel-title" title="{{data.title}}">{{data.title}}</h3>
+										</div>
+
+										<div class="KP-main-value ">
+
+											<div class="KP-subtitle">Total Count</div>
+
+											<div class="kpi-{{data.id}}"></div>
+
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+
+
+
+
+
+
+
+
+						</div>
+
+
+
+					</div>
+
+
+
+
+
+					<div gridstack class="grid-stack grid1" options="gridStackOptions"
+						on-change="onChange(event,items)"
+						on-drag-start="onDragStart(event,ui)"
+						on-drag-stop="onDragStop(event,ui)"
+						on-resize-start="onResizeStart(event,ui)"
+						on-resize-stop="onResizeStop(event,ui)">
+						<div id="widget-{{widget.id}}" gridstack-item
+							ng-if="widget.options.config.chart_type!='table'"
+							ng-repeat="widget in ctrl.widgets" class="grid-stack-item"
+							gs-item-x="widget.x" gs-item-y="widget.y"
+							gs-item-width="widget.width" gs-item-height="widget.height"
+							gs-item-autopos="0" on-item-added="onItemAdded(item)"
+							on-item-removed="onItemRemoved(item)">
+							<div class="grid-stack-item-content">
+								<div class="panel dashboard-panel  box" ng-init="open=false;">
+
+
+									<div class="panel-heading dashboard-panel-header " style="border-bottom: 2px solid #2367A3 !important;"
+										ng-if="!widget.frameless || editMode" 
+										ng-mouseover="open = true" ng-mouseleave="open = false">
+										<div class="panel-control" ng-if="open">
+
+
+											<a class="btn-link btn-link-white"
+												href="javascript:void('0')"
+												ng-click="reloadWidget(widget.id)" title="Refresh the graph"><i
+												class="fa fa-repeat"></i></a> &nbsp; <a
+												class="btn-link btn-link-white" href="javascript:void('0')"
+												title="Download"
+												ng-click="downloadPNG(widget.id,widget.title)"> <i
+												class="fa fa-image"></i>
+											</a> &nbsp; <a href="javascript:void('0')"
+												class="btn-link btn-link-white" ng-click="remove($index)"
+												ng-if="editMode" title="Delete">&nbsp;<i
+												class="ion-trash-b"></i>&nbsp;
+											</a> <a
+												href="/configuration#!/menusettings?action=editWidget&widgetId={{widget.id}}"
+												class="btn-link btn-link-white"
+												ng-click="editWidget($index)" ng-if="editMode" title="Edit">&nbsp;<i
+												class="fa fa-pencil"></i>&nbsp;
+											</a> <a href="javascript:void('0')"
+												class="btn-link btn-link-white"
+												ng-click="toggleFullScreen(widget.id)" title="Fullscreen"><i
+												class="fa fa-expand"></i></a> &nbsp;&nbsp;
+
+
+
+										</div>
+										<h3 class="dashboard-panel-title" title="{{widget.title}}">{{widget.title}}</h3>
+									</div>
+									<div class="panel-body">
+
+										<div style="width: 100%; height: 300px"
+											id="chart-{{widget.id}}"></div>
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+
+
+
+
+
+
+					</div>
+
+
+
+					<br />
+
+				</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+			</div>
+
+			<div ng-if="dashboardContainsTable">
+			
+			
+
+				<div class="row" style="page-break-before: always; display: block;">
+					
+					<div  class="col-md-12" ng-repeat="widget in ctrl.widgets"
+						ng-if="widget.options.config.chart_type==='table'"
+						style="margin-top: 20px;border-top: 1px solid #ffff;">
+						<div style="margin-top: 20px;" class="panel dashboard-panel  box" ng-init="open=false;">
+
+
+
+							<div class="panel-heading dashboard-panel-header "
+								style="border-bottom: 2px solid #2367A3 !important;"
+								ng-if="!widget.frameless || editMode" ng-mouseover="open = true"
+								ng-mouseleave="open = false">
+								<div class="panel-control" ng-if="open">
+
+
+									<a class="btn-link btn-link-white" href="javascript:void('0')"
+										ng-click="reloadWidget(widget.id)" title="Refresh the graph"><i
+										class="fa fa-repeat"></i></a> &nbsp; <a
+										class="btn-link btn-link-white" href="javascript:void('0')"
+										title="Download"
+										ng-click="downloadPNG(widget.id,widget.title)"> <i
+										class="fa fa-image"></i>
+									</a> &nbsp; <a href="javascript:void('0')"
+										class="btn-link btn-link-white" ng-click="remove($index)"
+										ng-if="editMode" title="Delete">&nbsp;<i
+										class="ion-trash-b"></i>&nbsp;
+									</a> <a
+										href="/configuration#!/menusettings?action=editWidget&widgetId={{widget.id}}"
+										class="btn-link btn-link-white" ng-click="editWidget($index)"
+										ng-if="editMode" title="Edit">&nbsp;<i
+										class="fa fa-pencil"></i>&nbsp;
+									</a> <a href="javascript:void('0')" class="btn-link btn-link-white"
+										ng-click="toggleFullScreen(widget.id)" title="Fullscreen"><i
+										class="fa fa-expand"></i></a> &nbsp;&nbsp;
+
+
+
+								</div>
+								<h3 class="dashboard-panel-title" title="{{widget.title}}">{{widget.title}}</h3>
+							</div>
+
+							<div class="panel-body">
+
+
+								<div style="width: 100%;" id="chart-{{widget.id}}"></div>
+
+							</div>
+
+						</div>
+
+					</div>
+					<br />
+
+				</div>
+
+			</div>
+
+		</div>
+
+
+	</div>
+
+
+
+</body>
+</html>

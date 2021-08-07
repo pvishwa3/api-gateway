@@ -1,0 +1,149 @@
+<div ng-controller="logFieldsController as ctrl" ng-init="ctrl.pageName = 'deviceType'" class="content-wrapper">
+
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-md-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Log Fields</h4>
+			</div>
+		</div>
+		<div class="col-md-6">
+		<button ng-if="ctrl.canCreate" class="btn btn-primary pull-right mar-rgt"
+				ng-click="ctrl.createLogFields()">Create
+				Field</button>
+			<button id="viewLogFieldButton" class="btn btn-primary mar-rgt pull-right"
+				ng-click="ctrl.editLogField(ctrl.selectedLogFields[0])">Edit</button>
+			<button id="deleteLogFieldButton" class="btn btn-danger mar-rgt pull-right"
+				ng-click="ctrl.deleteLogFields()">Delete</button>
+			
+		</div>
+	</div>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+
+	<div class="card">
+		<div class="card-body">
+			<div class="">
+				<div id="logFieldsContent" class="{{theme}}" style="height: 500px;"></div>
+			</div>
+
+			<div id="newLogFields" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+							<h4 class="modal-title">Create Log Fields</h4>
+						</div>
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.alertMessagaesModal" class="alert"
+								ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}
+							</div>
+							<form class="form-horizontal" ng-submit="ctrl.saveLogFields()" name="fieldTypeForm"
+								novalidate="novalidate">
+								<div class="form-group row">
+									<label class="control-label col-md-3 text-capitalize">Device
+										Type</label>
+									<div class="col-md-7">
+										<select class="form-control" ng-model="ctrl.newField.deviceTypeId"
+											required="required" name="deviceTypeId">
+											<option ng-repeat="deviceType in ctrl.deviceTypesList | unique:'deviceTypeId' | orderBy:'deviceTypedisplayName'"
+												value="{{deviceType.deviceTypeId}}">{{deviceType.deviceTypedisplayName}}</option>
+										</select>
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.deviceTypeId.$touched) && fieldTypeForm.deviceTypeId.$error.required">
+											Device
+											Name is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Field Name</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="ctrl.newField.fieldName" class="form-control"
+											name="fieldName" required="required" pattern="[a-zA-Z0-9\s_.-]+" />
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.fieldName.$touched) && fieldTypeForm.fieldName.$error.required">
+											Field
+											Name is mandatory</div>
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.fieldName.$touched) && fieldTypeForm.fieldName.$error.pattern">
+											Special
+											characters are not allowed</div>
+
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Description</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="ctrl.newField.description" class="form-control"
+											required="required" name="description" />
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.description.$touched) && fieldTypeForm.description.$error.required">
+											Description
+											is mandatory</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Display Name</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="ctrl.newField.displayName" class="form-control"
+											required="required" name="displayName" pattern="[a-zA-Z0-9\s]+" />
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.displayName.$touched) && fieldTypeForm.displayName.$error.required">
+											Display
+											Name is mandatory</div>
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.displayName.$touched) && fieldTypeForm.displayName.$error.pattern">
+											Special
+											characters are not allowed</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Analyzed</label>
+									<div class="col-md-7">
+										<input type="checkbox" name="analyzed" ng-model="ctrl.newField.analyzed"
+											ng-true-value="true" ng-false-value="false" class="checkbox" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Assert</label>
+									<div class="col-md-7">
+										<input type="checkbox" name="assert" ng-model="ctrl.newField.assertField"
+											ng-true-value="true" ng-false-value="false" class="checkbox" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Data Type</label>
+									<div class="col-md-7">
+										<select class="form-control" ng-model="ctrl.newField.dataType"
+											required="required" name="dataType">
+											<option value="User">User</option>
+											<option value="IP">IP</option>
+											<option value="Domain">Domain</option>
+											<option value="URL">URL</option>
+											<option value="Hash">Hash</option>
+											<option value="File">File</option>
+											<option value="text">Text</option>
+											<option value="numeric">Numeric</option>
+											<option value="ipaddress">IP Address</option>
+											<option value="date">Date</option>
+										</select>
+										<div class="text-danger text-bold"
+											ng-show="(fieldTypeForm.$submitted || fieldTypeForm.dataType.$touched) && fieldTypeForm.dataType.$error.required">
+											Data
+											Type is mandatory</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<input type="submit" class="btn btn-success" ng-disabled="fieldTypeForm.$invalid" />
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

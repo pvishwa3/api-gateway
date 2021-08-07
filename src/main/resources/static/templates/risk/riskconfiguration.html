@@ -1,0 +1,278 @@
+
+<div ng-controller="riskConfiguration as controller"
+     ng-init="controller.init()" class="content-wrapper">
+
+    <script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+    <div uib-alert ng-repeat="alert in controller.conditionMessagesModal"
+         class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+         close="closeAlert($index)">{{alert.msg}}</div>
+
+
+    <uib-tabset active="active">
+        <uib-tab index="0" heading="Risk Configuration">
+
+            <br/>
+            <div class="col-md-12">
+                <button class="btn btn-primary pull-right" ng-click = "saveConfiguraton()">Save</button>
+            </div>
+            <br/>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column" style="height:300px;overflow:auto">
+                            <div class="wrapper">
+                                <h4 class="card-title" style="height:16px">Risk Level
+                                    <a href="javascript:void('0')" class="btn btn-link" ng-click = "addRiskLevel()"><i class="fa fa-plus-circle"></i> </a>
+                                </h4>
+                            </div>
+
+                            <table class="table">
+
+                                <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Score</th>
+                                </tr>
+
+                                </thead>
+                                <tbody >
+                                <tr ng-repeat = "data in riskLevels">
+                                    <td ><input type="text" class = "form-control" name="riskLevel" ng-model = "data.level" ></td>
+                                    <td> <input type="number" style="width: 100%;" class="form-control" ng-model = "data.score"></td>
+                                    <td><a href="javascript:void('0')" ng-click = "deleteRiskLevel($index)" class="btn btn-link">Delete</a> </td>
+                                </tr>
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="wrapper">
+                                <h4 class="card-title">Risk Configuration</h4>
+                            </div>
+
+                            <table class="table">
+
+                                <thead>
+                                <tr>
+
+                                    <th>Level</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                </tr>
+
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat = "data in riskConfigLevels">
+                                    <td style="width:6%">{{data.level}}</td>
+                                    <td> <input type="number" style="width: 100%;" class="form-control" ng-model = "data.from"></td>
+                                    <td> <input type="number" style="width: 100%;" class="form-control" ng-model = "data.to"></td>
+                                </tr>
+                                </tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="wrapper">
+                                <h4 class="card-title" style="height:16px">Risk Calculation
+                                    <a href="javascript:void('0')" class="btn btn-link" ng-click = "addRiskFactor()"><i class="fa fa-plus-circle"></i> </a>
+                                </h4>
+                            </div>
+
+                            <table class="table">
+
+                                <thead>
+                                <tr>
+                                    <th>Risk Factor</th>
+                                    <th>Score</th>
+                                </tr>
+
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat = "data in riskConfiguration">
+                                    <td>
+                                        <select class = "form-control" ng-model = "data.riskFactor">
+                                            <option  value= "{{factor.id}}" ng-repeat = "factor in riskFactors">{{factor.riskFactor}}</option>
+                                        </select>
+
+                                    </td>
+                                    <td> <input type="number" style="width: 100%;" class="form-control" ng-change = "calculateTotalScore()"  ng-model = "data.score"></td>
+                                    <td><a href="javascript:void('0')" class="btn btn-link" ng-click = "deleteRiskConfiguration($index)"><i class="fa fa-trash-o"></i> </a> </td>
+
+                                </tr>
+                                </tbody>
+
+                                <tfoot>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>{{totalWeightAge}}</td>
+
+                                </tr>
+
+                                </tfoot>
+
+
+                            </table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="wrapper">
+                                <h4 class="card-title">Risk Baseline
+
+                                </h4>
+                            </div>
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Configuration</th>
+                                        <th>Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat = "data in rowData">
+                                        <td style="width:6%">{{data.riskBucket}}</td>
+                                        <td>
+                                        <select class="form-control" ng-model = "data.level">
+                                            <option ng-repeat = "data in riskLevels" value="{{data.score}}-{{data.level}}">{{data.level}}</option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </uib-tab>
+
+        <uib-tab index="1" heading="Risk Assignment">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="wrapper">
+                                <div class="col-md-12">
+                                    <a href="javascript:void('0')" class="btn btn-link pull-right" ng-click = "addRiskAssignment()"><i class="fa fa-plus-circle"></i> </a>
+                                    <button class="btn btn-primary pull-right" ng-click = "saveRiskAssigment()">Save</button>
+                                </div>
+
+                            </div>
+
+                            <table class="table">
+
+                                <thead>
+                                <tr>
+                                    <th>Risk Factor</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Score Type</th>
+                                    <th>Score</th>
+                                </tr>
+
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat = "data in assignmentDetails">
+                                    <td>
+                                        <select class = "form-control" ng-model = "data.riskFactor">
+                                            <option  value= "{{factor.id}}" ng-repeat = "factor in riskFactors">{{factor.riskFactor}}</option>
+                                         </select>
+                                    </td>
+
+                                    <td>
+                                        <select class = "form-control" ng-model = "data.type" ng-change = "getValuesBasedOnType(data)">
+                                            <option value="group">Group</option>
+                                            <option value="value">Value</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class = "form-control" ng-model = "data.value" ng-if = "data.type === 'group'">
+                                            <option value="{{refSets.id}}" ng-repeat = "refSets in data.currentRiskFactors">
+                                                {{refSets.referenceSetName}}</option>
+                                        </select>
+                                        <input type="text" class="form-control" ng-model = "data.value"  ng-if = "data.type === 'value'">
+
+                                    </td>
+                                    <td>
+                                      <select class = "form-control" ng-model = "data.scoreType">
+                                            <option value="value">Value</option>
+                                             <option value="level">Level</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" style="width: 100%;" class="form-control" ng-if = "data.scoreType==='value'"   ng-model = "data.score">
+                                        <select class="form-control" ng-model = "data.score"  ng-if = "data.scoreType==='level'">
+                                            <option ng-repeat = "data in riskLevels" value="{{data.score}}-{{data.level}}">{{data.level}}</option>
+                                        </select>
+                                    </td>
+                                    <td> <a href="javascript:void('0')" class="btn btn-link" ng-click = "deleteAssignmentDetails($index)"><i class="fa fa-trash-o"></i></a></td>
+                                </tr>
+                                </tbody>
+
+
+
+
+                            </table>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+        </uib-tab>
+
+
+    </uib-tabset>
+
+
+
+
+
+
+
+</div>

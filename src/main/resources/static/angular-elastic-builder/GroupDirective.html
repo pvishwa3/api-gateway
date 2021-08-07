@@ -1,0 +1,53 @@
+
+
+<div class="rules-group-header">
+	<div class="btn-group pull-right group-actions">
+		<button type="button" class="btn btn-xs btn-dark"
+			data-ng-click="addRule()" data-add="rule">
+			<i class="glyphicon glyphicon-plus"></i> Add rule
+		</button>
+		
+
+		<button type="button" class="btn btn-xs btn-danger"
+			data-ng-click="onRemoveNew()" data-add="group">
+			<i class="glyphicon glyphicon-minus-sign"></i> Remove group
+		</button>
+
+
+
+
+	</div>
+</div>
+
+<div class="btn-group group-conditions">
+	<select data-ng-model="group.subType" class="form-control">
+		<option value="must">AND</option>
+		<option value="should">OR</option>
+	</select>
+</div>
+
+<div class="rules-group-body">
+	<div class="rules-list">
+
+
+		<div class="rule-container condition">
+			<table class="table cloneTable">
+				<tr data-ng-repeat="rule in group.rules"
+					data-elastic-builder-chooser="rule"
+					data-elastic-fields="elasticFields" data-depth="{{ +depth + 1 }}"
+					data-on-remove="removeChild($index)">
+
+
+
+				</tr>
+
+
+
+			</table>
+
+		</div>
+
+	</div>
+</div>
+
+

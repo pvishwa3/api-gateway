@@ -1,0 +1,315 @@
+<div class="pad-btm form-inline">
+	<div class="row" style="padding-top: 15px;">
+		<div class="col-sm-6 table-toolbar-left">
+			<h4 class="text-semibold text-dark">{{model.title}}</h4>
+		</div>
+		<div class="col-sm-6 table-toolbar-right">
+
+
+			<div class="btn-group">
+
+				<a href="javascript:void('0')" title="Filter"
+					class="btn btn-link btn-float has-text"
+					title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}"
+					ng-click="openFliter = true"> <i class="fa fa-filter"></i>
+				</a> <a href="javascript:void('0')" ng-if="editMode" title="Add Widget"
+					class="btn btn-link btn-float has-text"
+					title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}"
+					ng-click="addWidgetDialog()"> <i class="ion-plus-circled"></i>
+				</a> <a href="javascript:void('0')" title="Edit Dashboard"
+					class="btn btn-link btn-float has-text" ng-if="editMode"
+					title="{{ translate('ADF_COMMON_EDIT_DASHBOARD') }}"
+					ng-click="editDashboardDialog()"> <i class="ion-edit"></i>
+				</a> <a href="javascript:void('0')"
+					class="btn btn-link  btn-float has-text" ng-if="options.editable"
+					title="{{editMode ? translate('ADF_DASHBOARD_TITLE_TOOLTIP_SAVE') : translate('ADF_DASHBOARD_TITLE_TOOLTIP_EDIT_MODE') }}"
+					ng-click="toggleEditMode()"> <i class=""
+					ng-class="{'ion-edit' : !editMode, 'fa fa-check' : editMode}"></i>
+				</a> <a href="javascript:void('0')" title="Undo"
+					class="btn btn-link  btn-float has-text" ng-if="editMode"
+					title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_UNDO') }}"
+					ng-click="cancelEditMode()"> <i class="ion-reply"></i>
+
+				</a> <a href="javascript:void('0')" title="Export To Pdf"
+					class="btn btn-link btn-float has-text"
+					title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_UNDO') }}"
+					ng-click="exportToPdf(model.title)"> <i class="fa fa-download"></i>
+				</a> <a href="javascript:void('0')" data-toggle="dropdown"
+					class="btn btn-link btn-float has-text dropdown-toggle"
+					aria-expanded="true"> <i class="ion-clock"></i> {{labelName}}
+				</a>
+				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+					<div class="row">
+						<div class="col-sm-4 col-md-3">
+
+							<h3 class="panel-title">Custom range</h3>
+
+							<form  class="form-horizontal" action="" style="padding-left: 12px; padding-bottom: 12px;">
+								
+								<div class="form-group pad-top">
+									<label class="col-sm-3 control-label">From</label> 
+									<div class="col-sm-9">
+									<input type="text"  id="from-date" ng-model="displayStartDate" class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group pad-top">
+									<label class="col-sm-3 control-label">To</label>  
+									<div class="col-sm-9">
+									<input type="text" ng-model="displayEndDate" id="to-date" class="form-control">
+									</div>
+								</div>
+								
+								<br/>
+
+								<div class="row text-right pad-top">
+									<button class="btn btn-dark" type="button"
+										ng-click="apply()">Apply</button>
+								</div>
+							</form>
+
+
+						</div>
+						<div class="col-sm-8 col-md-9">
+							<h3 class="panel-title">Quick ranges</h3>
+
+							<div class="col-sm-4 col-md-3">
+
+								<ul class="list-unstyled">
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+											2 days</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+											7 days</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+											30 days</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+											90 days</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last6months','Last 6 months')">Last
+											6 months</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last1year','Last 1 year')">Last
+											1 year</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last2years','Last 2 years')">Last
+											2 years</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last5years','Last 5 years')">Last
+											5 years</a></li>
+								</ul>
+							</div>
+							<div class="col-sm-4 col-md-3">
+
+								<ul class="list-unstyled">
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+											before yesterday</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+											day last week</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+											week</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+											month</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+											year</a></li>
+
+								</ul>
+							</div>
+
+							<div class="col-sm-4 col-md-3">
+
+								<ul class="list-unstyled">
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('today','Today')">Today</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+											so far</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisWeek','This week')">This
+											week</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+											week so far</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisMonth','This month')">This
+											month</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+											month so far</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisYear','This year')">This
+											year</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+											year so far</a></li>
+
+								</ul>
+							</div>
+							<div class="col-sm-4 col-md-3">
+
+								<ul class="list-unstyled">
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+											15 minutes</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+											30 minutes</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+											1 hour</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+											3 hours</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+											6 hours</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+											12 hours</a></li>
+									<li><a href="javascript:void('0')"
+										ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+											24 hours</a></li>
+								</ul>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+
+
+
+
+
+			</div>
+		</div>
+	</div>
+
+	<div class="row" ng-show="showFilter">
+
+		<div class="col-md-12">
+
+
+			<div class="panel">
+
+				<div class="panel-heading">
+					<div class="panel-control">
+								<a href="javascript:void('0')" class="btn-link btn-link-white" ng-click="clearFilter();openFliter()"> <i class="fa fa-close" title="clear filter"></i> <span ng-show="false"></span></a>
+					</div>
+					<h3 class="panel-title">Filter</h3>
+
+				</div>
+
+				<div class="panel-body">
+				
+					<dashboardquery-builder group="dashboardfilter.group"></dashboardquery-builder>	
+				
+
+					<script type="text/ng-template" id="queryBuilderDirective.html">
+    <div class="alert-group col-md-12 col-md-offset-4 ">
+	
+
+<div class="text-center">
+		
+<table class="table cloneTable bord-btm" style="width:30%">
+			<tr>
+				<td class="clonetd" style="width:5%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td>
+				<td class="clonetd" style="width:5%"><button  ng-click="addCondition(group)" class="btn  btn-dark"><i class="icon-plus22"></i> Add Condition</button></td>
+           		<td class="clonetd" style="width:5%"> <button ng-click="addGroup()" class="btn  btn-dark"><i class="icon-plus22"></i> Add Group</button></td>
+				<td class="clonetd" ><button  ng-click="removeGroup()" class="btn btn-default "><span class="icon-minus2"></span> Remove Group</button></td>
+			 </tr>
+		</table>
+	</div>
+		
+
+
+	
+        <div class="group-conditions">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        
+									
+
+
+						<table class="table cloneTable">
+							<tr>
+								
+								<td  class="clonetd" style="width:10%"> 
+		<ui-select  ng-model="rule.field"  theme="select2" style="width:100%"> title = "Fields"
+            <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices  repeat="t in fields | filter: $select.search">
+              <span ng-bind-html="t.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>	
+								
+									
+                                 </td>
+ 								<td class="clonetd"  style="width:5%">
+									
+								<select   ng-model="rule.condition" class="form-control input-sm">
+									<option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option>
+								</select>
+								</td>
+
+							
+								<td class="clonetd" style="width:5%" ><input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/></td>
+								
+
+								<td class="clonetd"><a ng-click="removeCondition($index)" ng-show = "$index >= 1" class="btn btn-link "><i class="ion-trash-a"></i></a></td>
+							</tr>	
+                        
+						</table>
+
+
+						
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+	
+
+    </script>
+    
+    <div class="text-right">
+					                    <button class="btn btn-dark" type="submit" ng-click = "addFilter()">Apply Filter</button>
+					                    <button class="btn btn-default" type="submit" ng-click = "clearFilter()">Clear Filter</button>
+					      </div>
+    </div>
+
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div uib-alert ng-repeat="alert in alertMessagaes" class="alert"
+	ng-class="'alert-' + (alert.type || 'warning')"
+	close="closeAlert($index)">{{alert.msg}}</div>

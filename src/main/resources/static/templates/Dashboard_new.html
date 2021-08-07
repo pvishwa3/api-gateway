@@ -1,0 +1,2357 @@
+
+
+<div ng-controller="dashboardNewController as ctrl"
+	class="content-wrapper" style="padding: 0px 10px 0px 10px;">
+
+
+
+
+	<div class="page-content dashbaord-container">
+
+		<div scrolling-tabs-wrapper refresh-on="ctrl.triggerRefresh"
+			class="nav-bottom-bar">
+
+			<!-- Standard Bootstrap ul.nav-pills -->
+
+			<ul class="nav nav-pills" role="tablist" id="dashboardNavBar">
+				<li style="list-style-type: none; margin-top: 7px"><a
+					style="cursor: pointer;" ng-click="showDashboardTree()"
+					class="add-new control fill aside-toggle"><i
+						class="demo-pli-dot-vertical"></i> </a></li>
+				<li>
+				<li
+					ng-repeat="tab in dashboardTabs | orderBy : 'name' | unique :'name'"
+					ng-class="tab.tabClass" id="{{tab.id}}"
+					style="color: white;">
+					<button type="button" data-toggle="tab"
+						ng-click="confirmDialogue(tab)" data-target="#id"
+						class="btn bg-transparent"
+						style="">{{tab.name
+						| CamelCase}} &nbsp;&nbsp;</button>
+					<button ng-if="$index > 0"
+						ng-click="ctrl.closeTab($index,tab.name)" type="button"
+						class="btn btn-outline-secondary bg-transparent">
+						<i class="fa fa-close"></i>
+					</button>
+				</li>
+			</ul>
+
+		</div>
+
+
+		<div class="panel dashboard-panel">
+			<div class="" style="border-bottom: none;"></div>
+		</div>
+	</div>
+	<div id="dashboardsWidgets"
+		style="width: 100%; overflow-x: hidden; overflow: inherit; padding-bottom: 40px;">
+
+		<div class="panel dashboard-panel" id="sampleId"
+			style="overflow: initial">
+
+			<div class="panel-body dashboard-body dbody " id="id"
+				style="border-top: none; padding: 0px">
+
+				<div class="row srow">
+
+					<div class="col-md-3">
+						<div class="filerContainer">
+
+							<form ng-submit="searchBasedonQueryString()">
+
+								<div class="input-group">
+									<input type="text" class="form-control"
+										placeholder="Search Here" ng-model="searchQueryString">
+									<div
+										class="input-group-append btn-inverse-primary bg-primary border-primary"
+										style="cursor: pointer;" ng-click="searchBasedonQueryString()">
+										<span class="input-group-text bg-transparent"
+											style="color: white;"> Search </span>
+									</div>
+								</div>
+
+							</form>
+
+
+						</div>
+
+					</div>
+					<div class="col-md-9" style="margin-left: 0px; padding-left: 0px;">
+
+						<div class="btn-group dropdown">
+							<button class="btn btn-dark dropdown-toggle btn-inverse-primary"
+								type="button" id="dropdownMenuButton3" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">
+								<span ng-if="categoryDisplayText != ''">{{categoryDisplayText}}</span>
+								<span ng-if="categoryDisplayText == ''">All</span>
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton3"
+								style="max-height: 300px; overflow-y: scroll; width: auto">
+								<a class="dropdown-item" href="javascript:void(0)"
+									ng-click="filterCategory('All')" style="font-size: 12px">All</a>
+								<a class="dropdown-item"
+									ng-repeat="data in ctrl.deviceTypesList | unique : 'deviceType' | orderBy : 'deviceType'"
+									href="javascript:void(0)"
+									ng-click="filterCategory(data.deviceType)"
+									style="font-size: 12px">{{data.deviceTypedisplayName}}</a>
+
+							</div>
+						</div>
+
+						<div class="btn-group dropdown">
+							<button
+								class="btn btn-active-pink dropdown-toggle dropdown-toggle-icon btn-dark btn-inverse-primary"
+								data-toggle="dropdown" aria-expanded="false">
+								<span>{{currentCompany}}</span>
+
+							</button>
+
+
+
+							<ul class="dropdown-menu dropdown-menu-left"
+								style="max-height: 300px; overflow-y: scroll; width: auto">
+
+								<a class="dropdown-item" href="javascript:void(0)"
+									ng-click="filterCompany('All')">All</a>
+
+
+								<a class="dropdown-item"
+									ng-repeat="company in ctrl.currentCompanies | orderBy : 'companyName'"
+									href="javascript:void(0)"
+									ng-click="filterCompany(company.companyName)">{{company.companyName}}</a>
+							</ul>
+						</div>
+
+						<div class="btn-group" uib-dropdown>
+
+
+							<a href="javascript:void('0')" title="Eanble Or Disable Connect"
+								class="btn btn-link btn-float has-text"
+								ng-class="(isGroupEnabled) ? ['text-success'] : ['']"
+								title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}"
+								ng-click="enableConnect()"> <i class="fa fa-chain"></i></a> <a
+								href="javascript:void('0')" ng-if="editMode" title="Add Widget"
+								class="btn btn-link btn-float has-text"
+								title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}"
+								ng-click="openAddWidgetDialog()"> <i
+								class="ion-plus-circled"></i>
+							</a>
+							<a href="javascript:void('0')" ng-click="ctrl.showFilter();" title="Add Filter" class="btn btn-link btn-float has-text"> + Add filter </a> 
+								
+								<div id="filter-dropdown"
+									class="dropdown-menu dropdown-menu-lg" style="width: 481px;max-height: 313px;" >
+									<div class="">
+									<div uib-alert ng-repeat="alert in ctrl.filterMessagaes" class="alert"
+				ng-class="'alert-' + (alert.type || 'warning')"
+				close="closeAlert($index)">{{alert.msg}}</div>
+										<form ng-submit="submitQuery()">
+											<div class="FilterContainer" style="width: -webkit-fill-available">
+												<div class="Filterheader">
+													<div class="Filtertitle">
+														Customize Filter
+														<div class="pull-right" ng-click="ctrl.closeFilter()">
+															<a href="javascript:void('0')"><i class="fa fa-close"></i></a>
+														</div>
+													</div>
+												</div>
+												<div class="FilterBody" >
+													<div class="FilterRow row" style="margin-left: 5px;margin-right: 0px;">
+														<div class="col-md-6" style="">
+															<div class="drContainer containerCss" style="padding-left: 3px;">
+																<label class="labelDiv">Field</label>
+																<selectize options='logFieldsFilter' title="Select Event Name"
+																	config="ctrl.fieldConfig" ng-model="ctrl.temp.field"></selectize>
+															</div>
+														</div>
+														<div class="col-md-6" style="">
+															<div class="drContainer containerCss">
+																<label class="labelDiv">Operator</label>
+																<selectize options='ctrl.operator' title="Select Event Name"
+																	config="ctrl.operatorConfig" ng-model="ctrl.temp.subType"></selectize>
+															</div>
+														</div>
+													</div>
+													<div class="FilterRow">
+														<div class="col-md-12 cmd12" style="">
+															<div class="drContainer containerCss">
+																<label class="labelDiv">Value</label> <input type="text"
+																	placeholder="Select a value" class="form-control"
+																	style="width: 100%" ng-model="ctrl.temp.value"
+																	ng-disabled="ctrl.temp.subType == 'exists' || ctrl.temp.subType == 'notExists'">
+															</div>
+														</div>
+													</div>
+								
+												</div>
+												<div class="FilterFooter">
+													<div class="btnContainer" style="margin-right:14px">
+														<button type="button" ng-click="ctrl.closeFilter()"
+															class="btn btn-md btn-secondary btnc">Cancel</button>
+														<button type="submit" class="btn btn-success btnc">Save</button>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+
+							<a ng-if="liveMode" href="javascript:void('0')" title="Pause"
+								ng-click="toggleLive('stop')"
+								class="btn btn-link btn-float has-text live-icon"> <i
+								class="ion-ionic"></i> Live Data
+								
+								
+							</a>
+							<a ng-if="!liveMode" href="javascript:void('0')" title="Pause"
+								ng-click="toggleLive('start')"
+								class="btn btn-link btn-float has-text"> <i
+								class="ion-ionic"></i> Live Data
+								
+								
+							</a>
+							 <a href="javascript:void('0')" title="Reset Dashboard Filters"
+								ng-click="clearFilters()"
+								class="btn btn-link btn-float has-text"> <i
+								class="ion-trash-b"></i>
+
+							</a> <a href="javascript:void('0')" title="Edit Dashboard"
+								class="btn btn-link btn-float has-text" ng-if="editMode"
+								title="{{ translate('ADF_COMMON_EDIT_DASHBOARD') }}"
+								ng-click="editDashboard()"> <i class="ion-edit"></i>
+							</a> <a ng-if="!editMode" href="javascript:void('0')"
+								class="btn btn-link  btn-float has-text" title="Edit"
+								ng-click="toggleEditMode()"> <i class="ion-edit"></i>
+							</a> <a ng-if="editMode" href="javascript:void('0')"
+								class="btn btn-link  btn-float has-text" title="Save {{name}}"
+								ng-click="toggleEditMode()"> <i class="fa fa-check"></i>
+							</a> <a href="javascript:void('0')" title="Undo"
+								class="btn btn-link  btn-float has-text" ng-if="editMode"
+								title="Undo" ng-click="cancelEditMode()"> <i
+								class="ion-reply"></i>
+							</a>
+							<!-- 							<div> -->
+							<a id="simple-dropdown-anchor" href="javascript:void('0')"
+								href="javascript:void('0')" class="btn has-text dropdown-toggle"
+								aria-expanded="false"> <i class="ion-clock"></i>
+								{{labelName}}
+							</a>
+							<div id="simple-dropdown"
+								class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+								<div class="row">
+									<div class="col-sm-4 col-md-3"
+										style="margin-left: 20px; padding-top: 10px;">
+
+										<h5 class="page-title">Custom range</h5>
+
+										<form class="form-horizontal row col-md-12"
+											style="padding-left: 5px; padding-bottom: 12px; padding-top: 30px">
+
+											<div class="form-group pad-top row">
+												<label class="col-sm-2 control-label pad-top"
+													style="color: white; padding-top: 7px">From</label>
+												<div class="col-sm-10">
+													<!-- 													<input type="datetime-local" class="form-control" ng-model="startDateInput.momentDate"/> -->
+													<input class="form-control datetimepicker"
+														placeholder="Select a start date..."
+														moment-picker="startDateInput.stringDate" locale="en"
+														format="YYYY-MM-DD HH:mm:ss" autoclose="true"
+														ng-model="startDateInput.momentDate"
+														ng-model-options="{ updateOn: 'blur' }">
+												</div>
+											</div>
+
+											<div class="form-group pad-top row">
+												<label class="col-sm-2 control-label pad-top"
+													style="color: white; padding-top: 7px">To</label>
+												<div class="col-sm-10">
+													<!-- 													<input type="datetime-local" class="form-control" ng-model="endDateInput.momentDate"/> -->
+													<input type="text"
+														placeholder="Select a end
+ 														 date..."
+														moment-picker="endDateInput.stringDate" locale="en"
+														format="YYYY-MM-DD HH:mm:ss" id="to-date" autoclose="true"
+														ng-model="endDateInput.momentDate" class="form-control">
+												</div>
+											</div>
+
+											<br />
+
+											<div class="row text-right pad-all"
+												style="padding-left: 50px">
+												<button class="btn btn-dark" type="button"
+													ng-click="applyTimeBasedFilter()">Apply</button>
+
+											</div>
+
+										</form>
+
+
+									</div>
+									<div class="col-sm-8 col-md-9 row">
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+														2 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+														7 days</a></li>
+												<a class="dropdown-ite" href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+													30 days</a>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+														90 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6months','Last 6 months')">Last
+														6 months</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1year','Last 1 year')">Last
+														1 year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2years','Last 2 years')">Last
+														2 years</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last5years','Last 5 years')">Last
+														5 years</a></li>
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+														before yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+														day last week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+														year</a></li>
+
+											</ul>
+										</div>
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('today','Today')">Today</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+														so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeek','This week')">This
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+														week so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonth','This month')">This
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+														month so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYear','This year')">This
+														year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+														year so far</a></li>
+
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+														15 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+														30 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+														1 hour</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+														3 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+														6 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+														12 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+														24 hours</a></li>
+											</ul>
+										</div>
+									</div>
+
+
+								</div>
+							</div>
+						</div>
+						<div class="btn-group dropdown">
+							<button
+								class="btn btn-active-pink dropdown-toggle dropdown-toggle-icon btn-dark btn-inverse-primary"
+								data-toggle="dropdown" aria-expanded="false">
+								<span>Export As</span>
+							</button>
+
+
+
+							<ul class="dropdown-menu dropdown-menu-left" style="width: auto">
+
+								<a class="dropdown-item"
+									href="/siem-core/widget/download-dashboard/{{dashboard.id}}?startDate={{startDate}}&endDate={{endDate}}&formatType=pdf"
+									target="_blank">PDF</a>
+
+								<a href="javascript:void('0')" class="dropdown-item"
+									ng-click="downloadAsExcel()">Excel</a>
+
+
+
+
+							</ul>
+						</div>
+					</div>
+
+
+
+
+
+					<div ng-if="ctrl.query.rules.length > 0">
+
+						<div id="filterControl" class="col-md-12"
+							style="margin-left: 60px;">
+
+							<div id="GlobalFilterGroup"
+								class="globalFilterGroup__wrapper globalFilterGroup__wrapper-isVisible row">
+								<div>
+									<div
+										class="euiFlexGroup euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow globalFilterGroup row">
+
+										<div class="euiFlexItem row">
+											<div
+												class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--wrap globalFilterBar globalFilterGroup__filterBar row">
+												<div class="euiFlexItem euiFlexItem--flexGrowZero"
+													ng-repeat="data in ctrl.query.rules">
+													<div
+														class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
+														id="popoverFor_filter{{$index}}">
+														<div class="euiPopover__anchor">
+															<button class="btn-dark" aria-label="Filter actions"
+																title="Filter: {{data.field}}:{{data.value}}. Select for more filter actions."
+																data-test-subj="filter filter-enabled filter-key-agent.hostname filter-value-test"
+																style="border: none; margin-left: 10px;">
+																<span
+																	class="euiBadge__content header-sm d-flex justify-content-between align-items-center"
+																	ng-click="ctrl.removeQuery($index)"><i
+																	class="fa fa-close"></i>&nbsp;&nbsp; <span><span>{{data.field}}:{{data.value}}</span></span>
+																	<path
+																		d="M7.293 8L3.146 3.854a.5.5 0 1 1 .708-.708L8 7.293l4.146-4.147a.5.5 0 0 1 .708.708L8.707 8l4.147 4.146a.5.5 0 0 1-.708.708L8 8.707l-4.146 4.147a.5.5 0 0 1-.708-.708L7.293 8z"></path>
+																	</svg></span>
+															</button>
+														</div>
+													</div>
+												</div>
+												<div class="euiFlexItem euiFlexItem--flexGrowZero">
+													<div
+														class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
+														id="addFilterPopover">
+														<div class="euiPopover__anchor">
+															<button
+																class=" btn euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+																type="button" data-test-subj="addFilter"></button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- 						<div ng-repeat="data in ctrl.query.rules" class="col-md-2 mar-ver"> -->
+							<!-- 							<div class="input-group-btn dropdown"> -->
+							<!-- 								<button class="btn  btn-default filterOverlay" popover -->
+							<!-- 									title="{{data.subType}} {{data.field}}:{{data.value}}" -->
+							<!-- 									type="button" ng-click="ctrl.editQuery(data,$index)">{{data.subType}} -->
+							<!-- 									{{data.field}}:{{data.value}}</button> -->
+							<!-- 								<button -->
+							<!-- 									class="btn btn-default dropdown-toggle dropdown-toggle-icon" -->
+							<!-- 									type="button" ng-click="ctrl.removeQuery($index)"> -->
+							<!-- 									<i class="fa fa-close"></i> -->
+							<!-- 								</button> -->
+							<!-- 							</div> -->
+							<!-- 						</div> -->
+
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mar-hor mar-top">
+			<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+				ng-class="'alert-' + (alert.type || 'warning')"
+				close="closeAlert($index)">{{alert.msg}}</div>
+		</div>
+
+		<div class="col-md-12">
+
+			<div class="dashboard-panel-body" id="page-print">
+
+
+
+
+
+				<div st gridstack class="grid-stack grid1"
+					options="gridStackOptions" on-change="onChange(event,items)"
+					on-drag-start="onDragStart(event,ui)"
+					on-drag-stop="onDragStop(event,ui)"
+					on-resize-start="onResizeStart(event,ui)"
+					on-resize-stop="onResizeStop(event,ui)">
+					<div id="widget-{{widget.id}}" gridstack-item
+						ng-repeat="widget in ctrl.widgets " class="grid-stack-item"
+						gs-item-x="widget.x" gs-item-y="widget.y"
+						gs-item-width="widget.width" gs-item-height="widget.height"
+						gs-item-autopos="0" on-item-added="onItemAdded(item)"
+						on-item-removed="onItemRemoved(item)">
+						<div class="grid-stack-item-content">
+							<div class="panel dashboard-panel  box card"
+								ng-init="open=false;">
+
+
+								<div
+									class="panel-heading dashboard-panel-header card-header header-sm d-flex justify-content-between align-items-center"
+									ng-if="!widget.frameless || editMode"
+									ng-mouseover="open = true" ng-mouseleave="open = false"
+									style="padding: 10px 5px 10px 5px; border: none; height: 25px;">
+
+									<h5
+										style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+										class="card-title" title="{{widget.title}}">{{widget.title}}</h5>
+									<div
+										style="position: relative; float: right; padding: 2px 2px 0 2px; height: inherit;"
+										class="panel-control" ng-if="open">
+										<a class="btn-link btn-link-white" href="javascript:void('0')"
+											ng-click="reloadWidget(widget.id)" title="Refresh the graph"><i
+											class="fa fa-repeat"></i>&nbsp;</a> <a
+											class="btn-link btn-link-white" href="javascript:void('0')"
+											title="Download"
+											ng-click="downloadPNG(widget.id,widget.title)"> <i
+											class="fa fa-image"></i> &nbsp;
+										</a> <a href="javascript:void('0')"
+											class="btn-link btn-link-white" ng-click="remove($index)"
+											ng-if="editMode" title="Delete"><i class="ion-trash-b"></i>&nbsp;</a>
+										<a
+											href="/configuration#!/menusettings?action=editWidget&widgetId={{widget.id}}"
+											class="btn-link btn-link-white" ng-click="editWidget($index)"
+											ng-if="editMode" title="Edit"><i class="fa fa-pencil"></i>&nbsp;</a>
+										<a href="javascript:void('0')" class="btn-link btn-link-white"
+											ng-click="toggleFullScreen(widget.id)" title="Fullscreen"><i
+											class="fa fa-expand"></i>&nbsp;</a>
+									</div>
+								</div>
+								<div class="card-body panel-body"
+									style="padding: 0px 0px 20px 0px">
+
+									<pannel-content model="options" content="widget" />
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+
+
+
+
+
+
+				</div>
+
+				<div id="add_widget_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Widgets</h4>
+							</div>
+							<div class="modal-body">
+								<div uib-alert ng-repeat="alert in ctrl.modalMessagaes"
+									class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+									close="closeAlert($index)">{{alert.msg}}</div>
+								<div class="form-group">
+									<input type="text" ng-model="ctrl.search" class="form-control"
+										placeholder="Search widgets">
+								</div>
+								<div class="d-none d-lg-block px-0 chat-sidebar"
+									style="max-height: 420px; overflow-y: scroll">
+									<div class="list-group">
+										<a class="dropdown-item list-item-sm "
+											ng-click="addWidget(data)" href="javascript:void('0')"
+											ng-repeat="data in existingWidgets | filter : {title : ctrl.search} | orderBy: 'title' ">{{data.title}}</a>
+
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+
+				<div id="newDashboard_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Add
+									Dashboards</h4>
+							</div>
+							<div class="modal-body">
+
+								<div class="row">
+
+									<div class="pad-all file-manager">
+
+										<div class="fixed-fluid">
+
+											<div class="fixed-sm-200 pull-sm-left file-sidebar">
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('all')">All
+														({{allDashboardsCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('public')">Public
+														({{publicDashboardCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('private')">Private
+														({{privateDashboardCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('shared')">Shared
+														({{sharedDashboardCount}})</a>
+
+												</div>
+
+											</div>
+
+											<div class="fluid file-panel">
+
+												<table
+													class="table table-striped  dataTable no-footer dtr-inline"
+													datatable="ng" dt-options="vm.dtOptions"
+													dt-instance="vm.dtInstance" width="100%"
+													dt-column-defs="vm.dtColumnDefs">
+													<thead>
+
+														<tr>
+															<th>Name</th>
+															<th>Space Name</th>
+															<th></th>
+
+														</tr>
+
+
+
+													</thead>
+
+													<tbody>
+
+														<tr ng-repeat="data in currentDashboards">
+															<td>{{data.name}}</td>
+															<td>{{data.spaceName}}</td>
+															<td><a href="javascript:void('0')"
+																ng-click="addDashboadToTab(data)">Add</a></td>
+
+														</tr>
+
+													</tbody>
+
+												</table>
+
+
+											</div>
+
+										</div>
+
+									</div>
+
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="modal left fade" id="dashboard-modal" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document"
+						style="width: 300px; padding-top: 63px;">
+						<div class="modal-content">
+							<div class="modal-body" style="overflow: scroll;">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close" style="padding-bottom: 10px;"></button>
+								<div class="pad-all"
+									style="padding-top: 13px; margin-bottom: 0px; padding-left: 12px;">
+									<input search type="text" class="form-control" style=""
+										placeholder="Search">
+								</div>
+								<div class="tree-container" js-tree="treeConfig"
+									ng-model="treeData" tree="treeInstance" should-apply="true"
+									tree-events="select_node:ctrl.getNodeInfo;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div id="edit_dashboard_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Dashboard</h4>
+							</div>
+							<div class="modal-body">
+								<form role="form">
+									<div class="form-group">
+										<label for="dashboardTitle"
+											ng-bind="translate('ADF_COMMON_TITLE')">Title</label> <input
+											type="text" class="form-control" id="dashboardTitle"
+											ng-model="model.title" required="">
+									</div>
+
+
+									<div class="form-group">
+										<label for="dashboardTitle">Permission Type</label> <select
+											class="form-control" ng-model="model.permission"
+											id="permission">
+											<option value="Role">Role</option>
+
+										</select>
+									</div>
+
+
+
+									<div class="form-group">
+										<label for="dashboardTitle">Permission</label>
+										<ui-select class="form-control" multiple ng-model="model.role"
+											theme="bootstrap" title="Choose a Field"> <ui-select-match
+											placeholder="select Type">{{$item}}</ui-select-match> <ui-select-choices
+											repeat="data in model.rolesArray  | filter : $select.search">
+										<div ng-bind-html="data | highlight:$select.search"></div>
+										</ui-select-choices> </ui-select>
+									</div>
+
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary waves-effect"
+									data-dismiss="modal">Close</button>
+
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal right fade" id="showAdvancedFilter" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+					<h4 class="modal-title" id="myModalLabel2">Filter</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<div data-elastic-builder="ctrl.data"></div>
+
+					<div class="text-right">
+						<button type="button" class="btn btn-danger"
+							ng-click="deleteFilter()">Delete Filter</button>
+						<button type="button" class="btn btn-success"
+							ng-click="saveAndApplyFilter()">Save</button>
+
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							aria-label="Close">Cancel</button>
+
+					</div>
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+	<div id="FilterOverlay">
+		<form ng-submit="submitQuery()">
+			<div class="FilterContainer">
+				<div class="Filterheader" style="width: 480px">
+					<div class="Filtertitle">
+						Customize Filter
+						<div class="pull-right" ng-click="closePopup()">
+							<a href="javascript:void('0')"><i class="fa fa-close"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="FilterBody" style="width: 480px">
+					<div class="FilterRow row col-md-12">
+						<div class="col-md-6" style="">
+							<div class="drContainer containerCss" style="padding-left: 3px;">
+								<label class="labelDiv">Field</label>
+								<selectize options='logFieldsFilter' title="Select Event Name"
+									config="ctrl.fieldConfig" ng-model="ctrl.temp.field"></selectize>
+							</div>
+						</div>
+						<div class="col-md-6" style="">
+							<div class="drContainer containerCss">
+								<label class="labelDiv">Operator</label>
+								<selectize options='ctrl.operator' title="Select Event Name"
+									config="ctrl.operatorConfig" ng-model="ctrl.temp.subType"></selectize>
+							</div>
+						</div>
+					</div>
+					<div class="FilterRow">
+						<div class="col-md-12 cmd12" style="">
+							<div class="drContainer containerCss">
+								<label class="labelDiv">Value</label> <input type="text"
+									placeholder="Select a value" class="form-control"
+									style="width: 100%" ng-model="ctrl.temp.value"
+									ng-disabled="ctrl.temp.subType == 'exists' || ctrl.temp.subType == 'notExists'">
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="FilterFooter" style="width: 480px">
+					<div class="btnContainer">
+						<button type="button" ng-click="closePopup()"
+							class="btn btn-md btn-secondary btnc">Cancel</button>
+						<button type="submit" class="btn btn-success btnc">Save</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="modal right fade" id="showAdvancedFilter" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+					<h4 class="modal-title" id="myModalLabel2">Filter</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<div data-elastic-builder="ctrl.data"></div>
+
+					<div class="text-right">
+						<button type="button" class="btn btn-danger"
+							ng-click="deleteFilter()">Delete Filter</button>
+						<button type="button" class="btn btn-dark"
+							ng-click="saveAndApplyFilter()">Save</button>
+
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							aria-label="Close">Cancel</button>
+
+					</div>
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+
+	<div id="timeControlOverlay">
+		<div class="FilterContainer">
+			<div class="Filterheader">
+				<div class="Filtertitle">
+					Quick Select
+					<div class="pull-right" ng-click="closePopup1()">
+						<a href="javascript:void('0')"><i class="fa fa-close"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="FilterBody">
+				<form class="form-inline well w-100" style="width: 100%; margin: 0">
+					<div class="form-group fgrpWidth" style="margin-left: 0px;">
+						<select id="eventType" class="form-control w-100"
+							ng-model="ctrl.timeRange.temp">
+							<option value="last" selected="selected">Last</option>
+							<option value="next">Next</option>
+						</select>
+					</div>
+					<div class="form-group fgrpWidth">
+						<input id="memory" type="number" class="form-control w-100"
+							ng-model="ctrl.timeRange.value">
+					</div>
+					<div class="form-group fgrpWidth">
+						<select id="type" class="form-control"
+							ng-model="ctrl.timeRange.format">
+							<option value="seconds" selected="selected">seconds</option>
+							<option value="minutes">minutes</option>
+							<option value="hours">hours</option>
+							<option value="days">days</option>
+							<option value="weeks">weeks</option>
+							<option value="months">months</option>
+							<option value="year">years</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-success" style=""
+							ng-click="setRelativeTimeCount()">Save</button>
+					</div>
+					<hr style="margin-top: 20px; margin-bottom: 20px;">
+					<label class="plabel">Commonly used</label>
+					<div class="">
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('today','Today')">Today</button>
+						</div>
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisWeek','This week')">This
+								week</button>
+						</div>
+					</div>
+					<div class="">
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisMonth','This month')">This
+								month</button>
+						</div>
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisYear','This year')">This
+								Year</button>
+						</div>
+					</div>
+					<div class="">
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+								so far</button>
+						</div>
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+								Week so far</button>
+						</div>
+					</div>
+					<div class="">
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+								Month so far</button>
+						</div>
+						<div class="btnRow">
+							<button class="btnnews" type="button"
+								ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+								Year so far</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="create_template_chooser"
+		class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form name="caseForm" class="form-horizontal" novalidate>
+
+
+
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Add Alerts to
+							Case</h4>
+					</div>
+					<div class="modal-body modal-body-scrolling">
+						<span>You are adding the following {{alertNames.length}}
+							event(s) to the selected case:</span>
+						<!-- 							<span class="pull-right">Count : -->
+						<!-- 							</span> -->
+						<ul class="head-list"
+							style="max-height: 300px; padding-top: 13px; overflow-y: auto;">
+
+							<li ng-repeat="data in alertNames track by $index">{{data.alertName}}</li>
+
+						</ul>
+
+						<div class="form-group row">
+
+							<label class="col-sm-3 control-label" for="demo-hor	-inputemail">Existing
+								Cases</label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="ctrl.caseDetails.id"
+									ng-class="ExistingCasesError ? 'border-danger' : ''">
+									<option
+										ng-repeat="data in ctrl.allCasesDetails | unique : 'id' | orderBy: 'name'"
+										value="{{data.id}}">{{data.name}}</option>
+								</select> <small ng-show="ExistingCasesError" class="text-danger"
+									data-bv-validator="notEmpty" data-bv-for="fullName"
+									data-bv-result="INVALID">Please select any case</small>
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-dismiss="modal"
+							type="button">Close</button>
+						<button class="btn btn-light" ng-click="createNewCase()"
+							type="button">Create New Case</button>
+						<button class="btn btn-success"
+							ng-click="ctrl.addToExistingCase()" type="button">Save</button>
+					</div>
+				</div>
+
+
+			</form>
+		</div>
+
+	</div>
+
+	<div id="create_case_template"
+		class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog">
+
+			<form name="caseForm" class="form-horizontal" novalidate
+				ng-submit="ctrl.createCase()">
+
+
+
+				<div class="modal-content">
+
+
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Create New
+							Case</h4>
+					</div>
+					<div class="modal-body modal-body-scrolling">
+						<div uib-alert ng-repeat="alert in ctrl.caseErrorMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group row">
+							<label class="col-sm-3 control-label" for="demo-hor	-inputemail">Case
+								Title *</label>
+							<div class="col-sm-9">
+								<input type="text" name="title" pattern="[a-zA-Z0-9\s _-]+"
+									ng-model="ctrl.caseDetails.title" class="form-control"
+									autocomplete="off" required>
+								<div
+									ng-show="caseForm.title.$touched && caseForm.title.$error.pattern"
+									class="error mt-2 text-danger">Special characters are not
+									allowed</div>
+								<div
+									ng-show="caseForm.title.$touched && caseForm.title.$error.required"
+									class="error mt-2 text-danger">Case name is mandatory</div>
+							</div>
+						</div>
+
+
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Case
+								Type *</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="caseType"
+									ng-model="ctrl.caseDetails.caseType" autocomplete="off"
+									required>
+									<option value="Port Scanning Activity">Port Scanning
+										Activity</option>
+									<option value="Malware Infection">Malware Infection</option>
+									<option value="Distributed Denial Of Service">Distributed
+										Denial Of Service</option>
+									<option value="Distributed Denial Of Service Diversion">Distributed
+										Denial Of Service Diversion</option>
+									<option value="Unauthorized Access">Unauthorized
+										Access</option>
+									<option value="Insider Breach">Insider Breach</option>
+									<option value="Unauthorized Privilege Escalation">Unauthorized
+										Privilege Escalation</option>
+									<option value="Destructive Attack">Destructive Attack</option>
+									<option value="Advanced Persistent Threat Or Multistage Attack">Advanced
+										Persistent Threat Or Multistage Attack</option>
+									<option value="False Alarms">False Alarms</option>
+									<option value="Other">Other</option>
+
+								</select>
+								<div
+									ng-show="caseForm.caseType.$touched && caseForm.caseType.$error.required"
+									class="error mt-2 text-danger">Case type is mandatory</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Priority
+								*</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="priority" autocomplete="off"
+									ng-model="ctrl.caseDetails.priority" required>
+									<option value="Critical">Critical</option>
+									<option value="High">High</option>
+									<option value="Medium">Medium</option>
+									<option value="Low">Low</option>
+								</select>
+								<div
+									ng-show="caseForm.priority.$touched && caseForm.priority.$error.required"
+									class="error mt-2 text-danger">Priority is mandatory</div>
+							</div>
+						</div>
+
+
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Summary
+								*</label>
+							<div class="col-sm-9">
+								<textarea rows="" cols="" name="description" required
+									autocomplete="off" ng-model="ctrl.caseDetails.description"
+									class="form-control"></textarea>
+								<div
+									ng-show="caseForm.description.$touched && caseForm.description.$error.required"
+									class="error mt-2 text-danger">Summary is mandatory</div>
+
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Assignee
+								*</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="assignee"
+									ng-model="ctrl.caseDetails.assingee" autocomplete="off"
+									required>
+
+									<option value="{{data.userName}}"
+										ng-repeat="data in ctrl.allUsers | orderBy : 'userName' | unique:'userName'">{{data.userName}}</option>
+
+								</select>
+								<div
+									ng-show="caseForm.assignee.$touched && caseForm.assignee.$error.required"
+									class="error mt-2 text-danger">Assignee is mandatory</div>
+							</div>
+						</div>
+
+					</div>
+
+
+
+					<div class="modal-footer">
+						<button class="btn btn-success" ng-disabled="caseForm.$invalid"
+							type="submit">Save</button>
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+	<div id="createWorkModal" class="modal fade" role="dialog">
+		<div class="modal-dialog" style="padding-top: 0px;">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Configure New Investigation</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in ctrl.alertMessagaesModal"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="ctrl.submitData()" name="investigationForm"
+						novalidate="novalidate">
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Name *</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" name="workBenchName"
+									ng-model="ctrl.workBench.workBenchName" required="required"
+									pattern="[a-zA-Z0-9\s. _-]+">
+								<div class="text-danger"
+									ng-show="investigationForm.workBenchName.$touched && investigationForm.workBenchName.$error.required">Name
+									is mandatory</div>
+								<div class="text-danger"
+									ng-show="investigationForm.workBenchName.$touched && investigationForm.workBenchName.$error.pattern">Special
+									Characters are not allowed</div>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Status *</label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="ctrl.workBench.status"
+									name="status" required="required">
+									<option value="New">New</option>
+									<option value="In Progress">In Progress</option>
+									<option value="Pending">Pending</option>
+									<option value="Resolved">Resolved</option>
+									<option value="Closed">Closed</option>
+								</select>
+								<div class="text-danger"
+									ng-show="investigationForm.status.$touched && investigationForm.status.$error.required">Status
+									is mandatory</div>
+								<!-- 								<div class="text-danger text-bold" -->
+								<!-- 									ng-show="((ctrl.workBench.status == '' || ctrl.workBench.status == undefined) && investigationForm.$submitted)">Select -->
+								<!-- 									atleast one status</div> -->
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Status *</label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="ctrl.workBench.priority"
+										name="status" required="required">
+									<option value="Critical">Critical</option>
+									<option value="High">High</option>
+									<option value="Medium">Medium</option>
+									<option value="Low">Low</option>
+
+								</select>
+								<div class="text-danger"
+									 ng-show="investigationForm.priority.$touched && investigationForm.priority.$error.required">Status
+									is mandatory</div>
+								<!-- 								<div class="text-danger text-bold" -->
+								<!-- 									ng-show="((ctrl.workBench.status == '' || ctrl.workBench.status == undefined) && investigationForm.$submitted)">Select -->
+								<!-- 									atleast one status</div> -->
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Indicator *</label>
+							<div class="col-sm-9">
+								<select class="form-control"
+									ng-model="ctrl.workBench.keyIndicatorValue" name="indicator"
+									required="required">
+									<option value="{{data}}"
+										ng-repeat="data in indicators | orderBy:'data'">{{data}}</option>
+								</select>
+								<div class="text-danger"
+									ng-show="investigationForm.indicator.$touched && investigationForm.indicator.$error.required">Indicator
+									is mandatory</div>
+								<!-- 								<div class="text-danger text-bold" -->
+								<!-- 									ng-show="((ctrl.workBench.status == '' || ctrl.workBench.status == undefined) && investigationForm.$submitted)">Select -->
+								<!-- 									atleast one status</div> -->
+							</div>
+						</div>
+
+
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Description *</label>
+							<div class="col-sm-9">
+
+								<textarea rows="5" cols="5" class="form-control"
+									ng-model="ctrl.workBench.description" name="description"
+									required="required"></textarea>
+								<div class="text-danger"
+									ng-show="investigationForm.description.$touched && investigationForm.description.$error.required">Description
+									is mandatory</div>
+							</div>
+						</div>
+
+						<div class="form-group row"
+							ng-if="ctrl.workBench.status === 'Closed' ">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Comments
+								*</label>
+							<div class="col-sm-9">
+								<textarea rows="5" cols="5" class="form-control" name="comments"
+									ng-model="ctrl.workBench.comments"></textarea>
+								<div class="text-danger"
+									ng-show="ctrl.workBench.status == 'Closed' && investigationForm.comments.$touched && investigationForm.description.$error.required">Status
+									is mandatory</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<input type="submit" class="btn btn-success"
+								ng-disabled="investigationForm.$invalid" value="Submit">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="showEventDetails" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Rule Information</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in ctrl.alertMessagaesModal"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+
+
+
+					<form action="" class="form-sample">
+						<div class="row">
+
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>TimeStamp:
+									</strong> </label>
+									<div class="col-md-8">
+										<p style="font-weight: 300">{{singleEvnentInfo['Event Time']}} {{singleEvnentInfo.evet_time}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Name
+											:</strong></label>
+									<div class="col-md-8">
+										<p style="font-weight: 300">{{singleEvnentInfo['Rule Name']}} {{singleEvnentInfo.rule_name}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Description:</strong></label>
+									<div class="col-md-8">
+										<p style="font-weight: 300">{{singleEvnentInfo.description}}
+											{{singleEvnentInfo['Description']}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Category
+											:</strong></label>
+									<div class="col-md-8">
+										<p style="font-weight: 300">{{singleEvnentInfo['Rule Category']}} {{singleEvnentInfo.rule_category}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Priority
+											:</strong></label>
+									<div class="col-md-8">
+										<div class="badge badge-warning"
+											ng-if="singleEvnentInfo['Priority'] === 'medium' ">Medium</div>
+										<div class="badge badge-danger"
+											ng-if="singleEvnentInfo['Priority']=== 'high' ">High</div>
+										<div class="badge badge-danger"
+											ng-if="singleEvnentInfo['Priority'] === 'critical' ">Critical</div>
+										<div class="badge badge-success"
+											ng-if="singleEvnentInfo['Priority'] === 'low' ">Low</div>
+									</div>
+									</div>
+								</div>
+							
+
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Risk
+											Score :</strong></label>
+									<div class="col-md-8">
+										<p class="">{{singleEvnentInfo['Risk Score']}}
+											{{singleEvnentInfo.risk_score}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label" style="margin-top:9px"><strong>Assingee:</strong></label>
+									<div class="col-md-4">
+										<select class="form-control" name="assignee"
+											ng-model="singleEvnentInfo.assignee" autocomplete="off"
+											ng-change="changeAlertAssignee(singleEvnentInfo)" required>
+
+											<option value="{{data.userName}}"
+												ng-repeat="data in ctrl.allUsers | orderBy : 'userName' | unique:'userName'">{{data.userName}}</option>
+
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label" style="margin-top:9px"><strong>Status
+											:</strong></label>
+									<div class="col-md-4">
+										<select class="form-control" name="assignee"
+											ng-change="changeAlertStatus(singleEvnentInfo)"
+											ng-model="singleEvnentInfo.alert_status" autocomplete="off"
+											required>
+
+											<option value="Open">Open</option>
+											<option value="In Progress">In Progess</option>
+											<option value="Close">Close</option>
+											<option value="Resloved">Resloved</option>
+
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						<div class="row" ng-if = "singleEvnentInfo['rule_category'] === 'Mitre'">
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Techniques:</strong></label>
+									<div class="col-md-4">
+										<div class="badge badge-outline-primary">
+											<a href="https://attack.mitre.org/techniques/{{singleEvnentInfo.techniques.split('-')[0].trim()}}/">{{singleEvnentInfo.techniques}}</a>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Techniques
+											:</strong></label>
+									<div class="col-md-4">
+										<div class="badge badge-outline-primary" ng-repeat = "data in singleEvnentInfo.tactics.split(',')">
+											<a href="javascript:void('0')">{{data}}</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</form>
+
+
+					<hr style="border: 1px solid #0a0b14" />
+
+
+
+					<div class="row" style="padding-top: 15px;">
+
+						<ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+							<li class="nav-item"><a class="nav-link"
+								ng-class="tabName =='history'?'active':''"
+								ng-click="tabName = 'history'">History</a></li>
+							<li class="nav-item"><a class="nav-link"
+								ng-class="tabName =='events'?'active':''"
+								ng-click="tabName = 'events';contributingEvents()">Contributed Events</a></li>
+						</ul>
+
+
+						<div class="tab-content tab-content-basic col-md-12">
+
+							<div class="col-md-12"  ng-if="tabName === 'history'">
+
+
+								<div class="panel-body cases-body">
+									<div class=" col-md-5 d-flex" style="argin-left: -13px;
+    margin-top: 14px;">
+                      <input type="text" class="form-control todo-list-input" placeholder="Enter Comments" ng-model="singleEvnentInfo.comment">
+                      <button class="add btn btn-primary font-weight-bold todo-list-add-btn"  ng-click="addNotes(singleEvnentInfo)">Add</button>
+                    </div>
+									<div style="height: 200px; overflow: scroll;padding-top:40px">
+										
+										<ul class="list-arrow">
+											<li ng-repeat="data in singleEvnentInfo.comments">
+													{{data.createdBy}} added a note <strong>{{data.createdDate | date:'medium' : 'UTC' }}</strong> {{data.notes}} </li>
+										</ul>
+										
+										
+									</div>
+
+								</div>
+
+					
+	
+
+								
+								
+
+
+
+							</div>
+
+							<div ng-if="tabName === 'events'">
+
+								<div class="card-body col-md-12" style="padding-top: 15px;">
+
+
+
+									<div class="" style="padding-top: 15px;">
+										<table
+											class="table table-striped table-sm dataTable no-footer dtr-inline"
+											datatable="ng" dt-options="widgetDtOptions"
+											dt-instance="widgetDtInstance" width="100%"
+											dt-columns="widgetDtColumns"
+											dt-column-defs="widgetDtColumnDefs">
+											<thead>
+												<tr>
+													<th>Timestamp</th>
+													<th>Event Name</th>
+													<th>Event Category</th>
+													<th>Log Device</th>
+												</tr>
+											</thead>
+
+
+											<tbody>
+												<tr ng-repeat="data  in singleEvnentInfo.event_data"
+													ng-click="showSingleEventDetails(data)">
+													<td>{{data['@timestamp']}}</td>
+													<td>{{data['Event Name']}}</td>
+													<td>{{data['Event Category']}}</td>
+													<td>{{data['Log Device']}}</td>
+
+
+												</tr>
+
+											</tbody>
+										</table>
+
+										<hr style="border: 1px solid #0a0b14" />
+
+										<h5 class="page-title"
+											style="font-weight: bold; padding: 15px;">Event
+											Information</h5>
+										<div class="col-md-12 row" style="padding-top: 15px;">
+
+
+
+
+											<div class="col-sm-6"
+												ng-repeat="(key,value) in singleEventDetails">
+
+												<div class="form-group row">
+													<label class="col-md-3 control-label"><strong>{{key}}</strong></label>
+													<div class="col-md-8" ng-if = "key === 'User Name' ">
+														<a href="/configuration#!/explore?type=User&value={{value}}" target="_blank">{{value}}</a>
+
+													</div>
+													<div class="col-md-8" ng-if = "key === 'log_source_device_name' ">
+														<a href="/configuration#!/explore?type=Device&value={{value}}" target="_blank">{{value}}</a>
+													</div>
+													<div class="col-md-8" ng-if = "key != 'log_source_device_name' &&  key != 'User Name'">
+														<p class="form-control-static" style="word-wrap:break-word">{{value}}</p>
+													</div>
+												</div>
+
+
+											</div>
+
+										</div>
+									</div>
+
+								</div>
+
+							</div>
+
+
+
+
+
+
+
+
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal right fade in" id="dashboard-settings-modal"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Dashboard Settings</h4>
+				</div>
+
+				<div class="modal-body" style="padding-bottom: 10px">
+
+
+					<uib-tabset active="active"> <uib-tab index="0"
+						heading="Settings">
+
+					<form class="form-horizontal" style="padding-top: 20px"
+						novalidate="novalidate" name="dashboardForm">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Title
+									*</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="title" name="title"
+										ng-model="model.title" required pattern="[a-zA-Z0-9\s _-]+">
+									<div class="text-danger"
+										ng-show="dashboardForm.title.$touched && dashboardForm.title.$error.required">Title
+										is mandatory</div>
+									<div class="text-danger"
+										ng-show="dashboardForm.title.$touched && dashboardForm.title.$error.pattern">Special
+										characters are not allowed</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Category
+									*</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-model="model.categoryId"
+										name="categoryId" required="required">
+										<option value="{{data.id}}"
+											ng-repeat="data in ctrl.allCategories">{{data.categoryName}}</option>
+									</select>
+									<div class="text-danger"
+										ng-show="dashboardForm.categoryId.$touched && dashboardForm.categoryId.$error.required">Category
+										is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Description
+									*</label>
+								<div class="col-sm-9">
+									<textarea class="form-control" rows="" cols="5"
+										ng-model="model.description" name="description"
+										required="required"></textarea>
+									<div class="text-danger"
+										ng-show="dashboardForm.description.$touched && dashboardForm.description.$error.required">Description
+										is mandatory</div>
+
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Reports
+									Enabled</label>
+								<div class="col-sm-9">
+									<input type="checkbox" ng-model="model.reports"
+										class="checkbox">
+								</div>
+							</div>
+						</div>
+
+						<h4>Access</h4>
+						<hr />
+
+
+
+						<div class="row col-md-12" style="margin-top: 12px"
+							ng-if="canEditDashboards">
+
+							<div uib-alert ng-repeat="alert in ctrl.accessAlerts"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+							<table class="table table-borderless">
+								<tbody>
+									<tr class="row col-md-12">
+										<td class="col-md-7"
+											style="padding-left: 0px; padding-right: 0px;"><ui-select
+												ng-model="accessModel.name" id="setWithAuto"
+												ng-click="setWidthAuto();"> <ui-select-match
+												placeholder="Select Role Or Users">{{$select.selected.name}}</ui-select-match>
+											<ui-select-choices
+												repeat="t in accessList | filter: $select.search | orderBy :'name' | unique : 'name'">
+											<span ng-bind-html="t.name | highlight: $select.search"></span>
+											</ui-select-choices> </ui-select></td>
+										<td class="col-md-4"><select class="form-control"
+											ng-model="accessData.access">
+
+												<option value="viewer">Viewer</option>
+												<option value="editor">Editor</option>
+												<option value="admin" ng-if="model.isAdmin || model.isOwner">Admin</option>
+
+										</select></td>
+										<td class="col-md-1">
+											<button class="btn btn-primary" ng-click="addToList()"
+												type="button">Share</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- 							<div class="col-md-7"> -->
+
+
+
+
+							<!-- 							</div> -->
+							<!-- 							<div class="col-md-3"> -->
+
+							<!-- 							</div> -->
+
+
+
+						</div>
+
+
+
+
+
+						<div class="col-m-8 access-container" style="margin-top: 5%">
+
+							<table class="table">
+
+								<tr>
+									<th style="border: none;">Name</th>
+									<th style="border: none;">Access</th>
+									<th style="border: none;">Action</th>
+
+								</tr>
+
+
+								<tbody>
+									<tr ng-repeat="data in model.existingRoles">
+										<td>{{data.role_name}}</td>
+										<td ng-if="canEditDashboards"><select
+											ng-change="updateRoles($index)" class="form-control"
+											ng-model="data.access">
+												<option value="viewer">Viewer</option>
+												<option value="editor">Editor</option>
+												<option value="admin" ng-if="model.isAdmin || model.isOwner">Admin</option>
+
+										</select></td>
+										<td ng-if="!canEditDashboards">{{data.access}}</td>
+
+										<td ng-if="canEditDashboards"><a
+											href="javascript:void('0')" ng-click="deleteRoles(data.id)">Delete</a>
+										</td>
+									</tr>
+
+								</tbody>
+
+
+							</table>
+
+						</div>
+
+
+
+						<hr />
+
+
+
+
+						<div class="modal-footer">
+							<button class="btn btn-success" ng-click="ctrl.saveDashboard()"
+								type="button" ng-disabled="dashboardForm.$invalid">Save</button>
+						</div>
+					</form>
+
+
+
+
+
+
+
+
+
+
+					</uib-tab> <uib-tab index="2" heading="Reports">
+
+					<div uib-alert ng-repeat="alert in ctrl.reportAlerts" class="alert"
+						ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form class="form-horizontal" ng-submit="saveReports()"
+						style="padding-top: 20px" name="reportsForm">
+
+
+
+						<div class="panel-body">
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Title
+									*</label>
+								<div class="col-sm-9">
+									<input type="text" ng-disabled="isRepotsEditable"
+										class="form-control" id="reportTitle" name="scheduleName"
+										ng-model="reports.scheduleName" required="required"
+										pattern="[a-zA-Z0-9\s _-]+">
+									<div class="text-danger"
+										ng-show="reportsForm.scheduleName.$touched && reportsForm.scheduleName.$error.required">Title
+										is mandatory</div>
+									<div class="text-danger"
+										ng-show="reportsForm.scheduleName.$touched && reportsForm.scheduleName.$error.pattern">Special
+										characters are not allowed</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Frequency
+									*</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequency" name="frequency"
+										required="required">
+										<option value="daily">Daily</option>
+										<option value="weekly">Weekly</option>
+										<option value="monthly">Monthly</option>
+									</select>
+									<div class="text-danger"
+										ng-show="reportsForm.frequency.$touched && reportsForm.frequency.$error.required">Frequency
+										is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row"
+								ng-if="reports.frequency === 'weekly'">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Day
+									of Week *</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequencyType" required="required">
+										<option value="SUN">Sunday</option>
+										<option value="MON">Monday</option>
+										<option value="TUE">Tuesday</option>
+										<option value="WED">Wednesday</option>
+										<option value="THU">Thrusday</option>
+										<option value="FRI">Friday</option>
+										<option value="SAT">Saturday</option>
+									</select>
+									<div class="text-danger"
+										ng-show="reportsForm.frequencyType.$touched && reportsForm.frequencyType.$error.required">Frequency
+										Type is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row"
+								ng-if="reports.frequency === 'monthly'">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label"
+									required>Day of Week *</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequencyType" name="frequencyType">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+										<option value="7">7</option>
+										<option value="8">8</option>
+										<option value="9">9</option>
+										<option value="10">10</option>
+										<option value="11">11</option>
+										<option value="12">12</option>
+										<option value="13">13</option>
+										<option value="14">14</option>
+										<option value="15">15</option>
+										<option value="16">16</option>
+										<option value="17">17</option>
+										<option value="18">18</option>
+										<option value="19">19</option>
+										<option value="20">20</option>
+										<option value="21">21</option>
+										<option value="22">22</option>
+										<option value="23">23</option>
+										<option value="24">24</option>
+										<option value="25">25</option>
+										<option value="26">26</option>
+										<option value="27">27</option>
+										<option value="28">Last day</option>
+									</select>
+									<div class="text-danger"
+										ng-show="reportsForm.frequencyType.$touched && reportsForm.frequencyType.$error.required">Frequency
+										Type is mandatory</div>
+
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Hour
+									of Day *</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.hourOfDay" name="hourOfDay" required>
+										<option value="0">0:00</option>
+										<option value="1">1:00</option>
+										<option value="2">2:00</option>
+										<option value="3">3:00</option>
+										<option value="4">4:00</option>
+										<option value="5">5:00</option>
+										<option value="6">6:00</option>
+										<option value="7">7:00</option>
+										<option value="8">8:00</option>
+										<option value="9">9:00</option>
+										<option value="10">10:00</option>
+										<option value="11">11:00</option>
+										<option value="12">12:00</option>
+										<option value="13">13:00</option>
+										<option value="14">14:00</option>
+										<option value="15">15:00</option>
+										<option value="16">16:00</option>
+										<option value="17">17:00</option>
+										<option value="18">18:00</option>
+										<option value="19">19:00</option>
+										<option value="20">20:00</option>
+										<option value="21">21:00</option>
+										<option value="22">22:00</option>
+										<option value="23">23:00</option>
+									</select>
+									<div class="text-danger"
+										ng-show="reportsForm.hourOfDay.$touched && reportsForm.hourOfDay.$error.required">Frequency
+										Type is mandatory</div>
+								</div>
+							</div>
+
+
+
+
+							<div class="form-group row" ng-model="reports.timeRange">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Export
+									Time Range *</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-if="reports.frequency === 'daily' "
+										ng-model="reports.timeRange" name="timeRange"
+										required="required">
+										<option value="perviousDay">Pervious Day</option>
+										<option value="last24Hours">Last 24 Hours</option>
+									</select> <select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.timeRange"
+										ng-if="reports.frequency === 'weekly' " name="timeRange"
+										required="required">
+										<option value="perviousWeek">Pervious Week</option>
+										<option value="last7Days">Last 7 Days</option>
+									</select> <select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.timeRange"
+										ng-if="reports.frequency === 'monthly' " name="timeRange"
+										required="required">
+										<option value="perviousMonth">Pervious Month</option>
+										<option value="last30Days">Last 30 Days</option>
+									</select>
+									<div class="text-danger"
+										ng-show="reportsForm.timeRange.$touched && reportsForm.timeRange.$error.required">Time
+										range is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Email
+									Address *</label>
+								<div class="col-sm-9">
+									<input type="text" ng-disabled="isRepotsEditable"
+										class="form-control" id="reportTitle"
+										ng-model="reports.emailAddress"
+										placeholder="Comma Seperated Email Address" required>
+								</div>
+							</div>
+
+
+
+
+						</div>
+
+						<hr />
+
+						<div class="pull-right pad-all">
+							<button class="btn btn-success pull-right"
+								style="margin-right: 10px" type="submit"
+								ng-disabled="isRepotsEditable" ng-if="reportsForm.$valid">Schedule
+								Report</button>
+							<button class="btn btn-primary pull-right"
+								style="margin-right: 10px" ng-click="enableReport()"
+								type="button" ng-if="isRepotsEditable">Edit Report</button>
+							<button class="btn btn-danger pull-right"
+								style="margin-right: 10px" ng-click="deleteReport(reports.id)"
+								type="button" ng-if="isRepotsEditable">Delete</button>
+						</div>
+					</form>
+
+
+
+					</uib-tab> </uib-tabset>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="menuInfo" style="right: auto">
+		<div id="menuInfoWrapper" class="menuWrapper">
+			<div id="menuInfoFormDiv">
+				<div id="logViewDiv" class="menuForm ">
+
+					<div class="row" id="logTabHeight">
+
+						<div class="panel log-view-panel"
+							style="width: -webkit-fill-available;">
+							<div id="logSlider"></div>
+							<div class="panel-header" id="logSliderContent">
+
+								<div style="max-height: 50px; min-height: 50px;">
+									<button class="btn btn-default" data-toggle="panel-overlay"
+										style="float: left; border-right-color: transparent;"
+										ng-click="refreshTable()">
+										<i class="demo-psi-repeat-2 events-view-icon"></i>
+									</button>
+
+
+									<div class="dropdown button"
+										style="float: left; border-right-color: #32393c;">
+										<button class="btn btn-default dropdown-toggle"
+											style="background-color: transparent; margin-top: -3px; border-right-color: transparent;"
+											data-toggle="dropdown" aria-expanded="false">
+											{{headerTitle}}</button>
+
+										<div class="dropdown-menu" role="menu">
+
+											<a class="dropdown-item" href="javascript:void('0')"
+												ng-click="showEventsTable('events')">Events</a> <a
+												class="dropdown-item" href="javascript:void('0')"
+												ng-click="showEventsTable('rules')">Rules</a> <a
+												class="dropdown-item" href="javascript:void('0')"
+												ng-click="showEventsTable('alerts')">Alerts</a> <a
+												class="dropdown-item" href="javascript:void('0')"
+												ng-click="showEventsTable('case')">Cases</a>
+
+
+
+										</div>
+
+
+
+									</div>
+									<button
+										ng-if="infoTableType === 'alerts' && alertNames.length>0"
+										href="javascript:void('0')" class="btn btn-default"
+										
+										ng-click="ctrl.addToCase()">Add To Case</button>
+									<button
+										ng-if="infoTableType === 'alerts' && alertNames.length==1"
+										class="btn btn-default"
+										ng-click="ctrl.addAlertToInvestigation()">Add To
+										Investigation</button>
+								</div>
+
+
+
+
+
+
+							</div>
+
+
+						</div>
+						<div data-split-pane style="top: -20px;" id="border-color">
+							<div data-split-pane-component data-width="60em">
+								<div class="log-viewer-table"
+									style="overflow: hidden; flex-grow: 1">
+									<div id="myGrid" style="height: 400px; width: 100%;"
+										class="{{theme}}"></div>
+								</div>
+
+
+
+
+
+
+
+
+							</div>
+							<div data-split-pane-divider data-width="5px"></div>
+							<div data-split-pane-component data-width="10em"
+								data-minWidth="10em" id="colorId">
+
+								<uib-tabset active="active"> <uib-tab index="0"
+									heading="{{headerTitle}}">
+
+
+								<div class="pull-right alert-place-holder"
+									style="padding-right: 95px; padding-top: 1%; padding-bottom: 1%">
+
+									<a ng-if="infoTableType === 'alerts' && alertNames.length>0"
+										href="javascript:void('0')" class="btn-link"
+										ng-click="ctrl.addToCase()">Add To Case</a>&nbsp;&nbsp; <a
+										ng-if="infoTableType === 'alerts' && alertNames.length == 1"
+										href="javascript:void('0')" class="btn-link"
+										ng-click="ctrl.addAlertToInvestigation()">Add To
+										Investigation</a>
+
+
+								</div>
+
+
+
+								<table class="table table-event-details"
+									id="table-event-details" style="margin-bottom: 10px;">
+
+									<tbody>
+
+										<tr ng-repeat="(key,value) in singleEvnentInfo"
+											ng-if="key!='message' 
+											&& key!='rule_data' 
+											&& key!= 'alertevidences' 
+											&& key!= 'Event Data' 
+											&& key!= 'collaboratiors' 
+											&& key!= 'isResponded' 
+											&& key!= 'respondEsclationTime' 
+											&& key!= 'resolutionEsclationTime' 
+											&& key!= 'reslovedDate'
+											&& key!= 'alertEvidences' 
+											&& key!= 'rleatedCases' 
+											&& key!= 'isSLABreched'
+											&& key!= 'timeTookToReslove'
+											&& key!= 'timeTookToRespond'
+											&& key!= 'investigationEvidence'
+											&& key!= 'resolutionEsclationNames	'
+											&& key!= 'event_data'
+											&& key!= 'respondEsclationNames'  
+											&& key!= 'notes'  
+											&& key!= 'files'
+											&& key!= 'id'
+											&& key!= 'caseActivities'
+											&& key!= 'caseTags'
+											&& key!= 'resolutionEsclationNames'
+											&& key!= 'logEvidence'
+											&& key!= 'dueDate'
+											&& key!= 'comments'
+											
+											
+											
+											 ">
+
+
+
+											<td class="td-field-label">{{key}}</td>
+
+											<td class="td-field-value" ng-if="key === 'title'"><a
+												href="/configuration#!/cases-history?name={{value.trim()}}"
+												class='btn-link'>{{value}}</a></td>
+
+											<td class="td-field-value" ng-if="key === 'dueDate'">{{value|
+												date:'medium'}}</td>
+											<td class="td-field-value"
+												ng-if="key === 'resolutionDueDate'">{{value|
+												date:'medium'}}</td>
+											<td class="td-field-value" ng-if="key === 'createDate'">{{value|
+												date:'medium'}}</td>
+											<td class="td-field-value" ng-if="key === 'respondDueDate'">{{value|
+												date:'medium'}}</td>
+											<td class="td-field-value" ng-if="key === 'respondedDate'">{{value|
+												date:'medium'}}</td>
+
+
+											<td class="td-field-value" ng-if="key === 'event count'"><a
+												href="javascript:void('0')"
+												ng-click='showEventDetails(singleEvnentInfo)'
+												class='btn-link'>{{value}}</a></td>
+
+											<td class="td-field-value"
+												ng-if="key!='title' 
+											
+											&& key!= 'createDate'
+											&& key!= 'dueDate'
+											&& key!= 'resolutionDueDate'
+											&& key!= 'respondDueDate'
+											&& key!= 'respondedDate	'
+											
+											
+											">
+
+												{{value}}</td>
+
+										</tr>
+
+
+
+
+
+									</tbody>
+
+								</table>
+
+
+								</uib-tab> <uib-tab ng-if="infoTableType === 'events' " index="1"
+									select="alertMe()" heading="Message">
+								<div class="blog">
+									<div c lass="blog-content">
+										<div class="blog-body" style="margin: 1% 10% 1% 1%;">
+											<p>{{singleEvnentInfo['Message']}}</p>
+
+										</div>
+
+									</div>
+								</div>
+
+								</uib-tab> <uib-tab ng-if="infoTableType === 'alerts' " index="1"
+									select="alertMe()" heading="Cases">
+
+
+								<div class="list-group bord-no" style="padding: 17px">
+									<a
+										href="/configuration#!/cases-history?name={{singleEvnentInfo.case_name.trim()}}">{{singleEvnentInfo.case_name}}</a>
+								</div>
+
+								</uib-tab> <uib-tab ng-if="infoTableType === 'alerts' " index="2"
+									select="alertMe()" heading="Investigations">
+
+
+
+								<div class="list-group bord-no" style="padding: 17px">
+									<a
+										href="/configuration#!/investigations?name={{singleEvnentInfo.investigation_name.trim()}}">
+										{{singleEvnentInfo.investigation_name}}</a>
+								</div>
+
+
+
+
+								</uib-tab> </uib-tabset>
+
+							</div>
+						</div>
+
+
+					</div>
+
+				</div>
+
+			</div>
+			<div data-split-pane-divider data-height="10px"></div>
+			<div id="menuInfoTabs" class=" row logViewerButton"
+				is-expanded="false">
+
+				<div class="col-md-1" id="showLogView"
+					class="clickable tab showHide inActive"
+					style="background: #32393c; color: white; float: right; right: 0;position: fixed">
+
+					<a style="color: white;" href="javascript:void('0')"><i style="color: white;" 
+						class="fa fa-plus-square-o"></i> Logs </a>
+
+				</div>
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+
+
+
+</div>

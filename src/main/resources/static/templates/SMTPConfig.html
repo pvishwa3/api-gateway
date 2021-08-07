@@ -1,0 +1,133 @@
+<div ng-controller="smtpConfig as ctrl"
+	ng-init="ctrl.pageName = 'smtpConfig'" class="content-wrapper">
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-sm-4">
+			<div id="page-head">
+				<h4 class="page-title">Update SMTP Mail Server</h4>
+			</div>
+		</div>
+
+	</div>
+	<hr />
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div id="panel-body-alt">
+
+
+		<form class="forms-sample" ng-submit="ctrl.saveConfig()"
+			name="onBoardDevieForm">
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">To Address<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="text" class="form-control" ng-model = "ctrl.smtpConfig.toAddress"/>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-12 control-label">From address <span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="email" class="form-control" ng-model = "ctrl.smtpConfig.fromEmailAddress"/>
+					
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Email prefix <span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="text" class="form-control" ng-model = "ctrl.smtpConfig.emailPrefix"/>
+					
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Protocol<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<select class="form-control" ng-model = "ctrl.smtpConfig.protocol">
+						<option value="smtp" selected="selected">SMTP</option>
+						<option value="secure_smtp">Secure SMTP</option>
+					</select>
+
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Host Name<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="text" class="form-control" ng-model = "ctrl.smtpConfig.hostName"/>
+					
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Port<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="number" class="form-control" ng-model = "ctrl.smtpConfig.port"/>
+					
+				</div>
+			</div>
+			
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Username<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="text" class="form-control" ng-model = "ctrl.smtpConfig.username"/>
+					
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-12 control-label">Password<span
+					style="color: red">*</span>
+				</label>
+				<div class="col-md-12">
+					<input type="password" class="form-control" ng-model = "ctrl.smtpConfig.password"/>
+					
+				</div>
+			</div>
+			
+
+			
+
+
+
+
+
+		
+
+			<div class="modal-footer">
+			
+				<button type="button" 
+					class="btn btn-danger"
+					ng-click="ctrl.enableOrDisable()">Enable/Disable</button>
+					
+				<button type="button" 
+					class="btn btn-secondary"
+					ng-click="ctrl.testEmailConfig()">Test Connection</button>
+
+				<button type="submit" class="btn btn-primary"
+					ng-disabled="onBoardDevieForm.$invalid">Update</button>
+				
+			</div>
+
+		</form>
+
+	</div>
+</div>

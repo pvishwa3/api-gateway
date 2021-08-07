@@ -1,0 +1,169 @@
+<div ng-controller="whiteListController as ctrl"
+	ng-init="showHomeButton = true; ctrl.pageName ='WhiteList'"
+	class="content-wrapper">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-8">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Indicators</h4>
+			</div>
+		</div>
+		<div class="col-sm-4 pull-right">
+			<button ng-click="ctrl.createWhiteList()"
+				class="btn btn-primary pull-right mar-all">Create</button>
+			<button data-target="#addList" data-toggle="modal"
+				class="btn btn-dark pull-right mar-all">Add File</button>
+			<button id="whiteListButton" ng-click="ctrl.ToggleTheSelected();"
+				class="btn btn-light pull-right mar-all">White/Block List</button>
+		</div>
+	</div>
+
+	<div ng-include src="templateUrl"></div>
+	<!--  TI alerts main page - Saved whiteListDetails -->
+
+
+	<div class="">
+		<div class="card" ng-init="rule.showButtons=false">
+			<div class="card-body">
+					<div uib-alert ng-repeat="baner in ctrl.alertMessagaes"
+						class="alert alert-{{baner.type}}" close="closeAlert($index)">
+						{{baner.msg}}</div>
+					<div uib-alert ng-repeat="baner in alertMessages"
+						class="alert alert-{{baner.type}}" close="closeAlert($index)">
+						{{baner.msg}}</div>
+					<div id="myGrid" style="height: 500px;"
+						class="{{theme}}"></div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="createWhiteList" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"></button>
+					<h4 class="modal-title">Create Indicator</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="baner in ctrl.alertModalMessagaes"
+						class="alert alert-{{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+					</div>
+					<form class="form-horizontal" ng-submit="ctrl.submitData()"
+						name="whitelist" novalidate="novalidate">
+						<div class="form-group row">
+							<label class="col-md-3 control-label text-capitalize">Type</label>
+							<div class="col-md-7">
+								<select class="form-control" ng-model="ctrl.whiteListData.indicatorStatus" name="indicatorStatus" required="required">
+									<option value="whitelist">whitelist</option>
+									<option value="blocklist">blocklist</option>
+								</select>
+								<div class="text-danger text-bold help-block with-errors" ng-show="(whitelist.$submitted || whitelist.indicatorStatus.$touched)  && whitelist.indicatorStatus.$error.required">Type is mandatory</div>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-3 control-label text-capitalize">Indicator
+								Type</label>
+							<div class="col-sm-7">
+								<select class="form-control" title="Select Indicator" ng-model="ctrl.whiteListData.indicator" name="indicator" required="required">
+									<option>IP</option>
+									<option>DOMAIN</option>
+									<option>URL</option>
+									<option>MD5</option>
+									<option>SHA1</option>
+									<option>SHA256</option>
+									<option>EMAIL</option>
+									<option>FILENAMES</option>
+									<option>REGISTRY</option>
+								</select>
+								<div class="text-danger text-bold help-block with-errors" ng-show="(whitelist.$submitted || whitelist.indicator.$touched)  && whitelist.indicator.$error.required">Indicator type is mandatory</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="control-label col-md-3 text-capitalize">Value</label>
+							<div class="col-md-7">
+								<input type="text" class="form-control" title="Enter Indicator value" ng-model="ctrl.whiteListData.value" name="value" required="required">
+								<div class="text-danger text-bold help-block with-errors" ng-show="(whitelist.$submitted || whitelist.value.$touched)  && whitelist.value.$error.required">Value is mandatory</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="control-label col-md-3"></div>
+							<div class="checkbox col-md-7 pull-right">
+								<label class="text-capitalize"><input type="checkbox"
+									ng-model="ctrl.whiteListData.status" title="Select status">Enable</label>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="control-label col-md-3 text-capitalize">feed
+								Trust Score</label>
+							<div class="col-md-7">
+								<input type="number" min="0" max="100" ng-model="ctrl.whiteListData.feedTrustScore" class="form-control" name="feedTrustScore" required="required"/>
+								<div class="text-danger text-bold help-block with-errors" ng-show="(whitelist.$submitted || whitelist.feedTrustScore.$touched)  && whitelist.feedTrustScore.$error.required">Feed trust score is mandatory</div>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="control-label col-md-3 text-capitalize">Reason</label>
+							<div class="col-md-7">
+								<textarea type="text" class="form-control" title="Enter Reason" ng-model="ctrl.whiteListData.reason" required="required" name="reason"></textarea>
+								<div class="text-danger text-bold help-block with-errors" ng-show="(whitelist.$submitted || whitelist.reason.$touched)  && whitelist.reason.$error.required">Reason is mandatory</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<input type="submit" class="btn btn-success" value="Save">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<div id="addList" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Add Lists</h4>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-12">
+						<form class="form-horizontal" ng-submit="ctrl.fileUpload()">
+							<div class="form-group">
+								<label class="control-label col-sm-2" for="email">Type</label>
+								<div class="col-sm-10">
+									<select ng-model="ctrl.fileType" class="form-control" required>
+										<option>whitelist</option>
+										<option>blocklist</option>
+									</select>
+
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2" for="pwd">File</label>
+								<div class="col-sm-10 form-control-static">
+									<input type="file" file-model="ctrl.uploadedFile.name" required
+										accept=".csv">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-5 col-sm-10">
+									<input type="submit" class="btn btn-dark" />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer" style="border: none"></div>
+			</div>
+		</div>
+	</div>
+</div>

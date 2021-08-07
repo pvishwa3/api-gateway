@@ -1,0 +1,68 @@
+<div class="row" ng-controller="threatinteligenceFeedController as ctrl"
+	id="content-container">
+	<div id="page-content">
+		<div id="page-head">
+			<div id="page-title">
+				<h1 class="page-header text-overflow">Threat Feed</h1>
+			</div>
+			<ol class="breadcrumb">
+				<li><a href="/configuration#!">Home</a></li>
+				<li class="active">Threat Feed</li>
+			</ol>
+		</div>
+		<hr>
+		<div class="banners">
+			<div uib-alert ng-repeat="baner in ctrl.alertMessagaes"
+				class="alert {{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6 ">
+				<div id="demo-panel-ref" class="panel">
+					<div class="panel-body">
+						<div class="widget-simple text-center card-box">
+							<h3 class="text-success counter">{{ctrl.totalIndicators}}</h3>
+							<p class="text-muted">Total Number of Indicators</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 ">
+				<div id="demo-panel-ref" class="panel">
+					<div class="panel-body">
+						<div class="widget-simple text-center card-box">
+							<h3 class="text-primary counter">{{ctrl.totalFeed}}</h3>
+							<p class="text-muted">Total Feeds</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-sm-3 col-md-3"
+					ng-repeat="data in ctrl.feedDataStats">
+					<div class="thumbnail panel">
+						<div class="panel-body">
+							<h4 class=" m-t-0 header-title">{{data.feed_name}}</h4>
+							<img src="{{data.banner}}" alt="{{data.feed_name}}"
+								style="width: 299px; height: 120px;"> <a
+								href="javascript:void(0)" ng-show="data.status === 'active' "
+								ng-click="ctrl.submitData(data.id,'inactive', data.feed_name)"
+								class="btn btn-danger waves-effect w-md waves-light  col-xs-12"
+								role="button">Unsubscribe</a> <a href="javascript:void(0)"
+								ng-show="data.status === 'inactive' "
+								ng-click="ctrl.submitData(data.id,'active', data.feed_name)"
+								class="btn btn-dark waves-effect w-md waves-light  col-xs-12"
+								role="button">Subscribe</a>
+
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

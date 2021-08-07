@@ -1,0 +1,321 @@
+
+<div ng-controller="referencesetController as controller"
+	ng-init="controller.init()" class="content-wrapper">
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">ReferenceSet Details</h4>
+			</div>
+		</div>
+		<div class="col-sm-6 pull-right">
+			<button ng-click='controller.openUploadModal()' ng-show="canShowUploadData" class="btn btn-dark pull-right mar-rgt" title="Upload Data">Upload</button>
+			<button ng-click='controller.openCreateReferenceSetDetails()' ng-show = "!canBackButton" class="btn btn-primary pull-right mar-rgt" title="New ReferenceSet">New ReferenceSet</button>
+
+			<button ng-click="controller.deleteContents()" id = "deleteContents"   class="btn btn-danger pull-right mar-rgt">Delete</button>
+			<button ng-click='controller.goBack()' ng-show="canBackButton" class="btn btn-dark pull-right mar-rgt" title="Back">Back</button>
+			<button ng-click='controller.resync()' ng-show="!canShowUploadData" class="btn btn-dark pull-right mar-rgt" title="Resync">Resync</button>
+			<button id="viewButton" class="btn btn-primary mar-rgt pull-right"  ng-click='controller.viewContents(controller.referenceSetId[0].id)'>View Contents</button> 
+			<button id="deleteButton" class="btn btn-danger mar-rgt pull-right"  ng-click='controller.deleteReferenceSetDetails(controller.referenceSetId[0].id,controller.referenceSetId[0].referenceSetName)'>Delete</button>
+		</div>
+	</div>
+
+
+
+	<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+	<div uib-alert ng-repeat="alert in controller.conditionMessagesModal"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+
+	<script type="text/ng-template" id="viewReferenceDetails.html">
+			
+			<div class="card">
+				<div class="card-body">
+					<div id="viewReferenceContent" class="{{theme}}" style="height:500px"><div>
+			 <!-- <table class="table" datatable="ng">
+				<thead>
+					<tr>
+						
+						<th>Name</th>
+						<th>Type</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>
+
+
+				<tbody>
+					<tr ng-repeat="data  in controller.referenceSetDetails">
+						
+						<td>{{data.referenceSetName}}</td>
+						<td>{{data.referenceSetType}}</td>
+						<td class="text-center">
+									
+							<button  href= "javascript:void('0')" class="btn btn-outline-primary"  ng-click='controller.viewContents(data.id)'>View Contents</button> &nbsp;
+                            <button  href= "javascript:void('0')" class="btn btn-outline-danger"  ng-click='controller.deleteReferenceSetDetails(data.id,data.referenceSetName)'>Delete</button> &nbsp;
+						</td>
+					</tr>
+				</tbody>
+			</table> -->
+			</div>
+		</div>
+			
+		
+		</script>
+
+
+	<script type="text/ng-template" id="createReferenceDetails.html">
+			
+				
+			<form class="form-horizontal group-border-dashed"
+			ng-submit="controller.saveReferenceDetails()" name="conditionCategory">
+			<div class="modal-body">
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Name</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.referenceSetName">
+
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Type</label>
+					<div class="col-sm-6">
+						<select class = "form-control"  ng-model="controller.referenceSetFrom.referenceSetType">
+								<option value = "Active Directory">Active Directory</option>
+								<option value = "Events">Create From Events</option>
+								<option value = "Manual">Manual</option>
+						</select>
+
+
+
+					</div>
+				</div>
+
+			<div ng-if = "controller.referenceSetFrom.referenceSetType === 'Manual' ">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Keys</label>
+					<div class="col-sm-6">
+							 <selectize placeholder='Define Keys' options='keyOptions' name='key' config="keyConfig" ng-model="keyModel" required='true'></selectize>
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Values</label>
+					<div class="col-sm-6">
+							 <selectize placeholder='Define Values' options='valueOptions' name='key' config="evenetKeyConfig" ng-model="valueModel" required='true'></selectize>
+
+					</div>
+				</div>
+			</div>
+
+			<div ng-if = "controller.referenceSetFrom.referenceSetType === 'Events' ">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Keys</label>
+					<div class="col-sm-6">
+							 <selectize placeholder='Define Keys' options='keyOptions' name='key' config="evenetKeyConfig" ng-model="keyModel" required='true'></selectize>
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Values</label>
+					<div class="col-sm-6">
+							 <selectize placeholder='Define Values' options='valueOptions' name='key' config="evenetValueConfig" ng-model="valueModel" required='true'></selectize>
+
+					</div>
+				</div>
+			</div>
+
+				<div ng-if = "controller.referenceSetFrom.referenceSetType === 'Active Directory' ">
+
+				
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Base Dn</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.baseDn">
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">User Object Filter</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.userObjectFilter">
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">User Attribute</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.userNameRDNAttribute">
+
+					</div>
+				</div>
+
+			<div class="form-group">
+					<label class="col-sm-3 control-label">Group Attribute</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.groupMembersAttribute">
+
+					</div>
+				</div>
+		<div class="form-group">
+					<label class="col-sm-3 control-label">Keys</label>
+					<div class="col-sm-6">
+							 
+							<select class="form-control" required="required" ng-model="controller.referenceSetFrom.keyFields">
+								<option value = "{{data}}" ng-repeat = "data in controller.referenceSetFrom.userNameRDNAttribute.split(',')">{{data}}</option>	
+							</select>
+					</div>
+				</div>
+			
+
+<div class="form-group">
+					<label class="col-sm-3 control-label">Sync Interval (Minutes)</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" placeholder=""
+							required="required" ng-model="controller.referenceSetFrom.syncInterval">
+
+					</div>
+				</div>
+
+			</div>
+</div>
+
+
+		
+				
+				
+			<div class="modal-footer">
+				<button type="button" ng-click = "controller.doPerview()" class="btn btn-default waves-effect"
+					>Perview</button>
+					
+				
+				
+				
+				<input type="submit" class="btn btn-dark" value="Save">
+			</div>
+		</form>
+
+
+		<table class="table">
+				
+				<thead>
+
+					<tr>
+						<th ng-repeat = "data in cols">{{data}}</th>
+					</tr>
+
+				</thead>
+
+				<tbody>
+				
+					<tr ng-repeat = "data in previewDetails">
+						<td ng-repeat="(key, value) in data" >{{value}}</td>
+					</tr>
+					
+				</tbody>
+		</table>
+			
+		
+		</script>
+
+	<script type="text/ng-template" id="viewContenetReferenceDetails.html">
+			
+				
+			<div id = "ContenetReferenceDetails" class="{{theme}}" style="height:500px"></div>
+			
+
+		 
+		
+		</script>
+
+	<div id="uploadFileData" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Upload File</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					name="conditionCategory">
+					<div class="modal-body">
+						<div uib-alert
+							ng-repeat="alert in controller.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group">
+
+							<div class="col-sm-6">
+
+								<input type="file" file-model="controller.uploadedFile.name"
+									required accept=".csv">
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default waves-effect"
+							data-dismiss="modal">Close</button>
+						<input type="button" ng-click="uploadFile()" class="btn btn-dark"
+							value="Save">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="addDataModel" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Add Data</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					name="conditionCategory">
+					<div class="modal-body">
+						<div uib-alert
+							ng-repeat="alert in controller.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group">
+
+							<div class="col-sm-6">
+
+								<input type="text" ng-model="controller.cacheData.name" required>
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default waves-effect"
+							data-dismiss="modal">Close</button>
+						<input type="button" ng-click="addDataToCache()"
+							class="btn btn-dark" value="Save">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+</div>

@@ -1,0 +1,283 @@
+<div id="container" ng-init="controller.init()"
+     ng-controller="threatIntelMapController as controller"
+     class="content-wrapper" style="background:black; height:100vh">
+
+
+            <div id = "map" style="height: 100vh;
+    position: absolute;
+    outline: none;
+    width: 100%;
+    opacity: 0.6;
+"></div>
+
+    <div class="row">
+
+        <div class="col-md-2">
+            <div class="card card-attcker" style="height: 250px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+                <div class="threat-header">
+                    <p>Attacks</p>
+                </div>
+                <div class="">
+                    <table class='table table-condensed table_data'>
+
+
+
+                        <tbody>
+                        <tr ng-repeat = "data in attacks">
+                            <td>{{data.attack}}</td>
+
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-1 offset-md-5">
+            <div class="card card-attcker" style="
+        background:#000000 !important;
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+
+                <div class="">
+                    <div class="form-group">
+                        <select class="form-control" ng-change = "getHistoricalData()"  style="background:#072535;color:#04f540" ng-model = "dateRangeFilter">
+                            <option value="24h">Last 24 Hours</option>
+                            <option value="1d">Last 1 Day</option>
+                            <option value="2d">Last 2 Days</option>
+                            <option value="7d">Last 7 Days</option>
+                            <option value="15d">Last 15 Days</option>
+                            <option value="30d">Last 30 Days</option>
+                        </select>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-attcker" style="height: 250px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7">
+                <div class="threat-header">
+                    <p>TOR EXIT</p>
+                </div>
+                <div class="">
+                    <table class='table table-condensed table_data'>
+
+                        <thead>
+                        <tr>
+                            <th>IP</th>
+                            <th>ISP</th>
+                            <th>Score</th>
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat = "data in tors">
+                            <td><a href="/configuration#!/explore?type=IP&value={{data.torIp}}" target="_blank">{{data.torIp}}</a></td>
+                            <td>{{data.isp}}</td>
+                            <td>{{data.score}}</td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+            <div class="row" style="position: fixed;
+    border: 0;
+    width: 97%;
+    /* position: absolute; */
+    bottom: 0%;
+    text-transform: uppercase;
+    /* text-align: right; */
+    z-index: 2;
+">
+
+
+                <div class="col-md-2">
+                    <div class="card card-attcker" style="height: 300px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+                        <div class="threat-header">
+                            <p>Service</p>
+                        </div>
+                        <div class="">
+                            <table class='table table-condensed table_data'>
+
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Port</th>
+                                    <th></th>
+                                    <th>Service</th>
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                <tr ng-repeat = "data in services">
+                                    <td>{{data.count}}</td>
+                                    <td>{{data.port}}</td>
+                                    <td><div class='circle'  style='background:{{data.color}}'></div></td>
+                                    <td>{{data.app.toUpperCase()}}</td>
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="card card-attcker" style="height: 300px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+                        <div class="threat-header">
+                            <p>Origins</p>
+                        </div>
+                        <div class="">
+                            <table class='table table-condensed table_data'>
+
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th>Country</th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                <tr ng-repeat="data in sourceCountries">
+                                    <td>{{data.count}} </td>
+                                    <td><img  src="{{data.path}}"> </td>
+                                    <td>{{data.country_name.toUpperCase()}}</td>
+
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="card card-attcker" style="height: 300px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+                        <div class="threat-header">
+                            <p>Targets</p>
+                        </div>
+                        <div class="">
+                            <table class='table table-condensed table_data'>
+
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th>Country</th>
+
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                <tr ng-repeat="data in countries">
+                                    <td>{{data.count}} </td>
+                                    <td><img  src="{{data.path}}"> </td>
+                                    <td>{{data.country_name.toUpperCase()}}</td>
+
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-attcker" style="height: 300px;
+
+    margin-top: 12px;
+    overflow-y: scroll;opacity: 0.7;">
+                        <div class="threat-header">
+                            <p>Live Traffic</p>
+                        </div>
+                        <div class="">
+                            <table class='table table-condensed table_data'>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Source Ip</th>
+                                        <th>Destination Ip</th>
+                                        <th>Source Country</th>
+                                        <th>Destination Country</th>
+
+
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="data in threatData">
+                                    <td>{{data.time}}</td>
+                                    <td><a href="/configuration#!/explore?type=IP&value={{data.source_ip}}" target="_blank">{{data.source_ip}}</a></td>
+                                    <td><a href="/configuration#!/explore?type=IP&value={{data.destination_ip}}" target="_blank">{{data.destination_ip}}<a></td>
+                                    <td>{{data.source_country_name}}</td>
+                                    <td>{{data.destination_country_name}}</td>
+
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+        </div>
+
+</div>
+
+

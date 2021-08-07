@@ -1,0 +1,58 @@
+<div ng-controller="irpController as ctrl" class="content-wrapper">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Incident Response Plan</h4>
+			</div>
+		</div>
+		<div class="col-sm-6 pull-right">
+			<button ng-show="showHomeButton" class="btn btn-primary pull-right" ng-click="ctrl.openNewIRP()">New IRP</button>
+			<button ng-show="!showHomeButton" type="button" style="margin-left: 16px;" class="btn btn-success pull-right" value="Save" ng-click="ctrl.saveiprDetails()">Save</button>
+			<button ng-show="!showHomeButton" class="btn btn-default pull-right" ng-click="ctrl.goback()">Back To IRP</button>
+			<button ng-show="showHomeButton" id="viewButton" class="btn btn-primary pull-right mar-rgt" ng-click="ctrl.edit(ctrl.irpsId[0])"> Edit </button>
+			<button ng-show="showHomeButton" id="deleteButton" class="btn btn-danger pull-right mar-rgt" ng-click="ctrl.delete(ctrl.irpsId[0].id,ctrl.irpsId[0].templateName)"> Delete </button>			
+			<button ng-show="showHomeButton" id="cloneButton" class="btn btn-light pull-right mar-rgt" ng-click="ctrl.clone(ctrl.irpsId[0])"> Clone </button>
+		</div>
+	</div>
+<!-- 	<hr /> -->
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+	<script type="text/ng-template" id="all-irps.html">
+
+            <div class="card">
+				<div class="card-body">
+					<div id = "irpContent" class="{{theme}}" style="height: 500px;"></div>
+                </div>
+            </div>
+    </script>
+
+	<script type="text/ng-template" id="irp-new.html">
+		<div class="panel">
+			<div class="panel-body" id="panel-body">
+				<form class="form-horizontal" name="irpForm" novalidate="novalidate">
+					<div class="form-group row">
+						<div class="col-md-6">
+							<label class="control-label col-sm-3">IRP Name </label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" ng-model="ctrl.irp.templateName" name"templateName" required="required" placeholder = "IRP Name" title = "Enter template name" >
+							</div>
+						</div>
+						<div class="col-md-6">
+							<label class="control-label col-sm-3">IRP Description </label>
+							<div class="col-sm-9">
+								<textarea type="text" class="form-control" rows="2" columns="100" name="description" ng-model="ctrl.irp.description" required="required" placeholder = "Description" title = "Enter description"></textarea>
+							</div>
+						</div>
+					</div>
+					<div id="editor-ui-container" style="position:relative;height:1000px;width:100%;">
+<input type="submit" ng-show="false">
+				</form>
+			</div>
+		</div>
+	</script>
+</div>

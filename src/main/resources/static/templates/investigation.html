@@ -1,0 +1,861 @@
+<div id="content-container"
+	ng-controller="investigationController as jobs" ng-cloak>
+	<div id="page-head">
+		<div id="page-title">
+			<h4 class="page-header text-overflow">Investigation</h4>
+		</div>
+		<ol class="breadcrumb">
+			<li><a href="/configuration#!">Home</a></li>
+			<li class="active">Investigation</li>
+		</ol>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel">
+				<div class="panel-body">
+					<div class="pad-ver">
+						<div class="col-md-6 pull-right">
+						<selectize options='jobs.allCases' config="jobs.caseTypeConfig" ng-model="jobs.selectedCase" required='true' ng-change="jobs.showCaseInvestigation()" placeholder="please select a case"></selectize>
+						</div>
+						<div class="chart-container">
+					<div id="workflow-graph" class="chart has-fixed-height"
+						style="width: 100%; height: 350px;"></div>
+				</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div ng-if="showDetails">
+	<div class="col-md-12">
+		<div class="panel col-sm-6 bord-rgt" style="height: 200px;">
+			<div class="panel-body">
+				<div class="">
+					<h4>
+						<b>Basic Information</b>
+					</h4>
+					 
+					<div class="col-sm-6">
+						<dt>IP</dt>
+					</div>
+					<div class="col-sm-6">{{jobReportBasicInfo.ip}}</div>
+					<div class="col-sm-6">
+						<dt>COUNTRY NAME</dt>
+					</div>
+					<div class="col-sm-6">{{jobReportBasicInfo.country_name}}</div>
+					<div class="col-sm-6">
+						<dt>COUNTRY CODE</dt>
+					</div>
+					<div class="col-sm-6">{{jobReportBasicInfo.country_code}}</div>
+					<div class="col-sm-6">
+						<dt>CITY</dt>
+					</div>
+					<div class="col-sm-6">{{jobReportBasicInfo.city}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel  col-sm-6" style="height: 200px;">
+			<div class="panel-body ">
+				<div class="">
+					<h4>
+						<b>External Sources</b>
+					</h4>
+					 
+					 <div ng-repeat="(key,value) in jobReportExtSrc">
+					 	<a ng-if='jobReportExtSrc.virustotal'  class="col-md-4 btn-link" href={{value}} target="_blank"> {{key}} &nbsp;<i class="fa fa-external-link"></i></a>
+					 </div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<div class="">
+					<h4><b>Passive DNS</b></h4>
+					 
+					<div ng-if="jobReportPassiveDns.data"
+						class="table-responsive col-md-12">
+						<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" width="100%">
+							<thead>
+								<tr>
+									<th>Host Name</th>
+									<th>Address</th>
+									<th>First Seen</th>
+									<th>Last Seen</th>
+									<th>Min TLP</th>
+									<th>Max TLP</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in jobReportPassiveDns.data">
+									<td>{{data.query}}</td>
+									<td>{{data.answer}}</td>
+									<td>{{data.lastSeenTimestamp}}</td>
+									<td>{{data.firstSeenTimestamp}}</td>
+									<td>{{data.minTtl}}</td>
+									<td>{{data.maxTtl}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<h4><b>ASN</b></h4>
+				<div>
+					<table class="table table-striped dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Announced</th>
+                                    <th>Country Code</th>
+                                    <th>Description</th>
+                                    <th>IP</th>
+                                    <th>First IP</th>
+                                    <th>Last IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            	<tr >
+                                    <td>{{asn.announced}}</td>
+                                    <td>{{asn.as_country_code}}</td>
+                                    <td>{{asn.as_description}}</td>
+                                    <td>{{asn.as_number}}</td>
+                                    <td>{{asn.ip}}</td>
+                                    <td>{{asn.first_ip}}</td>
+                                    <td>{{asn.last_ip}}</td>
+                                </tr>
+                            </tbody>
+                        	</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+		<div class="col-md-12">
+			<div class="panel">
+				<div class="panel-body">
+                    <h4><b>Inhouse Search</b></h4>
+                     
+					<div >
+						<p><b>First Seen in Environemt: </b> {{jobs.jobReportInhouse.firstSeen}}</p>
+                    	<p><b>Last Seen in Environemt: </b> {{jobs.jobReportInhouse.lastSeen}}</p>
+                    	<div class="table-responsive">
+                        	<table class="table table-striped dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Log Type</th>
+                                    <th>HostName</th>
+                                    <th>Log Device</th>
+                                    <th>ES Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobReportInhouse.hits">
+                                    <td>{{data['@timestamp']}}</td>
+                                    <td>{{data.log_type}}</td>
+                                    <td>{{data.beat.hostname}}</td>
+                                    <td>{{data.log_device}}</td>
+                                    <td>{{data._id}}</td>
+                                </tr>
+                            </tbody>
+                        	</table>
+                    	</div>				
+					</div>
+				</div>
+			</div>
+		</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<h4>
+					<b>Feed Search</b>
+				</h4>
+				 
+				<div >
+					<p>
+						<b>Score: </b> {{jobs.jobReportFeed}}
+					</p>
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" width="100%">
+							<thead>
+								<tr>
+									<th>Feed Name</th>
+									<th>Source</th>
+									<th>Value</th>
+									<th>Indicator</th>
+									<th>First Appearence</th>
+									<th>Last Appearence</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in jobReportFeed">
+									<td>{{data.feedName}}</td>
+									<td>{{data.source}}</td>
+									<td>{{data.value}}</td>
+									<td>{{data.indicator}}</td>
+									<td>{{data.firstAppearance}}</td>
+									<td>{{data.lastAppearance}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<h4>
+					<b>Previous Search Details</b>
+				</h4>
+				 
+
+				<p>
+					<b>First Seen in Previous Searches: </b>
+					{{jobReportPrevRes.firstSeen}}
+				</p>
+				<p>
+					<b>Last Seen in Previous Searches: </b>
+					{{jobReportPrevRes.lastSeen}}
+				</p>
+
+
+				<div ng-show="(jobReportPrevRes | json) != '{}' && jobReportPrevRes">
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" width="100%">
+							<thead>
+								<tr>
+									<th>Analysis Time</th>
+									<th>Analysis Name</th>
+									<th>Score</th>
+									<th>ES Id</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in jobReportPrevRes.hits">
+									<td>{{data.AnalysisTime}}</td>
+									<td>{{data.AnalysisName}}</td>
+									<td>{{data.score}}</td>
+									<td>{{data._id}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div
+					ng-show="(jobReportPrevRes | json) == '{}' || !jobReportPrevRes">
+					<pre>NO DATA AVAILABLE</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+	<br />
+                    <h4><b>Other Analyzer Results</b></h4>
+                     
+		<div class="panel">
+			<div class="">
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.ipStackOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipStackOptions = !jobs.ipStackOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP STACK REPORT</h3>
+            </div>
+            <div class="panel-body">
+            
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!ipstackReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    <div ng-if="ipstackReport">
+                        <div class="row" ng-if="jobs.ipStackOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in ipstackReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipStackOptions">
+                        	<div class="col-md-12">
+                           		<angular-jsoneditor ng-model="ipstackReport" options="jsonEditor.options" isEditable="false"></angular-jsoneditor>
+                         	</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 pad-no" style="padding-left:0px" ng-init="jobs.ipApiOptions =  true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipApiOptions = !jobs.ipApiOptions ">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP API REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    	<div ng-if="!ipapiReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="ipapiReport">
+                        <div class="row" ng-if="jobs.ipApiOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in ipapiReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipApiOptions">
+                            <div class="col-md-12">
+                            	 <angular-jsoneditor ng-if="ipapiReport" ng-model="ipapiReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--IPDATA REPORT-->
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.ipdataReportOptions =  true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipdataReportOptions = !jobs.ipdataReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP DATA REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!ipdataReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="ipdataReport">
+                        <div class="row" ng-if="jobs.ipdataReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in ipdataReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipdataReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor ng-if="ipdataReport" ng-model="ipdataReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--CYMON REPORT-->
+    <div class="col-md-6 pad-no" style="padding-left:0px" ng-init="jobs.cymonReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.cymonReportOptions = !jobs.cymonReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">CYMON Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!cymonReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="cymonReport">
+                        <div class="row" ng-if="jobs.cymonReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in cymonReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.cymonReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="cymonReport" ng-model="cymonReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.cybercrimeReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.cybercrimeReportOptions = !jobs.cybercrimeReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">CYBER CRIME Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!cybercrimeReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="cybercrimeReport">
+                        <div class="row" ng-if="jobs.cybercrimeReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in cybercrimeReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.cybercrimeReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor ng-if="cybercrimeReport" ng-model="cybercrimeReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 pad-no " style="padding-left:0px" ng-init="jobs.mywotReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.mywotReportOptions = !jobs.mywotReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">MY WOT Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!mywotReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="mywotReport">
+                        <div class="row" ng-if="jobs.mywotReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in mywotReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.mywotReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="mywotReport" ng-model="mywotReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.greynoiseReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.greynoiseReportOptions = !jobs.greynoiseReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">GREY NOISE REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!greynoiseReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="greynoiseReport">
+                        <div class="row" ng-if="jobs.greynoiseReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in greynoiseReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.greynoiseReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="greynoiseReport" ng-model="greynoiseReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 pad-no " style="padding-left:0px" ng-init="jobs.hashddReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.hashddReportOptions = !jobs.hashddReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">HASH DD REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!hashddReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="hashddReport">
+                        <div class="row" ng-if="jobs.hashddReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in hashddReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.hashddReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="hashddReport" ng-model="hashddReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.onphyeReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.onphyeReportOptions = !jobs.onphyeReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">ONPHYE REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!onphyeReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="onphyeReport">
+                        <div class="row" ng-if="jobs.onphyeReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in onphyeReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.onphyeReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor ng-if="onphyeReport" ng-model="onphyeReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.otxReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.otxReportOptions = !jobs.otxReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">OTX REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!otxReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="otxReport">
+                        <div class="row" ng-if="jobs.otxReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in otxReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.otxReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="otxReport" ng-model="otxReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.passivetotalReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.passivetotalReportOptions = !jobs.passivetotalReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">PASSIVE TOTAL REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!passivetotalReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="passivetotalReport">
+                        <div class="row" ng-if="jobs.passivetotalReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in passivetotalReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.passivetotalReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="passivetotalReport" ng-model="passivetotalReport" options="jsonEditor.options"
+            isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.phishtankReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.phishtankReport = !jobs.phishtankReport">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">PHISH TANK REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!phishtankReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="phishtankReport">
+                        <div class="row" ng-if="jobs.phishtankReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in phishtankReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.phishtankReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="phishtankReport" ng-model="phishtankReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.robtexReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.robtexReportOptions = !jobs.robtexReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">ROBTEX REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!robtexReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="robtexReport">
+                        <div class="row" ng-if="jobs.robtexReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in robtexReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.robtexReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="robtexReport" ng-model="robtexReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+   <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.shodanReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.shodanReportOptions = !jobs.shodanReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">SHODAN REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!shodanReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="shodanReport">
+                        <div class="row" ng-if="jobs.shodanReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in shodanReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.shodanReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-if="shodanReport" ng-model="shodanReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+</div>
+		</div>
+	</div>
+</div>
+</div>

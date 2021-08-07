@@ -1,0 +1,1086 @@
+<div class="row" ng-controller="logsimulationController as ls" ng-init="ls.getSavedEventTypes(); ls.getSavedLogTypes(); ls.getSavedEventDetails(); ls.getEventNames(); ls.getScheduledSimulations(); ls.getAllSavedFields(); ls.getAllSavedAttacks()">
+    <div class="page-header page-header-default">
+        <div class="page-header-content border-bottom border-bottom-success">
+            <div class="page-title">
+                <h4>
+					      <i class="icon-arrow-left52 position-left"></i> <span
+						    class="text-semibold">Log Simualtion</span>
+				      </h4>
+            </div>
+        </div>
+    </div>
+
+    <div ng-include src="templateUrl"></div>
+
+    <!--  Log Simulation main page - Saved Simulation -->
+    <script type="text/ng-template" id="logsimulation-schedulers.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Simulation</a>
+                        </li>
+						<li>
+							<a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedEventDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> Event Details</a>
+						</li>
+						<li>
+							<a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedAttackDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> Attack Details</a>
+						</li>
+                    </ul>
+                </div>
+            </div>
+<div class="banners">
+ <div uib-alert ng-repeat="baner in ls.alertMessagaes"
+		 class="alert {{baner.type}}"
+							close="closeAlert($index)">{{baner.msg}}
+					  </div>
+</div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Simulation Name</th>
+                            <th>Simulation Description</th>
+                            <th>Simulation Type</th>
+                            <th>Created By</th>
+                            <th>Scheduled At</th>
+                            <th>Status (E/D)</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.allSchedules">
+                            <td>{{data.simulationName}}</td>
+                            <td>{{data.simulationDescription}}</td>
+                            <td>{{data.simulationType}}</td>
+                            <td>{{data.createdBy}}</td>
+                            <td>{{data.scheduleDetails.cronExpression}}</td>
+                            <td>{{data.status}}</td>
+                            <td class="text-center">
+                            	<ul class="icons-list">
+                            		<li class="dropdown">
+                            			<a href="javascript:void('0')" class="dropdown-toggle" data-toggle="dropdown">
+                            				<i class="icon-menu9"></i>
+                            			</a>
+                            
+                            			<ul class="dropdown-menu dropdown-menu-right">
+                            				<li><a href="javascript:void('0')" ng-click="ls.editSimulationById(data.id)" > Edit</a></li>
+                            				<li><a href="javascript:void('0')" ng-click='ls.deleteSimulationById(data.id)' >Delete</a></li>
+                            				<li><a href="javascript:void('0')" ng-show="data.status == 'ENABLE'" ng-click='ls.changeScheduledSimulation(data.id,"DISABLE")' >Disable</a></li>
+                            				<li><a href="javascript:void('0')" ng-show="data.status == 'DISABLE'" ng-click='ls.changeScheduledSimulation(data.id,"ENABLE")' >Enable</a></li>
+                            			</ul>
+                            		</li>
+									<li> <button type="button"  ng-click = 'ls.ondemandScheduleSimulation(data.id)' class="btn  btn-link"><i class="icon-play3"></i></button> </li>
+                            	</ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+	<!--  Log Simulation - Saved event Details -->
+	<script type="text/ng-template" id="logsimulation-savedeventdetails.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewEventDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Event Details</a>
+                        </li>
+              			<li>
+                			<a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i 
+										  class="md md-add"></i> New Simulation</a>
+              			</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Event Id</th>
+                            <th>Event Name</th>
+                            <th>Event Type</th>
+                            <th>Log Type</th>
+                            <th>OS Type</th>
+                            <th>Format Type</th>
+							<th>Created By</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.allEventDetails">
+							<td>{{data.eventId}}</td>
+                            <td>{{data.eventName}}</td>
+                            <td>{{data.eventType}}</td>
+                            <td>{{data.logType}}</td>
+                            <td>{{data.osType}}</td>
+                            <td>{{data.formatType}}</td>
+							<td>{{data.createdBy}}</td>
+                            <td class="text-center">
+								<button type="button" ng-click = 'ls.editEventById(data.eventId)' class="btn btn-link"><i class="icon-pencil7"></i></button> 
+                                <button type="button"  ng-click = 'ls.deleteEventById(data.eventId)' class="btn  btn-link"><i class="icon-cross3"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+	<!--  Log Simulation - Saved Attack Details -->
+	<script type="text/ng-template" id="logsimulation-savedattackdetails.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewAttackDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Attack Details</a>
+                        </li>
+						<li>
+                			<a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i 
+										  class="md md-add"></i> New Simulation</a>
+              			</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Attack Id</th>
+                            <th>Attack Name</th>
+			    <th>Created By</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.allSavedAttacks">
+							<td>{{data.attackId}}</td>
+                            <td>{{data.attackName}}</td>
+		   				    <td>{{data.createdBy}}</td>
+                            <td class="text-center">
+								<button type="button" ng-click = 'ls.editAttackById(data.attackId)' class="btn btn-link"><i class="icon-pencil7"></i></button> 
+                                <button type="button"  ng-click = 'ls.deleteAttackById(data.attackId)' class="btn  btn-link"><i class="icon-cross3"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+	<!--  Log Simulation - Saved Event Type Details -->
+	<script type="text/ng-template" id="logsimulation-savedeventtypes.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewEventTypeForm()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Event Type</a>
+                        </li>
+						<li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewEventDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Event Details</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Event Type ID</th>
+			    <th>Event Type Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.eventTypes">
+                            <td>{{data.eventTypeId}}</td>
+                            <td>{{data.eventTypeName}}</td>
+                            <td class="text-center">
+								<button type="button" ng-click = 'ls.editEventTypeById(data.eventTypeId)' class="btn btn-link"><i class="icon-pencil7"></i></button> 
+                                <button type="button"  ng-click = 'ls.deleteEventTypeById(data.eventTypeId)' class="btn  btn-link"><i class="icon-cross3"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+	<!--  Log Simulation - Saved Log Type Details -->
+	<script type="text/ng-template" id="logsimulation-savedlogtypes.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+						<li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewLogTypeForm()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Log Type</a>
+                        </li>
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewEventDetails()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Event Details</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Event Type ID</th>
+			    <th>Event Type Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.logTypes">
+                            <td>{{data.logTypeId}}</td>
+                            <td>{{data.logTypeName}}</td>
+                            <td class="text-center">
+								<button type="button" ng-click = 'ls.editLogTypeById(data.logTypeId)' class="btn btn-link"><i class="icon-pencil7"></i></button> 
+                                <button type="button"  ng-click = 'ls.deleteLogTypeById(data.logTypeId)' class="btn  btn-link"><i class="icon-cross3"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+	<!--  Log Simulation - Saved Field Details -->
+    <script type="text/ng-template" id="logsimulation-savedfielddetails.html">
+        <div class="panel panel-flat">
+            <div class="panel-heading">
+                <div class="heading-elements">
+                    <ul class="icons-list">
+                        <li>
+                            <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewFieldModal()" class="btn btn-dark"><i
+							              class="md md-add"></i> New Field </a>
+                        </li>
+						<li>
+                			<a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i class="md md-add"></i> Back to New Simulation</a>
+              			</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <br />
+                <table class="table table-stripped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance" width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Field Value</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data  in ls.allSavedFields">
+                            <td>{{data.fieldName}}</td>
+                            <td>{{data.fieldValue}}</td>
+                            <td class="text-center">
+								<button type="button" ng-click = 'ls.editFieldById(data.id)' class="btn btn-link"><i class="icon-pencil7"></i></button> 
+                                <button type="button"  ng-click = 'ls.deleteFieldById(data.id)' class="btn  btn-link"><i class="icon-cross3"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    
+    <!--  Log Simulation creation page - Create New Simulation -->
+    <script type="text/ng-template" id="logsimulation-newsimulation.html">
+		<div class="panel panel-flat">
+			<div class="panel-heading">
+			<div class="heading-elements">
+				<ul class="icons-list">
+					<li>
+            	        <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedEventDetails()" class="btn btn-dark"><i class="md md-add"></i> Event Details</a>
+                    </li>
+					<li>
+            	        <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedAttackDetails()" class="btn btn-dark"><i class="md md-add"></i> Attack Details</a>
+                    </li>
+					<li>
+            	        <a style="color: white" href="javascript:void('0')" ng-click="ls.openSchedulers()" class="btn btn-dark"><i class="md md-add"></i> Back to Schedules</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+<div class="banners">
+ <div uib-alert ng-repeat="baner in ls.alertMessagaes"
+		 class="alert {{baner.type}}"
+							close="closeAlert($index)">{{baner.msg}}
+					  </div>
+</div>
+        <div class="panel-body">
+
+            <form class="form-horizontal" action="#">
+                <fieldset>
+                    <legend class="text-semibold">Enter Simulation Information</legend>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Simulation Name</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" ng-model="ls.newsim.simulationName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Simulation Description</label>
+                        <div class="col-sm-3">
+                            <textarea rows="" cols="5" class="form-control" ng-model="ls.newsim.simulationDescription"> </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Simulation Type</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" ng-model="ls.newsim.simulationType">
+                                <option ng-repeat="data in ls.simulationTypes" value="{{data}}">{{data}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="ls.newsim.simulationType == 'EVENT'">
+                        <label class="col-sm-3 control-label"> Event Name</label>
+                        <div class="col-sm-3">
+                           <!-- <select class="form-control" ng-model="ls.newsim.eventDetailsId">
+                               <option ng-repeat="data in ls.allEventDetails" value="{{data.eventId}}">{{data.eventName}}</option>
+                           </select> -->
+                            <select class="form-control" ng-model="ls.newsim.eventDetailsId" ng-options=" event.eventId as event.eventName for event in ls.allEventDetails">
+                                 <!--<option value="" disabled selected>-- please choose a Event --</option>-->
+                             </select>
+                        </div>
+						<span class="label"><a href="javascript:void('0')" ng-click='ls.openNewEventDetails()'>Create New Event</a></span>
+                    </div>
+					<div class="form-group" ng-show="ls.newsim.simulationType == 'ATTACK'">
+                        <label class="col-sm-3 control-label"> Attack Name</label>
+                        <div class="col-sm-3">
+							<select class="form-control" ng-model="ls.newsim.attackDetailsId" ng-options=" attack.attackId as attack.attackName for attack in ls.allSavedAttacks">
+                             </select>
+                        </div>
+						<span class="label"><a href="javascript:void('0')" ng-click='ls.openNewAttackDetails()'>Create New Attack</a></span> 
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"> Status</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" ng-model="ls.newsim.status">
+                                <option ng-repeat="data in ls.statuses" value="{{data}}">{{data}}</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-3 control-label"> Count </label>
+                        <div class="col-sm-3">
+                            <input type="number" min="1" class="form-control" ng-model="ls.newsim.count">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"> Schedule </label>
+                        <div class="col-sm-3">
+                            <select class="form-control" ng-model="ls.newsim.scheduleDetails.schedulerFlag">
+                                <option value="TRUE">TRUE</option>
+                                <option value="FALSE">FALSE</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form-group" ng-show="ls.newsim.scheduleDetails.schedulerFlag == 'TRUE'">
+                        <label class="col-sm-3 control-label"> Schedule Pattern</label>
+                        <div class="col-sm-3">
+							<a href="javascript:void('0')" ng-click="ls.openCronBuilder()">{{ls.newsim.scheduleDetails.cronExpression}}</a>
+                        </div>
+                    </div>
+                    <a href="javascript:void('0')"  ng-click="clickable=!clickable" style="color:black"><legend class="text-semibold">Advanced Details</legend></a>
+				<fieldset ng-show="clickable">
+                    <!-- 
+				<fieldset>
+					<!-- <legend class="text-semibold">Advanced Details</legend> -->
+					<div class="form-group">
+                        <label class="col-sm-3 control-label"> Meta Data </label>
+                        <div class="col-sm-3">
+                            <a href="javascript:void('0')" ng-click="ls.openMetaDataModal()">Edit Environmental Values</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"> MultiLine </label>
+                        <div class="col-sm-3">
+                            <select class="form-control" ng-model="ls.newsim.multiLineDetails.multiLineFlag">
+                                <option value="TRUE">TRUE</option>
+                                <option value="FALSE">FALSE</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form-group" ng-show="ls.newsim.multiLineDetails.multiLineFlag == 'TRUE'">
+                        <label class="col-sm-3 control-label"> MultiLine Pattern</label>
+                        <div class="col-sm-3">
+							<input type="text" class="form-control" ng-model="ls.newsim.multiLineDetails.multiLinePattern.pattern">
+                        </div>
+						<a href="javascript:void('0')" ng-click="ls.openMultiLineModal()">Edit MultiLine Matchers</a>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"> IP </label>
+                        <div class="col-sm-3">
+							<a href="javascript:void('0')" ng-click='ls.openRandomIpForm()'>{{ls.newsim.simulationIP.type}}</a>
+	                    </div>
+                     </div>
+                     <div class="form-group">
+                        <label class="col-sm-3 control-label"> Timestamp </label>
+                        <div class="col-sm-3">
+                   			<a href="javascript:void('0')" ng-click='ls.openRandomTimeStampForm()'>{{ls.newsim.simulationDate.type}}</a>
+	                    </div>
+					</div>
+				</fieldset>
+
+                </fieldset>
+                <div class="text-right">
+                    <button type="button" class="btn btn-dark" ng-click="ls.ondemandSimulation()">On-Demand</button>
+                    <button type="button" class="btn btn-dark" ng-if="ls.newsim.scheduleDetails.schedulerFlag=='TRUE'" ng-click="ls.scheduleSimulation()">Schedule</button>
+                    <button type="reset" class="btn btn-dark waves-effect m-l-5"> Reset</button>
+                </div>
+            </form>
+        </div>
+		</div>
+    </script>
+
+    <!--  Log Simulation create new Log Type , Message Type, Template - Create new eventDetails -->
+    <script type="text/ng-template" id="logsimulation-neweventdetails.html">
+      <div class="panel panel-flat">
+        <div class="panel-heading">
+          <div class="heading-elements">
+            <ul class="icons-list">
+              <li>
+                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedFieldDetails()" class="btn btn-dark"><i class="md md-add"></i> Field Details</a>
+              </li>
+              <li>
+                <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i class="md md-add"></i> Back to New Simulation</a>
+              </li>
+			  <li>
+                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedEventTypes()" class="btn btn-dark"><i class="md md-add"></i>Event Types</a>
+              </li>
+			  <li>
+                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedLogTypes()" class="btn btn-dark"><i class="md md-add"></i>Log Types</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+<div class="banners">
+<div uib-alert ng-repeat="baner in ls.alertMessagaes"
+		 class="alert {{baner.type}}"
+							close="closeAlert($index)">{{baner.msg}}
+					  </div>
+</div>
+        <div class="panel-body">
+
+          <form class="form-horizontal" action="#">
+              <fieldset>
+                  <legend class="text-semibold">Enter New Event Information</legend>
+                  <div class="form-group">
+                      <label class="col-sm-3 control-label"> Event Name </label>
+                      <div class="col-sm-3">
+                          <input type="text" class="form-control" ng-model="ls.newEventDetails.eventName" required="required">
+                      </div>
+                  </div>
+				  <div class="form-group">
+                      <label class="col-sm-3 control-label"> Event Type</label>
+                      <div class="col-sm-3">
+                         <!--<select class="form-control" ng-model="ls.newEventDetails.eventType">
+                             <option ng-repeat="data in ls.eventTypes" value="{{data.eventTypeId}}">{{data.eventTypeName}}</option>
+                         </select> -->
+                            <select class="form-control"  ng-model="ls.newEventDetails.eventType"  ng-options=" event.eventTypeId  as  event.eventTypeName for event in ls.eventTypes">
+                                   <option value=""  disabled selected>-- please choose a Event --</option>
+                               </select>
+                      </div>
+					  <span class="label"><a href="javascript:void('0')" ng-click='ls.openNewEventTypeForm()'>Create Event Type</a></span>
+                  </div>
+				  <div class="form-group">
+                      <label class="col-sm-3 control-label"> Log Type</label>
+                      <div class="col-sm-3">
+                         <!-- <select class="form-control" ng-model="ls.newEventDetails.logType">
+                             <option ng-repeat="data in ls.logTypes" value="{{data.logTypeId}}">{{data.logTypeName}}</option>
+                         </select> -->
+                        <select class="form-control"  ng-model="ls.newEventDetails.logType"  ng-options=" event.logTypeId  as  event.logTypeName for event in ls.logTypes">
+                                   <option value=""  disabled selected>-- please choose a Event --</option>
+                               </select>
+                      </div>
+					  <span class="label"><a href="javascript:void('0')" ng-click='ls.openNewLogTypeForm()'>Create Log Type</a></span>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-3 control-label"> OS</label>
+                      <div class="col-sm-3">
+						  <select class="form-control" ng-model="ls.newEventDetails.osType">
+                              <option ng-repeat="data in ls.osTypes" value="{{data}}">{{data}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-3 control-label"> Format Type</label>
+                      <div class="col-sm-3">
+						  <select class="form-control" ng-model="ls.newEventDetails.formatType">
+                              <option ng-repeat="data in ls.formatTypes" value="{{data}}">{{data}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-3 control-label"> Template </label>
+					  <div class="col-sm-6" ng-show="ls.newEventDetails.formatType=='JSON'">
+						   <angular-jsoneditor ng-model="obj.data" options="obj.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+							&nbsp;
+							<div class="pdL4">
+                                    <button type="button" class="btn btn-dark" ng-click="changeData()">Reset data </button>
+                                    <button type="button" class="btn btn-dark" ng-click="changeOptions()">change options </button>
+        	   		  		</div>
+					  </div>
+				      <div class="col-sm-6" ng-show="ls.newEventDetails.formatType=='PLAIN'">
+                          <textarea rows="" cols="10" class="form-control" ng-model="ls.newEventDetails.template" required="required"> </textarea>
+                      </div>
+                  </div>
+              </fieldset>
+              <div class="text-right">
+                  <button type="button" class="btn btn-dark" ng-click="ls.saveNewEventDetails()">Save</button>
+                  <button type="reset" class="btn btn-dark waves-effect m-l-5"> Reset</button>
+              </div>
+          </form>
+      </div>
+    </script>        
+
+    <!--  Log Simulation create new Log Type , Message Type, Template - Create new attackDetails -->
+    <script type="text/ng-template" id="logsimulation-newattackdetails.html">
+
+        <div class="col-sm-3">
+
+            <!-- Main sidebar -->
+            <div class="sidebar sidebar-main sidebar-default">
+                <div class="sidebar-content" style="width:299px; border-right:1px solid #ddd">
+
+                    <!-- Main navigation -->
+                    <div class="sidebar-category sidebar-category-visible">
+                        <div class="category-title h6">
+                            <span>Atacks</span>
+
+                        </div>
+
+                        <div class="category-content no-padding">
+                            <ul class="navigation navigation-main navigation-accordion">
+                                <li>
+                                    <input type="text" class="form-control" ng-model="searchinput" value="" style="width: 88%;  margin-left: 17px;">
+                                </li>
+
+                                <li class="has_sub" ng-repeat="(key, prop) in ls.subMenu  | filter:searchinput track by $index">
+                                    <a href=" javascript:void(0); " ng-click="val.expanded=!val.expanded" class="has-ul " style="color: black;
+            font-weight: bold; "> 
+											<span>{{prop.eventName}} </span> 
+											<span class="menu-arrow "> 
+												<i class="md md-keyboard-arrow-down "></i>
+											</span>
+									</a>
+
+
+                                    <ul ng-if="val.expanded" class="list-unstyled collapse in" style="display: block;">
+                                        <li>
+                                            <a href="javascript:void(0);" ng-click='ls.addAttack(prop)'>
+                  {{prop.eventSubType}}
+                </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /main navigation -->
+
+                </div>
+            </div>
+            <!-- /main sidebar -->
+
+        </div>
+
+        <div class="col-sm-9">
+            <div class="panel panel-flat">
+                <div class="panel-heading">
+                    <div class="heading-elements">
+                        <ul class="icons-list">
+                            <li>
+                                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedFieldDetails()" class="btn btn-dark"><i class="md md-add"></i> Field Details</a>
+                            </li>
+                            <li>
+                                <a style="color: white" href="javascript:void('0')" ng-click="ls.openNewSimulation()" class="btn btn-dark"><i class="md md-add"></i> Back to New Simulation</a>
+                            </li>
+                            <li>
+                                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedEventTypes()" class="btn btn-dark"><i class="md md-add"></i>Event Types</a>
+                            </li>
+                            <li>
+                                <a style="color: white" href="javascript:void('0')" ng-click="ls.openSavedLogTypes()" class="btn btn-dark"><i class="md md-add"></i>Log Types</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="banners">
+                </div>
+                <div uib-alert ng-repeat="baner in ls.alertMessagaes" class="alert {{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+                </div>
+                <div class="panel-body">
+                    <br />
+                    <!-- <div uib-alert ng-repeat="alert in ls.alertMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div> -->
+                    <form class="form-horizontal" action="#">
+                        <fieldset>
+                            <legend class="text-semibold">Enter New Attack Information</legend>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><b> Attack Name </b></label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" ng-model="ls.newAttackDetails.attackName">
+                                </div>
+                            </div>
+                            
+                            <!--  <div class="form-group">
+                                <label class="col-sm-3 control-label"> Event Details</label>
+                                <table class="table">
+                                    <tbody>
+                                        <tr ng-repeat="data  in ls.newAttackDetails.eventDetails">
+                                            <td>
+
+                                                <select class="form-control" ng-model="data.selectEvent" style="width:400px">
+                              		<option ng-repeat="event in ls.allEventDetails" value="{{event.eventId}}">{{event.eventName}}</option>
+                          		</select>
+                                            </td>
+
+
+
+                                            <td>Followed by within</td>
+                                            <td>
+                                                <span style="float:left"><input class="form-control" type="number" style="width:100px" ng-model="data.timeFrame"></span>
+                                                <span style="float:left"><select class="form-control" style="width:70px;" ng-model="data.timeMetric">
+     					     					   <option value="MINS">MINS</option>
+         								   		   <option value="SECS">SECS</option>
+           										   <option value="HRS">HRS</option>
+  								                 </select></span> </td>
+
+
+
+                                            <td>
+
+                                                <button type="button" ng-click="ls.addEvent()" class="btn  btn-link"><i class="icon-plus3"></i></button>
+                                                <button type="button" ng-click="ls.removeEvent($index)" class="btn  btn-link"><i class="icon-cross2"></i></button>
+
+
+                                            </td>
+                                        </tr>
+                                </table>
+                                </div> -->
+                            <!-- TABLE BODY -->
+
+                            <div class="form-group">
+
+                                <label class="col-sm-3 control-label"> <b>Event Details</b></label>
+                            </div>
+                            <div ng-repeat="data  in ls.newAttackDetails.eventDetails">
+                                <div class="form-group">
+                                    <div>
+                                        <!--<select class="form-control" ng-model="data.selectEvent" style="width:400px">
+                              		<option ng-repeat="event in ls.allEventDetails" value="{{event.eventId}}">{{event.eventName}}</option>
+                          		</select> -->
+ 									
+									<select class="form-control" style="width:400px" ng-model="data.selectEvent" ng-options="event.eventId as event.eventName for event in ls.allEventDetails">
+						 
+									<option value=""  disabled selected>-- please choose a Event --</option>			
+						
+			    					</select>
+
+
+                                    </div>
+                                    <br> &nbsp;&nbsp;&nbsp;
+
+                                    <label>Followed by within</label>
+                                    <div>
+
+                                        <div class="col-sm-3">
+                                            <span style="float:left"><input ng-model="data.timeFrame" class="form-control" type="number" style="width:100px"></span>
+                                            <span style="float:center"><select  ng-model="data.timeMetric" class="form-control" style="width:100px;">
+     					     					   <option value="MIN">MIN</option>
+         								   		   <option value="SEC">SEC</option>
+           										   <option value="HRS">HRS</option>
+  								                 </select></span>
+                                        </div>
+                                    </div>
+                        
+                                    <div>
+                                        <div class="col-sm-3" style="float:right">
+                                            <!--<button type="button" ng-show="$index==0" ng-click="ls.addEvent()" class="btn  btn-link"><i class="icon-plus3"></i></button>-->
+                                            <button type="button" ng-click="ls.removeEvent($index)" class="btn  btn-link"><i class="icon-bin2"></i></button>
+
+                                        </div>
+                                    </div>
+                                </div>
+<hr>
+                            </div>
+
+                            <!--TABLE BODY -->
+</fieldset>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-dark" ng-click="ls.saveNewAttackDetails()">Save</button>
+                            <button type="reset" class="btn btn-dark"> Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+    </script>
+    
+    
+    <!--  Log Simulation fields page - Create New Fields -->
+    <div id="newFieldModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+	   <form class="form-horizontal group-border-dashed">
+	      <div class="modal-dialog modal-lg">
+	         <div class="modal-content">
+	            <div class="modal-header">
+	               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	               <h4 class="modal-title" id="myLargeModalLabel">New Field</h4>
+	            </div>
+	            <div class="modal-body">
+	               <div class="panel panel-flat">
+	                  <div class="panel-body">
+	                     <fieldset>
+	                        <legend class="text-semibold">Enter New Field Information</legend>
+	                        <div class="form-group">
+	                           <label class="col-sm-3 control-label"> Field Name</label>
+	                           <div class="col-sm-3">
+	                              <input type="text" class="form-control" ng-model="ls.newField.fieldName">
+	                           </div>
+	                        </div>
+	                        <div class="form-group">
+	                           <label class="col-sm-3 control-label"> Field Value</label>
+	                           <div class="col-sm-3">
+	                              <input type="text" class="form-control" ng-model="ls.newField.fieldValue">
+	                           </div>
+	                        </div>
+	                     </fieldset>
+	                  </div>
+	               </div>
+	            </div>
+	            <div class="modal-footer">
+	               <button type="button" class="btn btn-dark" ng-click="ls.saveNewFieldDetails()" data-dismiss="modal">Save</button>
+	               <button type="reset" class="btn btn-dark waves-effect m-l-5"> Cancel </button>
+	               <button type="button" class="btn btn-dark waves-effect" data-dismiss="modal">Close</button>
+	            </div>
+	         </div>
+	      </div>
+	   </form>
+	</div>
+    
+	<!-- modal for meta fields - Add/Edit/Remove Meta Fields - Environment values  -->
+	<div id="metadataModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">Meta Data</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+
+                                <fieldset>
+                                	<legend class="text-semibold">Environment Details</legend>
+	                                <table class="table table-borderless">
+	                                	<th>
+	                                	<tr>
+	                                		<td>Key</td>
+	                                		<td>Value</td>
+	                                		<td>Action</td>
+	                                		</tr>
+	                                	</th>
+									    <tr ng-repeat="data in ls.newsim.metaFields">
+									        <td>
+									            <input type="text" class="form-control" required="" placeholder="key" ng-model="data.key">
+									        </td>
+									        <td>
+									            <input type="text" class="form-control" required="" placeholder="value" ng-model="data.value">
+									        </td>
+									        <td>
+										     	<button type="button"  ng-click = 'ls.addMetaFieldRow()' class="btn  btn-link"><i class="icon-plus3"></i></button>
+                                            <button type="button"  ng-click = 'ls.deleteMetaFieldRow($index)' class="btn  btn-link"><i class="icon-cross2"></i></button>
+											</td>
+									    </tr>
+									</table>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-dark waves-effect waves-light" >Reset</button>
+                       <button type="submit" class="btn btn-dark waves-effect waves-light" data-dismiss="modal">Save</button>
+                       <button type="button" class="btn btn-dark waves-effect waves-light" data-dismiss="modal"> Close</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+	<!--  modal for cron builder -->
+	<div id="cronModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">Cron Builder</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+                                <div uib-alert ng-repeat="alert in jobs.conditionMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+                                <fieldset>
+                                	<legend class="text-semibold">Choose Schedule</legend>
+	                                <cron-gen ng-model="ls.newsim.scheduleDetails.cronExpression" options="ls.cronOptions"></cron-gen>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" ng-click="ls.defaultCronExpression()">Reset</button>
+                        <button type="button" class="btn btn-dark waves-effect waves-light" data-dismiss="modal">Done</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+	<!--  modal for multiline patterns -->
+	<div id="multilineModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">MultiLine Matcher</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+
+                                <fieldset>
+                                	<legend class="text-semibold">Choose Matcher</legend>
+                                	<div class="form-group">
+	                                    <label class="col-sm-3 control-label">Negate</label>
+	                                   	<div class="col-sm-3">
+	                                	<select class="form-control" ng-required="true" ng-model="ls.newsim.multiLineDetails.multiLinePattern.negate">
+											<option ng-repeat="data in ls.multiLineNegates" value="{{data}}">{{data}}</option>
+		                      			</select>
+		                      		</div>
+		                      		</div>
+		                      		<div class="form-group">
+	                                    <label class="col-sm-3 control-label">Matcher</label>
+	                                   	<div class="col-sm-3">
+			                                <select class="form-control" ng-required="true" ng-model="ls.newsim.multiLineDetails.multiLinePattern.match">
+												<option ng-repeat="data in ls.multiLineMatchers" value="{{data}}">{{data}}</option>
+				                        	</select>
+			                        	</div>
+		                        	</div>
+								</fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark waves-effect" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-dark waves-effect waves-light">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+	<!--  modal for new event type -->
+	<div id="newEventTypeModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">New Event Type</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+
+                                <fieldset>
+                                	<legend class="text-semibold">Enter New Event Type</legend>
+                                	<div class="form-group">
+	                                    <label class="col-sm-3 control-label">Event Type</label>
+	                                   	<div class="col-sm-3">
+	                                		<input type="text" class="form-control" required="" placeholder="" ng-model="ls.newEventType.eventTypeName">
+		                      			</div>
+		                      		</div>
+								</fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark waves-effect" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dark waves-effect waves-light" data-dismiss="modal" ng-click="ls.saveNewEventType()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Modal for RandomIp's -->
+   <div id="randomIpModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed" ng-submit="ls.saveRandomIp()">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel"> IP</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+                               <!--  <div uib-alert ng-repeat="alert in ls.conditionMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>  -->
+                                <fieldset>
+                                	<legend class="text-semibold">Type Of IP</legend>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip" ng-model="ls.newsim.simulationIP.type" value="RANDOM IP">&nbsp; RANDOM IP
+										</div>
+										
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip" ng-model="ls.newsim.simulationIP.type" value="CIDR">&nbsp; CIDR
+										</div>
+										<div class="col-sm-3">
+											<input type="text" ng-model="ls.newsim.simulationIP.cidrValue" class="form-control" placeholder="CIDR value">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip" ng-model="ls.newsim.simulationIP.type" value="COUNTRY">&nbsp; COUNTRY
+										</div>
+										<div class="col-sm-3">
+                            				<select class="form-control" ng-required="true" ng-model="ls.newsim.simulationIP.countryValue">
+                                				<option ng-repeat="country in ls.countries" value="{{country}}">{{country}}</option>
+                            				</select>
+                        				</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip" ng-model="ls.newsim.simulationIP.type" value="RANGE">&nbsp; RANGE
+										</div>
+										<div class="col-sm-3">
+											<input type="text" ng-model="ls.newsim.simulationIP.range.fromIp" class="form-control" placeholder="From">
+										</div>
+										<div class="col-sm-3">
+											<input type="text" ng-model="ls.newsim.simulationIP.range.toIp" class="form-control" placeholder="TO">
+										</div>
+									</div>
+								</fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                     <button type="submit" class="btn btn-dark" data-dismiss="modal">Done</button>
+                      <button type="reset" class="btn btn-dark">Reset</button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                       
+                        
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    
+    
+     <!-- Modal for Random Timestamp -->
+   <div id="randomTimeModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">SIMULATION TIMESTAMP</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+                               <!--  <div uib-alert ng-repeat="alert in ls.conditionMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>  -->
+                                <fieldset>
+                                	<legend class="text-semibold">Type</legend>
+									
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="time" value="REAL TIME"ng-model="ls.newsim.simulationDate.type">&nbsp; REAL TIME
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="time" value="HISTORIC TIME" ng-model="ls.newsim.simulationDate.type">&nbsp; HISTORIC
+										</div>
+										<div class="col-sm-6">
+											<input type="text" name="datetimesFrom" class="form-control" ng-model="ls.sampledata" />
+										</div>
+									
+									</div>
+									
+								</fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-dark" data-dismiss="modal">Done</button>
+                      <button type="reset" class="btn btn-dark">Reset</button>
+                      <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+	<!--  modal for new log type -->
+	<div id="newLogTypeModal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-left: 0px;">
+        <form class="form-horizontal group-border-dashed">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel">New Log Type</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-flat">
+                            <div class="panel-body">
+
+                                <fieldset>
+                                	<legend class="text-semibold">Enter New Log Type</legend>
+                                	<div class="form-group">
+	                                    <label class="col-sm-3 control-label">Log Type</label>
+	                                   	<div class="col-sm-3">
+	                                		<input type="text" class="form-control" required="" placeholder="" ng-model="ls.newLogType.logTypeName">
+		                      			</div>
+		                      		</div>
+								</fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark waves-effect" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dark waves-effect waves-light" data-dismiss="modal" ng-click="ls.saveNewLogType()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	
+</div>

@@ -1,0 +1,508 @@
+<div ng-controller="historyController as ctrl"
+     ng-init="controller.init()" class="content-wrapper">
+    <div class="row page-header">
+        <div class="col-sm-8">
+            <h4 class="page-title text-overflow">Historical</h4>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+
+        <div class="panel dashboard-panel" id="sampleId" style="overflow: initial">
+
+            <div class="panel-body dashboard-body dbody " id="id" style="border-top: none; padding: 0px">
+
+                <div class="row srow">
+
+                    <div class="col-md-3">
+                        <div class="filerContainer">
+
+                            <form ng-submit="searchBasedonQueryString()" class="ng-pristine ng-valid">
+
+                                <div class="input-group">
+                                    <input type="text" class="form-control ng-pristine ng-valid ng-empty ng-touched" placeholder="Search Here" ng-model="searchQueryString">
+                                    <div class="input-group-append btn-inverse-primary bg-primary border-primary" style="cursor: pointer;" ng-click="searchBasedonQueryString()">
+                                        <span class="input-group-text bg-transparent" style="color: white;"> Search </span>
+                                    </div>
+                                </div>
+
+                            </form>
+
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-9" style="margin-left: 0px; padding-left: 0px;">
+
+                        <div class="btn-group dropdown">
+                            <button class="btn btn-dark dropdown-toggle btn-inverse-primary"
+                                    type="button" id="dropdownMenuButton3" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span>{{type}}</span>
+
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3"
+                                 style="max-height: 300px; overflow-y: scroll; width: auto">
+
+                                <a class="dropdown-item" href="javascript:void(0)" ng-click="changeType('Events')"  style="font-size: 12px">Events</a>
+                                <a class="dropdown-item" href="javascript:void(0)" ng-click="changeType('Alert')" style="font-size: 12px">Alerts</a>
+
+
+                            </div>
+                        </div>
+
+                        <div class="btn-group dropdown">
+                            <button class="btn btn-dark dropdown-toggle btn-inverse-primary"
+                                    type="button" id="dropdownMenuButton3" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span ng-if="categoryDisplayText != ''">{{categoryDisplayText}}</span>
+                                <span ng-if="categoryDisplayText == ''">All</span>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3"
+                                 style="max-height: 300px; overflow-y: scroll; width: auto">
+                                <a class="dropdown-item" href="javascript:void(0)"
+                                   ng-click="filterCategory('All')" style="font-size: 12px">All</a>
+                                <a class="dropdown-item"
+                                   ng-repeat="data in ctrl.deviceTypesList | unique : 'deviceType' | orderBy : 'deviceType'"
+                                   href="javascript:void(0)"
+                                   ng-click="filterCategory(data.deviceType)"
+                                   style="font-size: 12px">{{data.deviceTypedisplayName}}</a>
+
+                            </div>
+                        </div>
+
+                        <div class="btn-group dropdown">
+                            <button
+                                    class="btn btn-active-pink dropdown-toggle dropdown-toggle-icon btn-dark btn-inverse-primary"
+                                    data-toggle="dropdown" aria-expanded="false">
+                                <span>{{currentCompany}}</span>
+
+                            </button>
+
+
+
+                            <ul class="dropdown-menu dropdown-menu-left"
+                                style="max-height: 300px; overflow-y: scroll; width: auto">
+
+                                <a class="dropdown-item" href="javascript:void(0)"
+                                   ng-click="filterCompany('All')">All</a>
+
+
+                                <a class="dropdown-item"
+                                   ng-repeat="company in ctrl.currentCompanies | orderBy : 'companyName'"
+                                   href="javascript:void(0)"
+                                   ng-click="filterCompany(company.companyName)">{{company.companyName}}</a>
+                            </ul>
+                        </div>
+
+
+                        <div class="btn-group" uib-dropdown>
+
+
+
+                            <a href="javascript:void('0')" ng-click="ctrl.showFilter();" title="Add Filter" class="btn btn-link btn-float has-text"> + Add filter </a>
+
+                            <div id="filter-dropdown"
+                                 class="dropdown-menu dropdown-menu-lg" style="width: 481px;max-height: 313px;" >
+                                <div class="">
+                                    <div uib-alert ng-repeat="alert in ctrl.filterMessagaes" class="alert"
+                                         ng-class="'alert-' + (alert.type || 'warning')"
+                                         close="closeAlert($index)">{{alert.msg}}</div>
+                                    <form ng-submit="submitQuery()">
+                                        <div class="FilterContainer" style="width: -webkit-fill-available">
+                                            <div class="Filterheader">
+                                                <div class="Filtertitle">
+                                                    Customize Filter
+                                                    <div class="pull-right" ng-click="ctrl.closeFilter()">
+                                                        <a href="javascript:void('0')"><i class="fa fa-close"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="FilterBody" >
+                                                <div class="FilterRow row" style="margin-left: 5px;margin-right: 0px;">
+                                                    <div class="col-md-6" style="">
+                                                        <div class="drContainer containerCss" style="padding-left: 3px;">
+                                                            <label class="labelDiv">Field</label>
+                                                            <selectize options='logFieldsFilter' title="Select Event Name"
+                                                                       config="ctrl.fieldConfig" ng-model="ctrl.temp.field"></selectize>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="">
+                                                        <div class="drContainer containerCss">
+                                                            <label class="labelDiv">Operator</label>
+                                                            <selectize options='ctrl.operator' title="Select Event Name"
+                                                                       config="ctrl.operatorConfig" ng-model="ctrl.temp.subType"></selectize>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="FilterRow">
+                                                    <div class="col-md-12 cmd12" style="">
+                                                        <div class="drContainer containerCss">
+                                                            <label class="labelDiv">Value</label> <input type="text"
+                                                                                                         placeholder="Select a value" class="form-control"
+                                                                                                         style="width: 100%" ng-model="ctrl.temp.value"
+                                                                                                         ng-disabled="ctrl.temp.subType == 'exists' || ctrl.temp.subType == 'notExists'">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="FilterFooter">
+                                                <div class="btnContainer" style="margin-right:14px">
+                                                    <button type="button" ng-click="ctrl.closeFilter()"
+                                                            class="btn btn-md btn-secondary btnc">Cancel</button>
+                                                    <button type="submit" class="btn btn-success btnc">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+
+                            <a href="javascript:void('0')" class="btn btn-link  btn-float has-text" ng-click = "openSaveSearch()">Save</a>
+                            <a href="javascript:void('0')" class="btn btn-link  btn-float has-text" ng-click = "openSearch()">Open</a>
+
+
+                            <a ng-if="editMode" href="javascript:void('0')"
+                                class="btn btn-link  btn-float has-text" title="Save {{name}}"
+                                ng-click="toggleEditMode()"> <i class="fa fa-check"></i>
+                        </a> <a href="javascript:void('0')" title="Undo"
+                                class="btn btn-link  btn-float has-text" ng-if="editMode"
+                                title="Undo" ng-click="cancelEditMode()"> <i
+                                class="ion-reply"></i>
+                        </a>
+                            <!-- 							<div> -->
+                            <a id="simple-dropdown-anchor" href="javascript:void('0')"
+                               href="javascript:void('0')" class="btn has-text dropdown-toggle"
+                               aria-expanded="false"> <i class="ion-clock"></i>
+                                {{labelName}}
+                            </a>
+                            <div id="simple-dropdown"
+                                 class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-3"
+                                         style="margin-left: 20px; padding-top: 10px;">
+
+                                        <h5 class="page-title">Custom range</h5>
+
+                                        <form class="form-horizontal row col-md-12"
+                                              style="padding-left: 5px; padding-bottom: 12px; padding-top: 30px">
+
+                                            <div class="form-group pad-top row">
+                                                <label class="col-sm-2 control-label pad-top"
+                                                       style="color: white; padding-top: 7px">From</label>
+                                                <div class="col-sm-10">
+                                                    <!-- 													<input type="datetime-local" class="form-control" ng-model="startDateInput.momentDate"/> -->
+                                                    <input class="form-control datetimepicker"
+                                                           placeholder="Select a start date..."
+                                                           moment-picker="startDateInput.stringDate" locale="en"
+                                                           format="YYYY-MM-DD HH:mm:ss" autoclose="true"
+                                                           ng-model="startDateInput.momentDate"
+                                                           ng-model-options="{ updateOn: 'blur' }">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group pad-top row">
+                                                <label class="col-sm-2 control-label pad-top"
+                                                       style="color: white; padding-top: 7px">To</label>
+                                                <div class="col-sm-10">
+                                                    <!-- 													<input type="datetime-local" class="form-control" ng-model="endDateInput.momentDate"/> -->
+                                                    <input type="text"
+                                                           placeholder="Select a end
+ 														 date..."
+                                                           moment-picker="endDateInput.stringDate" locale="en"
+                                                           format="YYYY-MM-DD HH:mm:ss" id="to-date" autoclose="true"
+                                                           ng-model="endDateInput.momentDate" class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <br />
+
+                                            <div class="row text-right pad-all"
+                                                 style="padding-left: 50px">
+                                                <button class="btn btn-dark" type="button"
+                                                        ng-click="applyTimeBasedFilter()">Apply</button>
+
+                                            </div>
+
+                                        </form>
+
+
+                                    </div>
+                                    <div class="col-sm-8 col-md-9 row">
+
+                                        <div class="col-sm-4 col-md-3">
+
+                                            <ul class="list-unstyled">
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+                                                    2 days</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+                                                    7 days</a></li>
+                                                <a class="dropdown-ite" href="javascript:void('0')"
+                                                   ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+                                                    30 days</a>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+                                                    90 days</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last6months','Last 6 months')">Last
+                                                    6 months</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last1year','Last 1 year')">Last
+                                                    1 year</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last2years','Last 2 years')">Last
+                                                    2 years</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last5years','Last 5 years')">Last
+                                                    5 years</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-4 col-md-3">
+
+                                            <ul class="list-unstyled">
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+                                                    before yesterday</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+                                                    day last week</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+                                                    week</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+                                                    month</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+                                                    year</a></li>
+
+                                            </ul>
+                                        </div>
+
+                                        <div class="col-sm-4 col-md-3">
+
+                                            <ul class="list-unstyled">
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('today','Today')">Today</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+                                                    so far</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisWeek','This week')">This
+                                                    week</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+                                                    week so far</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisMonth','This month')">This
+                                                    month</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+                                                    month so far</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisYear','This year')">This
+                                                    year</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+                                                    year so far</a></li>
+
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-4 col-md-3">
+
+                                            <ul class="list-unstyled">
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+                                                    15 minutes</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+                                                    30 minutes</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+                                                    1 hour</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+                                                    3 hours</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+                                                    6 hours</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+                                                    12 hours</a></li>
+                                                <li><a href="javascript:void('0')"
+                                                       ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+                                                    24 hours</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div ng-if="ctrl.query.rules.length > 0">
+
+                        <div id="filterControl" class="col-md-12"
+                             style="margin-left: 40px;margin-bottom:10px">
+
+                            <div id="GlobalFilterGroup"
+                                 class="globalFilterGroup__wrapper globalFilterGroup__wrapper-isVisible row">
+                                <div>
+                                    <div
+                                            class="euiFlexGroup euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow globalFilterGroup row">
+
+                                        <div class="euiFlexItem row">
+                                            <div
+                                                    class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--wrap globalFilterBar globalFilterGroup__filterBar row">
+                                                <div class="euiFlexItem euiFlexItem--flexGrowZero"
+                                                     ng-repeat="data in ctrl.query.rules">
+                                                    <div
+                                                            class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
+                                                            id="popoverFor_filter{{$index}}">
+                                                        <div class="euiPopover__anchor">
+                                                            <button class="btn-dark" aria-label="Filter actions"
+                                                                    title="Filter: {{data.field}}:{{data.value}}. Select for more filter actions."
+                                                                    data-test-subj="filter filter-enabled filter-key-agent.hostname filter-value-test"
+                                                                    style="border: none; margin-left: 10px;">
+																<span
+                                                                        class="euiBadge__content header-sm d-flex justify-content-between align-items-center"
+                                                                        ng-click="ctrl.removeQuery($index)"><i
+                                                                        class="fa fa-close"></i>&nbsp;&nbsp; <span><span>{{data.field}}:{{data.value}}</span></span>
+																	<path
+                                                                            d="M7.293 8L3.146 3.854a.5.5 0 1 1 .708-.708L8 7.293l4.146-4.147a.5.5 0 0 1 .708.708L8.707 8l4.147 4.146a.5.5 0 0 1-.708.708L8 8.707l-4.146 4.147a.5.5 0 0 1-.708-.708L7.293 8z"></path>
+                                                                    </svg></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="euiFlexItem euiFlexItem--flexGrowZero">
+                                                    <div
+                                                            class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
+                                                            id="addFilterPopover">
+                                                        <div class="euiPopover__anchor">
+                                                            <button
+                                                                    class=" btn euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+                                                                    type="button" data-test-subj="addFilter"></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 						<div ng-repeat="data in ctrl.query.rules" class="col-md-2 mar-ver"> -->
+                            <!-- 							<div class="input-group-btn dropdown"> -->
+                            <!-- 								<button class="btn  btn-default filterOverlay" popover -->
+                            <!-- 									title="{{data.subType}} {{data.field}}:{{data.value}}" -->
+                            <!-- 									type="button" ng-click="ctrl.editQuery(data,$index)">{{data.subType}} -->
+                            <!-- 									{{data.field}}:{{data.value}}</button> -->
+                            <!-- 								<button -->
+                            <!-- 									class="btn btn-default dropdown-toggle dropdown-toggle-icon" -->
+                            <!-- 									type="button" ng-click="ctrl.removeQuery($index)"> -->
+                            <!-- 									<i class="fa fa-close"></i> -->
+                            <!-- 								</button> -->
+                            <!-- 							</div> -->
+                            <!-- 						</div> -->
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="save_search" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <i class="pci-cross pci-circle"></i>
+                    </button>
+                    <h4 class="modal-title">Save search</h4>
+                </div>
+                <form class="form-horizontal" ng-submit = "saveSearches()">
+                <div class="modal-body">
+                    <div uib-alert ng-repeat="alert in ctrl.deviceAlertMessages"
+                         class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+                         close="closeAlert($index)">{{alert.msg}}</div>
+
+
+                        <div class="form-group">
+                                <input type="text" required class="form-control" ng-model = "historicalSearchModel.queryName">
+                        </div>
+
+
+
+
+                </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="open_search" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <i class="pci-cross pci-circle"></i>
+                    </button>
+                    <h4 class="modal-title">Open search</h4>
+                </div>
+                <form class="form-horizontal" ng-submit = "saveSearches()">
+                    <div class="modal-body">
+                        <div uib-alert ng-repeat="alert in ctrl.conditionMessagesModal"
+                             class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+                             close="closeAlert($index)">{{alert.msg}}</div>
+                        <div class="add-items d-flex" style="margin-bottom:0.5rem">
+                            <input type="text" class="form-control" ng-model = "searchFilter" >
+
+                        </div>
+                            <div class="list-wrapper">
+
+                                <ul class="d-flex flex-column-reverse todo-list">
+
+                                    <li ng-repeat = "data in savedSearchesData | filter : searchFilter  | orderBy:'queryName'" style="border-bottom:0px solid #383e5d"><a href="javascript:void('0')" ng-click="openConfiguration(data)">{{data.queryName}}</a> </li>
+
+                                </ul>
+
+                            </div>
+
+
+
+
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-12" id = "time-series" style="height:300px;width:100%"></div>
+    <br/>
+    <div class="row col-md-12" style="">
+        <div id="myGrid" style="height: 700px; width: 100%;"  class="{{theme}}"></div>
+    </div>
+
+</div>

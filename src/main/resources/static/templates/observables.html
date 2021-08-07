@@ -1,0 +1,34 @@
+<div class="row" ng-controller="observablesController as ctrl">
+  <div class="page-header page-header-default">
+    <div class="page-header-content border-bottom border-bottom-success">
+      <div class="page-title">
+        <h4>
+          <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Observables</span>
+        </h4>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="input-group col-md-5">
+      <input type="text" class="form-control" ng-model="taskname">
+      <span class="input-group-btn"><button type="button" class="btn form-control btn-secondary  btn-xs" ng-click="ctrl.addTask(taskname);taskname=''	">Add Data type</button></span>
+    </div>
+  </div>
+  <br><br>
+  <div class="row">
+    <table class="table table-hover" data-tables="ng">
+      <thead>
+        <tr>
+          <td>DataType</td>
+          <td>Action</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="ob in ctrl.allObservables">
+          <td>{{ob}}</td>
+          <td><i class="btn icon-cross"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+{
+  "files": {
+    "static/js/0.4b5f84bf.chunk.js": "/obelus/static/js/0.4b5f84bf.chunk.js",
+    "static/js/0.4b5f84bf.chunk.js.map": "/obelus/static/js/0.4b5f84bf.chunk.js.map",
+    "main.css": "/obelus/static/css/main.1c421cbd.chunk.css",
+    "main.js": "/obelus/static/js/main.64a180e3.chunk.js",
+    "main.js.map": "/obelus/static/js/main.64a180e3.chunk.js.map",
+    "runtime-main.js": "/obelus/static/js/runtime-main.28ab80de.js",
+    "runtime-main.js.map": "/obelus/static/js/runtime-main.28ab80de.js.map",
+    "xlsx.js": "/obelus/static/js/xlsx.60e0992a.chunk.js",
+    "xlsx.js.map": "/obelus/static/js/xlsx.60e0992a.chunk.js.map",
+    "static/css/4.f34f3769.chunk.css": "/obelus/static/css/4.f34f3769.chunk.css",
+    "static/js/4.ed9b7fb2.chunk.js": "/obelus/static/js/4.ed9b7fb2.chunk.js",
+    "static/js/4.ed9b7fb2.chunk.js.map": "/obelus/static/js/4.ed9b7fb2.chunk.js.map",
+    "static/js/5.6019a61c.chunk.js": "/obelus/static/js/5.6019a61c.chunk.js",
+    "static/js/5.6019a61c.chunk.js.map": "/obelus/static/js/5.6019a61c.chunk.js.map",
+    "static/js/6.61240f2c.chunk.js": "/obelus/static/js/6.61240f2c.chunk.js",
+    "static/js/6.61240f2c.chunk.js.map": "/obelus/static/js/6.61240f2c.chunk.js.map",
+    "static/js/7.4125c10d.chunk.js": "/obelus/static/js/7.4125c10d.chunk.js",
+    "static/js/7.4125c10d.chunk.js.map": "/obelus/static/js/7.4125c10d.chunk.js.map",
+    "static/js/8.ec58c683.chunk.js": "/obelus/static/js/8.ec58c683.chunk.js",
+    "static/js/8.ec58c683.chunk.js.map": "/obelus/static/js/8.ec58c683.chunk.js.map",
+    "static/js/9.0d2ac894.chunk.js": "/obelus/static/js/9.0d2ac894.chunk.js",
+    "static/js/9.0d2ac894.chunk.js.map": "/obelus/static/js/9.0d2ac894.chunk.js.map",
+    "index.html": "/obelus/index.html",
+    "static/css/4.f34f3769.chunk.css.map": "/obelus/static/css/4.f34f3769.chunk.css.map",
+    "static/css/main.1c421cbd.chunk.css.map": "/obelus/static/css/main.1c421cbd.chunk.css.map",
+    "static/js/4.ed9b7fb2.chunk.js.LICENSE.txt": "/obelus/static/js/4.ed9b7fb2.chunk.js.LICENSE.txt",
+    "static/js/5.6019a61c.chunk.js.LICENSE.txt": "/obelus/static/js/5.6019a61c.chunk.js.LICENSE.txt",
+    "static/js/8.ec58c683.chunk.js.LICENSE.txt": "/obelus/static/js/8.ec58c683.chunk.js.LICENSE.txt",
+    "static/js/9.0d2ac894.chunk.js.LICENSE.txt": "/obelus/static/js/9.0d2ac894.chunk.js.LICENSE.txt",
+    "static/media/app.scss": "/obelus/static/media/bg_404.31af9ff7.png",
+    "static/media/bpmn-embedded.css": "/obelus/static/media/bpmn.cfe117ed.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.28ab80de.js",
+    "static/css/4.f34f3769.chunk.css",
+    "static/js/4.ed9b7fb2.chunk.js",
+    "static/css/main.1c421cbd.chunk.css",
+    "static/js/main.64a180e3.chunk.js"
+  ]
+}

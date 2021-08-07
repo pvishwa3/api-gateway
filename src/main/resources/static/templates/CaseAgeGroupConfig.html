@@ -1,0 +1,96 @@
+
+<div ng-controller="caseGroupConfiguration as controller"
+	ng-init="controller.init()" class="content-wrapper">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Manage Case Group</h4>
+			</div>
+		</div>
+		<div class="col-sm-6 pull-right">
+			<button ng-click='controller.openCaseAgeGroup()' class="btn btn-primary pull-right" title="New Tag">New Case Age Group</button>
+			<button ng-click="controller.deleteMultipleCaseGroups()" ng-if="controller.selectedTags.length > 0" class="btn btn-danger mar-hor">Delete</button>
+			<button id="viewButton" href= "javascript:void('0')"  class="btn btn-primary pull-right mar-rgt"  ng-click='controller.editTag(controller.caseAgeId[0].id)'>Edit</button>
+           	<button id="deleteButton"  href= "javascript:void('0')" class="btn btn-danger pull-right mar-rgt"  ng-click='controller.deleteTags(controller.caseAgeId[0].id,controller.caseAgeId[0].groupName)'>Delete</button>
+		</div>
+	</div>
+
+
+
+
+
+	<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+	<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+	<script type="text/ng-template" id="viewTagDetails.html">
+
+	<div class="card">
+			<div class="card-body">
+<div id = "caseAgeGroupContent" class="ag-theme-balham-dark" style="height: 500px;"></div>
+		</div>
+		</div>
+
+</script>
+
+
+	<div id="createCaseGroupConfigModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Case Age Group
+						Configuration</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					ng-submit="controller.submitData()" name="conditionCategory" novalidate="novalidate">
+					<div class="modal-body">
+						<div uib-alert
+							ng-repeat="alert in controller.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Group Name</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" placeholder="" required="required" ng-model="controller.caseGroupConfig.groupName" name="groupName" pattern="[a-zA-Z0-9\s -_]+">
+								<div class="text-danger" ng-show="(conditionCategory.$submitted || conditionCategory.groupName.$touched) && conditionCategory.groupName.$error.required">Group name is mandatory</div>
+								<div class="text-danger" ng-show="(conditionCategory.$submitted || conditionCategory.groupName.$touched) && conditionCategory.groupName.$error.pattern">Special Characters are not allowed</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">From</label>
+							<div class="col-sm-9">
+								<input type="number" class="form-control" placeholder=""
+									required="required"
+									ng-model="controller.caseGroupConfig.fromDay" name="fromDay">
+								<div class="text-danger" ng-show="(conditionCategory.$submitted || conditionCategory.fromDay.$touched) && conditionCategory.fromDay.$error.required">From is mandatory</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">To</label>
+							<div class="col-sm-9">
+								<input type="number" class="form-control" placeholder=""
+									required="required" ng-model="controller.caseGroupConfig.toDay" name="toDay">
+								<div class="text-danger" ng-show="(conditionCategory.$submitted || conditionCategory.toDay.$touched) && conditionCategory.toDay.$error.required">To is mandatory</div>
+
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<input type="submit" class="btn btn-success" value="Save" ng-disabled="conditionCategory.$invalid">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

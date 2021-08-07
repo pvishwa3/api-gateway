@@ -1,0 +1,163 @@
+<div ng-controller="jiraConnectionController as ctrl" ng-init="ctrl.pageName = 'deviceType'" class="content-wrapper">
+
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-md-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">ISTM Connection</h4>
+			</div>
+		</div>
+		<div class="col-md-6">
+		<button  class="btn btn-primary pull-right mar-rgt"
+				ng-click="ctrl.createNewConnections()">New Connection</button>
+			
+			
+		</div>
+	</div>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+		
+		
+		
+		
+
+	<div class="card">
+		<div class="card-body">
+			<div class="">
+				
+				<div uib-alert ng-repeat="alert in ctrl.alertModal" class="alert"
+								ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}
+				</div>
+			
+			
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+
+							<th>Type</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat = "data in ctrl.jiraConnections">
+							<td>{{data.connectionName}}</td>
+							<td>{{data.connectionType}}</td>
+							<td><a href="javascript:void" ng-click = "edit(data.id)">Edit</a> 
+								<a href="javascript:void" ng-click = "deleteConnection(data.id,data.connectionName)">Delete</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div id="newJiraConnection" class="modal fade" role="dialog">
+				<div class="modal-lg modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+							<h4 class="modal-title">Create new connection</h4>
+						</div>
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.alertMessagaesModal" class="alert"
+								ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}
+							</div>
+							<form class="form-horizontal" ng-submit="ctrl.saveLogFields()" name="fieldTypeForm"
+								novalidate="novalidate">
+								<div class="form-group row">
+									<label class="control-label col-md-3 text-capitalize">Connection Name</label>
+									<div class="col-md-7">
+											<input type="text" class="form-control" ng-model = "jiraConnection.connectionName">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3 text-capitalize">Vendor</label>
+									<div class="col-md-7">
+
+										<select class="form-control" ng-model = "jiraConnection.connectionType">
+											<option value="Jira">Jira</option>
+											<option value="Servicenow">Servicenow</option>
+										</select>
+
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="control-label col-md-3">Url</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="jiraConnection.jiraUrl" class="form-control"
+											name="fieldName" required="required"  />
+										
+
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label class="control-label col-md-3">User Name</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="jiraConnection.jiraUserName" class="form-control"
+											name="fieldName" required="required"  />
+										
+
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label class="control-label col-md-3">Password</label>
+									<div class="col-md-9">
+										<input type="password" ng-model="jiraConnection.jiraPassword" class="form-control"
+											name="fieldName" required="required"  />
+										
+											
+										
+									</div>
+								</div>
+								<div ng-if = "jiraConnection.connectionType === 'Jira'">
+									<div class="form-group row" >
+										<label class="control-label col-md-3">Project Key</label>
+										<div class="col-md-7">
+											<input type="text" ng-model="jiraConnection.projectKey" class="form-control"
+												   name="fieldName" required="required"  />
+
+										</div>
+									</div>
+
+									<div class="form-group row" >
+										<label class="control-label col-md-3">Issue Type</label>
+										<div class="col-md-7">
+											<input type="text" ng-model="jiraConnection.issueType" class="form-control"
+												   name="fieldName" required="required"  />
+
+										</div>
+									</div>
+
+								</div>
+
+
+								<div ng-if = "jiraConnection.connectionType === 'Servicenow'">
+									<div class="form-group row" >
+										<label class="control-label col-md-3">Category</label>
+										<div class="col-md-7">
+											<input type="text" ng-model="jiraConnection.category" class="form-control"
+												   name="fieldName" required="required"  />
+
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="modal-footer">
+									<button type="button" class="btn btn-success"  ng-click = "saveJiraConnection()">Save</button>
+									<button type="button" class="btn btn-success"  ng-click = "testConnection()">Test Connection</button>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

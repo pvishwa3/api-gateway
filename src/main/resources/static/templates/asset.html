@@ -1,0 +1,54 @@
+<div ng-controller="assetController as ctrl" class="content-wrapper">
+
+	<div class="row page-header">
+			<div class="col-sm-8">
+					<div id="page-head">
+							<h4 class="page-title text-overflow">Asset</h4>
+					</div>
+			</div>
+			<div class="col-sm-4 pull-right">
+				<button class="btn btn-primary" ng-click="ctrl.newAsset();">new
+								asset</button>
+			</div>
+		</div>
+		<hr />
+
+
+
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Asset</h1>
+							</div>
+						
+<!-- 						<ol class="breadcrumb" ng-if="showHomeButton"> -->
+<!-- 							<li><a href="/configuration#!">Home</a></li> -->
+<!-- 							<li class="active">Asset</li> -->
+<!-- 						</ol> -->
+<!-- 						<ol class="breadcrumb" ng-if="!showHomeButton"> -->
+<!-- 							<li><a href="/configuration#!">Home</a></li> -->
+<!-- 							<li><a href="javascript:void('0')" ng-click="ctrl.goBack()">Asset</a></li> -->
+<!-- 							<li class="active">New Asset</li> -->
+<!-- 						</ol> -->
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="row" style="padding-top: 20px; padding-right: 29px;">
+					<div id="page-head">
+						<div class="pull-right btn-group" ng-if="showHomeButton">
+							<button class="btn btn-dark" ng-click="ctrl.newAsset();">new
+								asset</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			
+		</div>
+	</div>
+</div>

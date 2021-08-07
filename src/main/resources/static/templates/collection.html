@@ -1,0 +1,86 @@
+
+
+
+<div ng-controller="collectionController as ctrl"
+	ng-init="ctrl.pageName = 'deviceType'" class="content-wrapper">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-11">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Log Sources</h4>
+			</div>
+		</div>
+		<div class="col-md-1">
+			<button id="enableButton" class="btn btn-dark"
+				ng-click="changeStatus()">Enable</button>
+			<button id="disableButton" class="btn btn-dark"
+				ng-click="changeStatus()">Disable</button>
+
+		</div>
+	</div>
+
+
+
+
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessages" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+	<div ng-init="getCollectionDetails()">
+		<div class="card">
+
+
+
+			<div class="card-body">
+
+				<div id="collectionContent" class="ag-theme-balham-dark"
+					style="height: 500px;"></div>
+
+
+
+				<!-- 				<table class="table" datatable="ng"> -->
+				<!-- 					<thead> -->
+				<!-- 						<tr> -->
+				<!-- 							<th>Source Host</th> -->
+				<!-- 							<th>IP Address</th> -->
+				<!-- 							<th>Mac Address</th> -->
+				<!-- 							<th>First Seen</th> -->
+				<!-- 							<th>Last Seen</th> -->
+
+				<!-- 							<th>Total Message</th> -->
+				<!-- 							<th>Actions</th> -->
+				<!-- 						</tr> -->
+				<!-- 					</thead> -->
+
+				<!-- 					<tbody> -->
+				<!-- 						<tr ng-repeat="data in collections"> -->
+				<!-- 							<td>{{data.source_host}}</td> -->
+				<!-- 							<td>{{data.ipAddress}}</td> -->
+				<!-- 							<td>{{data.macAddress}}</td> -->
+				<!-- 							<td>{{data.first_seen}}</td> -->
+				<!-- 							<td>{{data.last_seen}}</td> -->
+
+				<!-- 							<td>{{data.count}}</td> -->
+				<!-- 							<td><a href="javascript:void('0')" -->
+				<!-- 								ng-click="changeStatus($index)"> <span -->
+				<!-- 									ng-if="data.status == 'Enable'">Disable</span> <span -->
+				<!-- 									ng-if="data.status == 'Disable'">Enable</span></a></td> -->
+				<!-- 						</tr> -->
+				<!-- 					</tbody> -->
+				<!-- 				</table> -->
+
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+</div>
+

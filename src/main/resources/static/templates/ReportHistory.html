@@ -1,0 +1,95 @@
+
+<div ng-controller="reportingController as controller"
+	ng-init="controller.init()" class="content-wrapper">
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-10">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Reports History</h4>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<button id="downloadButton" class="btn btn-dark pull-right" ng-click="controller.downloadReport()">Download Report</button>
+		</div>
+	</div>
+
+		<div class="card">
+			<div class="card-body">
+			<div id = "reportHistoryContent" class="{{theme}}" style="height: 500px;"></div>
+			
+<!-- 					<table class="table table-striped  dataTable no-footer dtr-inline" -->
+<!-- 						datatable="ng" dt-options="vm.dtOptions" -->
+<!-- 						dt-instance="vm.dtInstance" width="100%" -->
+<!-- 						dt-column-defs="vm.dtColumnDefs"> -->
+<!-- 						<thead> -->
+<!-- 							<tr> -->
+
+<!-- 								<th>Report Name</th> -->
+<!-- 								<th>Last Run</th> -->
+<!-- 								<th>Next Run</th> -->
+
+<!-- 								<th class="text-center">Action</th> -->
+<!-- 							</tr> -->
+<!-- 						</thead> -->
+
+
+<!-- 						<tbody> -->
+<!-- 							<tr ng-repeat="data  in reportHistoryDetails"> -->
+<!-- 								<td>{{data.reportName}}</td> -->
+<!-- 								<td>{{data.lastRun | date:'medium'}}</td> -->
+<!-- 								<td>{{data.nextRun | date:'medium'}}</td> -->
+<!-- 								<td class="text-center"><a -->
+<!-- 									href="/siem-core/user/report/export/{{data.id}}" -->
+<!-- 									class="btn-link" ng-click='controller.editTag(data.id)'>Download -->
+<!-- 										Report</a></td> -->
+<!-- 							</tr> -->
+<!-- 						</tbody> -->
+<!-- 					</table> -->
+			</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+	<div id="createNewTag" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Create New Tag</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					ng-submit="controller.submitData()" name="conditionCategory">
+					<div class="modal-body">
+						<div uib-alert
+							ng-repeat="alert in controller.conditionMessagesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Tag</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" placeholder=""
+									required="required" ng-model="controller.tag.tagName">
+
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default waves-effect"
+							data-dismiss="modal">Close</button>
+						<input type="submit" class="btn btn-dark" value="Save">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,29 @@
+
+<div class='col-md-6'>
+
+ <select data-ng-model="rule.subType" class="form-control">
+    <!-- Term Options -->
+    <optgroup label="Text">
+      <option value="equals">Equals</option>
+      <option value="notEquals">! Equals</option>
+    </optgroup>
+
+    <!-- Generic Options -->
+    <optgroup label="Generic">
+      <option value="exists">Exists</option>
+      <option value="notExists">! Exists</option>
+    </optgroup>
+
+  </select> 
+
+
+</div>
+ 
+  <div class='col-md-6'>
+ 
+  	<input class="form-control"
+	data-ng-model="rule.value" type="text">
+	</div>
+
+ 
+ 

@@ -1,0 +1,135 @@
+<div ng-controller="jiraConnectionController as ctrl" class="content-wrapper" ng-init = "loadMisp()">
+
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-md-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Threat Intel Configurations</h4>
+			</div>
+		</div>
+		
+	</div>
+
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+		
+		
+		
+		
+
+	<div class="card">
+		<div class="card-body">
+			<div class="">
+				<form class="form-horizontal" ng-submit="ctrl.saveLogFields()" name="fieldTypeForm"
+								novalidate="novalidate">
+								<div class="form-group">
+									<label class="control-label col-md-3">URL</label>
+									<div class="col-md-7">
+										<input type="text" ng-model="misp.mispUrl" class="form-control" name="fieldName" required="required"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">Token</label>
+									<div class="col-md-9">
+										<input type="password" ng-model="misp.mispToken" class="form-control col-md-9" name="fieldName" required="required"  />
+										<button type="button" class="btn btn-success col-md-1"  ng-click = "testMispConnection()">Test</button>
+
+									</div>
+
+
+								</div>
+
+								<div ng-show = "showMispScoreConfiguration">
+
+									<div class="form-group">
+										<label class="control-label col-md-3">Threshold</label>
+										<div class="col-md-7">
+											<input type="number" ng-model="misp.threadShold" class="form-control" name="fieldName" required="required"  />
+										</div>
+
+
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-md-3">Sync Interval (In Minutes)</label>
+										<div class="col-md-7">
+											<input type="number" ng-model="misp.synConfig" class="form-control" name="fieldName" required="required"  />
+										</div>
+
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-md-3">Initial LookupBack (In Days)</label>
+										<div class="col-md-7">
+											<input type="number" ng-model="misp.intialLookupDays" class="form-control" name="fieldName" required="required"  />
+										</div>
+
+									</div>
+
+
+								</div>
+
+								<button class="btn btn-success pull-right"  ng-click = "addScoreConfig()">Add Attribute</button>
+
+								<table class="table" ng-show = "showMispScoreConfiguration">
+
+									<thead>
+										<tr>
+											<th>Attribute</th>
+											<th>IP</th>
+											<th>Domain</th>
+											<th>Hash</th>
+											<th>URL</th>
+											<th>Action</th>
+										</tr>
+
+									</thead>
+
+									<tbody>
+										<tr ng-repeat = "data in scoreConfig">
+											<td>
+												<ui-select ng-model="data.attribute" theme="bootstrap" style="width:100%" title = "Attributes" >
+													<ui-select-match placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+													<ui-select-choices repeat="t in mispAttributes | filter: $select.search">
+														<span ng-bind-html="t | highlight: $select.search"></span>
+													</ui-select-choices>
+												</ui-select>
+
+												 </td>
+											<td><input type="number" class="form-control" ng-change = "calculateTotalScore()" ng-model = "data.ipScore"></td>
+											<td><input type="number" class="form-control" ng-change = "calculateTotalScore()" ng-model = "data.domainScore"></td>
+											<td><input type="number" class="form-control" ng-change = "calculateTotalScore()" ng-model = "data.hashScore"></td>
+											<td><input type="number" class="form-control" ng-change = "calculateTotalScore()" ng-model = "data.urlScore"></td>
+
+											<td><a href="javascript:void('0')" ng-click = "deleteScoreConfig($index)">Delete</a> </td>
+										</tr>
+
+									</tbody>
+									<tfoot>
+										<tr>
+											<td>Total</td>
+											<td>{{ipTotalScore}}</td>
+											<td>{{domainTotalScore}}</td>
+											<td>{{hashTotalScore}}</td>
+											<td>{{urlTotalScore}}</td>
+										</tr>
+
+									</tfoot>
+
+
+
+								</table>
+
+
+
+									<button type="button" ng-if = "showMispScoreConfiguration" class="btn btn-primary" ng-click = "saveMispConfiguration()">Save</button>
+									
+							</form>
+			
+			
+				
+			</div>
+
+			
+		</div>
+	</div>
+</div>

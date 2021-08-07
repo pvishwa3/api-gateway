@@ -1,0 +1,400 @@
+<div class="right_col" role="main">
+    <div class="row" ng-controller="correlationController as ctrl">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <div class="col-md-6 text-left">
+						<h3>Rules</h3>
+					</div>
+					<div class="col-md-6 text-right"> 
+					  <div>
+		                <button class="btn btn-xs btn-dark" onclick="window.location.href='/configuration#!/alerts'">
+		                    <h5><i class="glyphicon glyphicon-arrow-left" aria-hidden="true"></i> Back to Alerts</h5>
+		                </button>
+		            </div>
+					</div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br />
+                    <script type="text/ng-template" id="alert.html">
+                        <div ng-transclude></div>
+                    </script>
+                    <div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+                    <form name="rolesForm">
+                        <div class="col-md-10 col-sm-10">
+                            <div class="form-group col-md-5 col-sm-5">
+                                <label for="name">Rule Name* </label>
+                                <input type="text" ng-model="ctrl.correlationData.correlationName" class="form-control  input-sm" id="name" required>
+                            </div>
+                            <div class="form-group col-md-5 col-sm-5">
+                                <label for="address">Rule Description*</label>
+                                <input type="text" ng-model="ctrl.correlationData.correlationDesc" class="form-control input-sm" id="desc" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12 col-sm-12">
+                            <!-- <div class="alert alert-warning alert-group"> -->
+                            
+                                <div class="row col-md-10 col-sm-10">
+                                    <div class="form-group col-md-5 col-sm-5" style="margin-right:10px;">
+                                    <label for="email" style="color:LightSlateGray">Event Filter* <a href="/configuration#!/condition" style="text-align:" class="text-primary">Create New Filter</a></label>
+                                        <select ng-model="ctrl.correlationData.filterQuery" class="form-control input-sm" required>
+                                        	<option value="">Select</option>
+                                            <option ng-repeat="data in filters" value="{{data.conditionName}}">{{data.conditionName}}</option>
+                                        </select>
+                                   </div>
+                                   <!-- <div class="form-group col-md-1 col-sm-1" style="margin-top:30px;margin-right:10px;">
+                                   		<a href="#/condition" class="">Create New Filter</a>
+                               	   </div> -->
+                               	   <div class="form-group col-md-6 col-sm-6">
+                                	<label for="email" style="color:LightSlateGray">Matching Criteria*</label>
+                                    <div class="form-inline" ng-repeat="data in ctrl.correlationData.matchCriteria | orderBy:'index'">
+                                        <!-- <div class="form-inline"> -->
+                                            <select ng-model="data.metricName" class="form-control input-sm">
+                                                <option value="count">Count</option>
+                                                <option value="Occurred">Occurred</option>
+                                                <option value="Join">Join</option>
+                                            </select>
+                                            <select ng-model="data.operator" class="form-control input-sm">
+                                                <option value="equals">Equals</option>
+                                                <option value="greaterThan">Greater Than</option>
+                                                <option value="lessThan">LessThan</option>
+                                                <option value="in">in</option>
+                                            </select>
+                                            <input type="text" style="color:LightSlateGray" ng-model="data.value" class="form-control-text input-sm" />
+                                            <button ng-click="addMatchCriteria()" style="margin-bottom:5px" class="btn btn-sm btn-dark glyphicon glyphicon-plus-sign"></button>
+                                            <button ng-click="removeMatchCriteria($index)" style="margin-bottom:5px" class="btn btn-sm btn-danger glyphicon glyphicon-minus-sign"></button>
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
+                                </div>
+                                <br>
+                                <div class="row col-md-12 col-sm-12"> 
+                                    <div class="form-group col-md-3 col-sm-3" ng-init="getLoggedIndex()">
+                                    <!-- <div class="form-group col-md-3 col-sm-3" ng-init="getAllIndexes()"> -->
+                                        <label for="name" style="color:LightSlateGray">Index type*</label>
+                                        <select ng-model="ctrl.correlationData.index" class="form-control input-sm" ng-change="getAllFieldsBasedOnIndex()">
+                                            <option selected>{{ctrl.correlationData.index}}</option>
+                                        </select>
+                                        <!-- <select ng-model="ctrl.correlationData.index" class="form-control input-sm" ng-change="getAllFieldsBasedOnIndex()">
+                                            <option ng-repeat="index in indexes">{{index}}</option>
+                                        </select> -->
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-3">
+                                        <label for="name" style="color:LightSlateGray">Log Type*</label>
+                                        <select ng-model="ctrl.correlationData.logType" class="form-control input-sm">
+                                            <option ng-repeat="type in logTypes">{{type}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            
+								  
+                                
+                                <br>
+                                <div class="col-md-12 col-sm-12">
+                                	<div class="row">
+                                	<div ng-repeat="items in ctrl.correlationData.filterFields">
+                                    	<div class="col-md-3 col-sm-3">
+                                        	<label for="title" style="color:LightSlateGray">Fields*:</label>
+                                        	<!-- <ui-select ng-model="items.fieldName" theme="bootstrap" close-on-select="true" title="Choose a Field">
+                                            <ui-select-match placeholder="Select Fields...">{{$select.selected}}</ui-select-match>
+                                            <ui-select-choices repeat="color in indexFields | filter:$select.search">{{color}}</ui-select-choices>
+                                        	</ui-select> -->
+                                        	<select ng-model="items.fieldName" class="form-control input-sm">
+	                                            <option ng-repeat="index in indexFields">{{index}}</option>
+	                                        </select>
+                                        </div>
+                                         <div class="col-md-3 col-sm-3">
+	                                        <label for="title" style="color:LightSlateGray">Aggregation Type*</label>
+	                                        <select ng-model="items.aggType" class="form-control input-sm">
+	                                            <option value="GroupBy">GroupBy</option>
+	                                            <option value="Sum">Sum</option>
+	                                            <option value="Average">Average</option>
+	                                        </select>
+	                                    </div>
+	                                    <div class="col-md-3 col-sm-3">
+	                                          <label for="title" style="color:LightSlateGray">Title</label>
+	                                          <input type="text" ng-model="items.fieldTitle" class="form-control input-sm" id="title" placeholder="Field Name in Report">
+                                        </div>  
+	                                    <div class="form-group col-md-1 col-sm-2">
+	                                        <label for="gender"></label>
+	                                        <a href="javascript:void(0)" class="btn btn-dark btn-sm form-control" ng-click="addField()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+	                                    </div>
+	                                    <div class="form-group col-md-1 col-sm-2">
+	                                        <label for="gender"></label>
+	                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm form-control" ng-click="removeField($index)"><i class="fa fa-ban" aria-hidden="true"></i></a>
+	                                    </div>
+	                                 </div>
+	                                 </div>
+                                </div>
+                            <!-- </div> -->
+                        </div>
+
+                        <!-- ###### Join Condition Begins ######-->
+                        <div class="form-group col-md-12 col-sm-12">
+                            <div class="alert alert-warning alert-group">
+                                <div class="form-inline">
+                                    <button style="margin-right: 5px" ng-click="addJoin()" class="btn btn-sm btn-dark"><span class="glyphicon glyphicon-plus-sign"></span> Add Join</button>
+                                </div>  
+                                <div class="group-conditions">
+                                    <div ng-repeat="data in ctrl.correlationData.joinInfo | orderBy:'index'" class="condition">
+                                        <div class="form-inline">
+                                            <div ng-repeat="data1 in data.joinCond" class="condition">
+                                                <select ng-model="data1.logicalOperator" class="form-control input-sm" style="width:70px;">
+                                                    <option value="AND">AND</option>
+                                                    <option value="OR">OR</option>
+                                                </select>
+                                                <span style="color:LightSlateGray">  Where  </span>
+                                                <select ng-model="data1.nextFilter" class="form-control input-sm" style="width:140px;" required>
+                                                	<option value="">Select</option>
+                                                    <option ng-repeat="data in filters" value="{{data.conditionName}}">{{data.conditionName}}</option>
+                                                </select>
+                                                <select ng-model="data1.nextField" class="form-control input-sm" style="width:200px;">
+                                                    <option ng-repeat="data in indexFields" value="{{data}}">{{data}}</option>
+                                                </select>
+
+                                                <span style="color:LightSlateGray">  =  </span>
+                                                <select ng-model="data1.prevFilter" class="form-control input-sm" style="width:140px;">
+                                                    <option ng-repeat="data in preFilters | orderBy track by $index" value="{{data}}">{{data}}</option>
+                                                </select>
+                                                <select ng-model="data1.prevField" class="form-control input-sm" style="width:200px;">
+                                                    <option ng-repeat="data in indexFields" value="{{data}}">{{data}}</option>
+                                                </select>
+                                                <button style="margin-right: 5px;margin-bottom:2px;" ng-click="addJoinCond($parent.$index)" class="btn btn-sm btn-dark"><span class="glyphicon glyphicon-plus-sign"></span>
+                                                </button>
+                                                <button style="margin-right: 5px;margin-bottom:2px;" ng-click="removeJoinCond($parent.$index,$index)" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-12 col-sm-12">
+                                            <div class="row" style="margin-left:-30px;">
+                                                <div class="form-group col-md-2 col-sm-2" ng-init="getLoggedIndex()">
+                                                    <label for="name" style="color:LightSlateGray">Index type*</label>
+                                                    <select ng-model="data.joinIndex" class="form-control input-sm" ng-change="getAllFieldsBasedOnIndex_Join($index)">
+                                                        <option >{{ctrl.correlationData.index}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-2 col-sm-2">
+                                                    <label for="name" style="color:LightSlateGray">Log Type*</label>
+                                                    <select ng-model="data.joinLogType" class="form-control input-sm">
+                                                        <option ng-repeat="type in logTypes">{{type}}</option>
+                                                    </select>
+                                                </div>
+                                           <!-- 	 </div>
+                                            <div class="col-md-6 col-sm-6"> -->
+                                            <div class="form-group col-md-8 col-sm-8">
+                                            	<label for="email" style="color:LightSlateGray">Matching Criteria*</label>
+                                                <div ng-repeat="data1 in data.joinMatchCriteria | orderBy:'index'">
+                                                    <div class="form-inline">
+                                                        <select ng-model="data1.metricName" class="form-control input-sm">
+                                                            <option value="count">Count</option>
+                                                            <option value="Occurred">Occurred</option>
+                                                            <option value="Join">Join</option>
+                                                        </select>
+                                                        <select ng-model="data1.operator" class="form-control input-sm">
+                                                            <option value="equals">Equals</option>
+                                                            <option value="greaterThan">Greater Than</option>
+                                                            <option value="lessThan">LessThan</option>
+                                                            <option value="in">in</option>
+                                                        </select>
+                                                        <input type="text" style="color:LightSlateGray" ng-model="data1.value" class="form-control-text-join input-sm" />
+                                                        <button style="margin-bottom:5px" ng-click="addJoinMatchCriteria($parent.$index)" class="btn btn-sm btn-dark glyphicon glyphicon-plus-sign"></button>
+                                                        <button style="margin-bottom:5px" ng-click="removeJoinMatchCriteria($parent.$index,$index)" class="btn btn-sm btn-danger glyphicon glyphicon-minus-sign"></button>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                            <div class="row" style="margin-left:-40px;">
+			                                	<div ng-repeat="items in data.joinFields">
+			                                    	<div class="col-md-3 col-sm-3">
+			                                        	<label for="title" style="color:LightSlateGray">Fields*:</label>
+			                                        	<ui-select ng-model="items.fieldName" theme="bootstrap" close-on-select="true" title="Choose a Field">
+			                                            <ui-select-match placeholder="Select Fields...">{{$select.selected}}</ui-select-match>
+			                                            <ui-select-choices repeat="color in indexFieldsJoin | filter:$select.search">{{color}}</ui-select-choices>
+			                                        	</ui-select>
+			                                        </div>
+			                                        <div class="col-md-3 col-sm-3">
+				                                        <label for="title" style="color:LightSlateGray">Aggregation Type*</label>
+				                                        <select ng-model="items.aggType" class="form-control input-sm">
+				                                            <option value="GroupBy">GroupBy</option>
+				                                            <option value="Sum">Sum</option>
+				                                            <option value="Average">Average</option>
+				                                        </select>
+				                                    </div>
+				                                    <div class="col-md-3 col-sm-3">
+				                                          <label for="title" style="color:LightSlateGray">Title</label>
+				                                          <input type="text" ng-model="items.fieldTitle" class="form-control input-sm" id="title" placeholder="Field Name in Report">
+			                                        </div>  
+				                                    <div class="form-group col-md-1 col-sm-2">
+				                                        <label for="gender"></label>
+				                                        <a href="javascript:void(0)" class="btn btn-dark btn-sm form-control" ng-click="addJoinField($parent.$index)"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+				                                    </div>
+				                                    <div class="form-group col-md-1 col-sm-2">
+				                                        <label for="gender"></label>
+				                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm form-control" ng-click="removeJoinField($parent.$index,$index)"><i class="fa fa-ban" aria-hidden="true"></i></a>
+				                                    </div>
+				                                 </div>
+				                             </div>
+			                                </div>
+                                        </div>
+                                        <button  ng-click="removeJoin($index)" class="btn btn-sm btn-danger "><span class="glyphicon glyphicon-minus-sign"></span> Remove Join</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ###### Correlation Filter Begins ######-->
+                        <div class="form-group col-md-12 col-sm-12">
+                                	<div class="row">
+                                	<div ng-repeat="items in ctrl.correlationData.correlationFilterFields">
+                                    	<div class="col-md-3 col-sm-3">
+                                        	<label for="title" style="color:LightSlateGray">Filter Field:</label>
+                                        	<!-- <ui-select ng-model="items.filterField" theme="bootstrap" close-on-select="true" title="Choose a Field">
+                                            <ui-select-match placeholder="Select Fields...">{{$select.selected}}</ui-select-match>
+                                            <ui-select-choices repeat="color in indexFields | filter:$select.search">{{color}}</ui-select-choices>
+                                        	</ui-select> -->
+                                        	<select ng-model="items.filterField" class="form-control input-sm">
+	                                            <option ng-repeat="index in indexFields">{{index}}</option>
+	                                        </select>
+                                        </div>
+                                         <div class="col-md-3 col-sm-3">
+	                                        <label for="title" style="color:LightSlateGray">Filter Condition</label>
+	                                        <select ng-model="items.operator" class="form-control input-sm">
+	                                            <option value="equals">Equal to</option>
+                                                <option value="is not_equal_to">Not Equal to</option>
+                                                <option value="greaterThan">Greater than</option>
+                                                <option value="lessThan">Less than</option>
+	                                        </select>
+	                                    </div>
+	                                    <div class="col-md-3 col-sm-3">
+	                                          <label for="title" style="color:LightSlateGray">Filter Value</label>
+	                                          <input type="text" ng-model="items.filterValue" class="form-control input-sm" id="title" placeholder="Field Name in Report">
+                                        </div>  
+	                                    <div class="form-group col-md-1 col-sm-2">
+	                                        <label for="gender"></label>
+	                                        <a href="javascript:void(0)" class="btn btn-dark btn-sm form-control" ng-click="addFilterField()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+	                                    </div>
+	                                    <div class="form-group col-md-1 col-sm-2">
+	                                        <label for="gender"></label>
+	                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm form-control" ng-click="removeFilterField($index)"><i class="fa fa-ban" aria-hidden="true"></i></a>
+	                                        
+	                                    </div>
+	                                 </div>
+	                                 </div>
+                                </div>
+                        
+                    </form>
+                </div>
+                <!-- <div class="form-group col-md-12 col-sm-12">
+                    <query-builder fields="tempField" group="filter.group"></query-builder>
+                </div> -->
+                <div class="form-group" style="text-align:center">
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                        <button class="btn btn-dark" type="reset">Reset</button>
+                        <input type="button" value="Run Query" class="btn btn-dark" ng-click="ctrl.runQuery()" ng-disabled="rolesForm.$invalid">
+                        <input type="button" value="{{!ctrl.correlationData.id ? 'Save' : 'Update'}}" class="btn btn-dark" ng-click="ctrl.submit()" ng-disabled="rolesForm.$invalid">
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--     </div> -->
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="row x_title">
+                <h2>Query Results</h2>
+                <h5 align="right">Query Execution Time : {{ ctrl.queryExecTime}} </h5>
+                <h5 align="right">Result Count : {{ ctrl.hits}} </h5>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br />
+                <div class="form-group text-center" style="margin-top: 12px">
+                	<div id="loadingIndicatorCtn" class="table" style="display:none;">
+						<div class="loadingIndicator text-primary lead"><i class="fa fa-spinner fa-spin fa-lg fa-fw"></i>&nbsp;&nbsp;Loading...</div>
+					</div>
+					<div id="noDataDiv" class="table"><h4 class="text-center text-primary">No Data to display</h5></div>
+                    <table id="queryData" class="table" style="margin-top: 20px;" st-safe-src="ctrl.tableData" st-table="tableDetailsPerPage">
+                        <thead>
+                            <tr>
+                                <th class="text-center" ng-repeat="columnHeader in ctrl.tableHeaders">{{ctrl.fieldTitles[columnHeader] || columnHeader}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr ng-repeat="data in tableDetailsPerPage"> -->
+                            <tr ng-repeat="data in ctrl.tableData">
+                                <td class="text-center" ng-repeat="columnHeader in ctrl.tableHeaders">
+                                    <p ng-if="ctrl.tableHeaders[$index] != 'KibanaLink'">{{data[ctrl.tableHeaders[$index]] || "-"}}</p>
+                                    <!-- <a class="btn-link" ng-if="ctrl.tableHeaders[$index] == 'KibanaLink'" ng-click="getKibanaLink(data[ctrl.tableHeaders[$index]])" href="{{kibanaURL}}" target="_blank">Find in Kibana</a> -->
+                                    <a class="btn-link" ng-if="ctrl.tableHeaders[$index] == 'KibanaLink'" href="{{data[ctrl.tableHeaders[$index]]}}" target="_blank">Find in Kibana</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <!-- <tfoot ng-if="ctrl.tableData.length >= 10">
+                            <tr>
+                                <td colspan="{{ctrl.tableHeaders.length}}" class="text-center">
+                                    <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="10"></div>
+                                </td>
+                            </tr>
+                        </tfoot> -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Rule Details</h2>
+                <button type="button" class="exportButton text-primary" ng-csv="rulesToExcel" csv-header="excelHeader" filename="{{ruleListExcelFileName}}"><u>Export all rules</u></button>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br />
+                <div class='pull-right'>
+                    <!-- <input class="form-control" type="text" name="search" placeholder="search all Rules" ng-model="search" ng-click="tableParams.sorting({})" /> -->
+                    <form class="form-inline">
+					        <div class="form-group">
+					            <input type="text" ng-model="search" class="form-control" placeholder="Search all Rules">
+					        </div>
+					    </form>
+                </div>
+                <table class="table">
+                    <thead>
+				        <tr>
+				            <th ng-click="sort('correlationName')">Rule Name
+				                <span class="glyphicon sort-icon" ng-show="sortKey=='correlationName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+				            </th>
+				            <th>Action</th>
+				        </tr>
+				    </thead>
+                    <tbody>
+                        <tr dir-paginate="data in rowCollection|orderBy:sortKey:reverse|filter:search|itemsPerPage:10">
+                            <td>{{data.correlationName}}</td>
+                            <td>
+                                <button class="btn btn-xs btn-dark" ng-click="displayUpdate(data.id)">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn btn-xs btn-dark" ng-click="deleteRules(data.id)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn btn-xs btn-dark" ng-click="duplicateRule(data.id)">
+                                    <i class="fa fa-clone" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-center">
+					<dir-pagination-controls 
+						max-size="10" 
+						direction-links="true" 
+						boundary-links="true">
+				    </dir-pagination-controls>
+				</div>
+            </div>
+        </div>
+    </div>
+   </div>
+</div>

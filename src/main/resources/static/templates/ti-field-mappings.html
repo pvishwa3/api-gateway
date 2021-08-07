@@ -1,0 +1,88 @@
+<div ng-controller="tiController as ctrl">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">TI Field Mappings</h1>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+		
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+		<div class="panel">
+
+			<div class="panel-body" id="panel-body">
+
+				<form class="form-horizontal" ng-submit="ctrl.submitData()"
+					name="newEvent">
+
+					<fieldset>
+
+						<legend class="text-semibold">
+
+							TI Field Mappings <a class="panel-control" href="javascript:void('0')"
+								ng-click="ctrl.addField()"> <i class="ion-plus"></i>
+							</a>
+						</legend>
+
+						<div class="form-group" style="margin-left: 1%; margin-right: 1%">
+
+							<table class="table table-borderless pad-all" >
+
+								<thead>
+									<tr>
+										<th class="col-md-4">Field</th>
+										<th class="col-md-4">Type</th>
+										<th class="col-md-4">Status</th>
+									</tr>
+
+								</thead>
+
+								<tr ng-repeat="data in ctrl.fieldMapping track by $index">
+									<td class="clonetd col-md-4"> <selectize options="fields"  config="fieldConfig" ng-model="data.field" ></selectize> </td>
+									<td class="clonetd col-md-4"><select ng-model="data.type" class="form-control">
+										<option value="IP">IP</option>
+										<option value="DOMAIN">DOMAIN</option>
+										<option value="URL">URL</option>
+										<option value="HASH">HASH</option>
+									</select></td>
+									<td class="clonetd col-md-3"><select ng-model="data.status" class="form-control">
+										<option value="true">Enable</option>
+										<option value="false">Disable</option>
+									</select></td>
+									<td class="clonetd col-md-1"><a
+										href="javascript:void('0')" class="on-default remove-row btn "
+										ng-click='ctrl.deleteRow($index)'><i
+											class="ion-minus-circled"></i></a></td>
+								</tr>
+							</table>
+						</div>
+
+					</fieldset>
+
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-dark">Save</button>
+						<button type="button" class="btn btn-default" ng-click="ctrl.reset()">Reset</button>
+					</div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>
+
+
+</div>
+
+
+
+

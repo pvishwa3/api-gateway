@@ -1,0 +1,19 @@
+
+<div class="panel-control">
+
+
+	<a  class="btn-link btn-link-white" href="javascript:void('0')" ng-click="reload()" title="refresh the graph"><i class="fa fa-repeat"></i></a>&nbsp;
+ 	<a href="javascript:void('0');" class="btn-link btn-link-white"> 
+ 		<a class="btn-link btn-link-white" href="javascript:void('0')" data-toggle="dropdown" aria-expanded="false"> <i class="fa fa-gear"></i></a> 
+ 			<ul class="dropdown-menu dropdown-menu-right"> 
+				<li><a href="javascript:void('0');" ng-click="downloadPNG(definition.type)"  >Download PNG</a></li> 
+				<li><a href="javascript:void('0');" ng-click="downloadExcel(definition.type)">Download Excel</a></li> 
+				<li><a href="javascript:void('0');" ng-click="viewDataTable(definition.type)">View Table</a></li> 
+	 		</ul> 
+ 		</a> &nbsp;
+	<a href="javascript:void('0')" class="btn-link btn-link-white" ng-click="remove()"
+				ng-if="editMode" title="delete"><i
+					class="ion-trash-b"></i></a>&nbsp;&nbsp	
+					<a href ="javascript:void('0')" class="btn-link btn-link-white" ng-click="toggleFullScreen(definition.type)" title="fullscreen"><i class="fa fa-expand"></i></a></li>
+					
+</div>

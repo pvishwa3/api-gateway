@@ -1,0 +1,36 @@
+<div class="col-xs-12 col-md-12">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-tabs-basic"><!-- 'tabs-right' for right tabs -->
+        <li class="nav-item  active"><a class="nav-link active" href="javascript:void('0')" data-target="#grid" data-toggle="tab">Grid</a></li>
+        <li class="nav-item"><a class="nav-link" href="javascript:void('0')" data-target="#legend" data-toggle="tab">Legend</a></li>
+        <li class="nav-item"><a class="nav-link" href="javascript:void('0')" data-target="#ctgAxis" data-toggle="tab">Category Axis</a></li>
+        <li class="nav-item"><a class="nav-link" href="javascript:void('0')" data-target="#ext" data-toggle="tab">Ext</a></li>
+    </ul>
+</div>
+<div class="col-xs-9 col-md-10">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane " id="grid">
+            <ng-include src="'templates/chart/options/common/grid.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="legend">
+            <ng-include src="'templates/chart/options/common/legend.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="ctgAxis">
+            <ng-include src="'templates/chart/options/common/categoryAxis.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="ext">
+            <form class="form-horizontal">
+                <div class="row" style="padding-top:3%">
+                    <div class="form-group col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="curWidget.config.option.dataZoom" ng-init="curWidget.config.option.dataZoom=false"> Show DataZoom
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

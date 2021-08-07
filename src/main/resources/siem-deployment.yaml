@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siem-core
+  template:
+    metadata:
+      labels:
+        app: siem-core
+    spec:
+      containers:
+      - name: siem-core
+        image: pvishwatechnominds/tmcl:siem_core_1.0_landmark
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: siem-core
+  labels:
+    app: siem-core
+spec:
+  ports:
+  - port: 8081
+    protocol: TCP
+  selector:
+    app: siem-core
+  type: NodePort

@@ -1,0 +1,23 @@
+<div id="content-container" ng-controller="logsimulationController as ls"
+	ng-init="ls.getSavedEventTypes(); ls.getSavedLogTypes(); ls.getSavedEventDetails(); ls.getEventNames(); ls.getScheduledSimulations(); ls.getAllSavedFields(); ls.getAllSavedAttacks();showHomeButton = true;presentPage = 'simulation'">
+	
+	<div id="page-content">
+	    <div class="row pad-btm">
+	        <div class="col-sm-12">
+	            <div class="row">
+	                <div id="page-head">
+	                    <div id="page-title">
+	                        <h1 class="page-header text-overflow">Manage Simulations</h1>
+	                    </div>
+	                    <ul class="breadcrumb" ng-show="showHomeButton">
+	                        <li><a href="/configuration#!">Home</a></li>
+	                        <li><a href="/configuration#!/simulation">Event Simulation</a></li>
+	                        <li class="active">New Simulation</li>
+	                    </ul>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
+</div>

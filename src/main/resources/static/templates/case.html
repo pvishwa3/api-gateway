@@ -1,0 +1,609 @@
+<div ng-controller="casenewController as ctrl" id="content-container">
+<div class="page-content dashbaord-container">
+
+		<div class="row panel">
+
+ 
+
+			<div class="panel-body dashboard-body" id="id">
+
+
+
+
+
+				<div class="row">
+
+					<div class="col-sm-4">
+
+						<h4 class="text-semibold dashboad-title text-dark ng-binding">{{dashboard.name}}</h4>
+
+					</div>
+
+					<div class="col-sm-4">
+
+						<div class="col-sm-7">
+
+							<div class="input-group"
+								style="margin-left: 1%; margin-top: 6px">
+								<input type="text" ng-model = "searchQueryString" placeholder="Search" class="form-control dashboardFilterInput">
+								<span class="input-group-btn">
+									<button class="btn btn-primary dashboardFilterButtonGroup" ng-click = "searchBasedonQueryString()" type="button">
+										<i class="ion-search"></i>
+									</button>
+
+
+
+								</span>
+							</div>
+							
+							
+						</div>
+
+						<div class="col-sm-5">
+							<div class="input-group"
+								style="margin-top: 11px">
+								
+								<a href="javascript:void('0')" ng-click = "openAdvancedFilter()" >Advanced Search</a>
+								
+							</div>
+						</div>
+
+
+
+
+					</div>
+
+					<div class="col-sm-4 text-right">
+
+
+						<div class="btn-group">
+
+
+							  <a href="javascript:void('0')" data-toggle="dropdown"
+								class="btn btn-link btn-float has-text dropdown-toggle"
+								aria-expanded="true"> <i class="ion-clock"></i>
+								{{labelName}}
+							</a>
+							<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+								<div class="row">
+									<div class="col-sm-4 col-md-3">
+
+										<h3 class="panel-title">Custom range</h3>
+
+										<form class="form-horizontal" action=""
+											style="padding-left: 12px; padding-bottom: 12px;">
+
+											<div class="form-group pad-top">
+												<label class="col-sm-3 control-label">From</label>
+												<div class="col-sm-9">
+													<input type="text" id="from-date"
+														ng-model="displayStartDate" class="form-control">
+												</div>
+											</div>
+
+											<div class="form-group pad-top">
+												<label class="col-sm-3 control-label">To</label>
+												<div class="col-sm-9">
+													<input type="text" ng-model="displayEndDate" id="to-date"
+														class="form-control">
+												</div>
+											</div>
+
+											<br />
+
+											<div class="row text-right pad-top">
+												<button class="btn btn-success" type="button"
+													ng-click="applyTimeBasedFilter()">Apply</button>
+
+											</div>
+
+										</form>
+
+
+									</div>
+									<div class="col-sm-8 col-md-9">
+										<h3 class="panel-title">Quick ranges</h3>
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+														2 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+														7 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+														30 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+														90 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6months','Last 6 months')">Last
+														6 months</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1year','Last 1 year')">Last
+														1 year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2years','Last 2 years')">Last
+														2 years</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last5years','Last 5 years')">Last
+														5 years</a></li>
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+														before yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+														day last week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+														year</a></li>
+
+											</ul>
+										</div>
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('today','Today')">Today</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+														so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeek','This week')">This
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+														week so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonth','This month')">This
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+														month so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYear','This year')">This
+														year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+														year so far</a></li>
+
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+														15 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+														30 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+														1 hour</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+														3 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+														6 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+														12 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+														24 hours</a></li>
+											</ul>
+										</div>
+									</div>
+
+
+								</div>
+							</div>
+
+
+
+
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row" ng-show="showFilter">
+
+					<div class="col-md-12">
+
+
+						<div class="panel">
+
+							<div class="panel-heading">
+								<div class="panel-control">
+									<a href="javascript:void('0')" class="btn-link btn-link-white"
+										ng-click="openFliter()"> <i
+										class="fa fa-close" title="clear filter"></i> <span
+										ng-show="false"></span></a>
+								</div>
+								<h3 class="panel-title">Filter</h3>
+
+							</div>
+
+							<div class="panel-body">
+
+
+								<div data-elastic-builder="ctrl.data"></div>
+
+
+
+								<div class="text-right">
+									<button type="button" class="btn btn-danger" ng-click = "deleteFilter()">Delete Filter</button>
+					
+									<button type="button" class="btn btn-primary" ng-click = "saveAndApplyFilter()">Save</button>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+
+
+				<div style="padding-bottom: 35px">
+					<div class="row" style="margin-left: 0px; margin-right: -10px;">
+						<div gridster="gridsterOptions">
+
+							<ul>
+								<li gridster-item="widget" ng-repeat="widget in ctrl.widgets">
+
+
+									<div class="panel dashboard-panel  box" style="height: 100%"
+										ng-init="open=false;">
+
+
+										<div class="panel-heading dashboard-panel-header "
+											ng-if="!widget.frameless || editMode"
+											ng-mouseover="open = true" ng-mouseleave="open = false">
+											<div class="panel-control" ng-if="open">
+
+
+												<a class="btn-link btn-link-white"
+													href="javascript:void('0')"
+													ng-click="reloadWidget(widget.id,widget.options)"
+													title="Refresh the graph"><i class="fa fa-repeat"></i></a>
+												&nbsp; <a class="btn-link btn-link-white"  ng-if="!(widget.options.config.chart_type == 'kpi')"
+													href="javascript:void('0')" data-toggle="dropdown"
+													aria-expanded="false" title="Options"> <i class="fa fa-cloud-download"></i></a>
+												<ul class="dropdown-menu dropdown-menu-right">
+													<li><a href="javascript:void('0');"
+														ng-if="!(widget.options.config.chart_type == 'table' || widget.options.config.chart_type == 'kpi')"
+														ng-click="downloadPNG(widget.id)">Download PNG</a></li>
+													<li><a href="javascript:void('0');" ng-click="downloadExcel(widget.id,widget.options.config.chart_type)">Download CSV</a></li>
+													<li><a href="javascript:void('0');" id="{{widget.id}}-chart"
+														ng-if="!(widget.options.config.chart_type == 'table' || widget.options.config.chart_type == 'kpi')"
+														ng-click="viewDataTable(widget.id)">Toggle Chart/Data</a></li>
+												</ul>
+												&nbsp; 
+
+												<a
+													href="/configuration#!/menusettings?action=editWidget&widgetId={{widget.id}}"
+													class="btn-link btn-link-white"
+													ng-click="editWidget($index)" ng-if="editMode"
+													title="Edit">&nbsp;<i class="fa fa-pencil"></i>&nbsp;</a>
+
+												<a href="javascript:void('0')"
+													class="btn-link btn-link-white"
+													ng-click="toggleFullScreen(widget.id)" title="Fullscreen"><i
+													class="fa fa-expand"></i></a>
+													&nbsp;&nbsp;
+												<div class="dropdown" ng-if="widget.options.config.values[0].series_type == 'polar'  || widget.options.config.values[0].series_type == 'column' || widget.options.config.values[0].series_type == 'doughnut' || widget.options.config.values[0].series_type == 'line' || widget.options.config.values[0].series_type == 'bar' || widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'pie' || widget.options.config.values[0].series_type == 'doughnut'||widget.options.config.values[0].series_type == 'stackline' || widget.options.config.values[0].series_type == 'columnstackbar' || widget.options.config.values[0].series_type == 'stackbar'" class="dropdown">
+						                            <a class="btn-link" href="javascript:void('0')" data-toggle="dropdown" aria-expanded="false" title="Switch"><i class="fa fa-bars"></i></a>
+						                            <ul class="dropdown-menu dropdown-menu-right" style="">
+														<li ng-if="widget.options.config.values[0].series_type == 'polar'  || widget.options.config.values[0].series_type == 'column' || widget.options.config.values[0].series_type == 'doughnut' || widget.options.config.values[0].series_type == 'line' || widget.options.config.values[0].series_type == 'bar' || widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'pie' || widget.options.config.values[0].series_type == 'doughnut'"><a href="javascript:void('0');"  ng-click="switchChart(widget.id,'column',widget.options)" >Switch to Column</a></li>
+						                                <li ng-if="widget.options.config.values[0].series_type == 'pie' || widget.options.config.values[0].series_type == 'bar' ||  widget.options.config.values[0].series_type == 'line'  ||  widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'column'"> <a href="javascript:void('0');" ng-click="switchChart(widget.id,'pie',widget.options)" >Switch to Pie</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'bar'  || widget.options.config.values[0].series_type == 'pie' ||widget.options.config.values[0].series_type == 'column' ||widget.options.config.values[0].series_type == 'line' || widget.options.config.values[0].series_type == 'doughnut' "><a href="javascript:void('0');" ng-click="switchChart(widget.id,'bar',widget.options)" >Switch to Bar</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'column' || widget.options.config.values[0].series_type == 'pie'  || widget.options.config.values[0].series_type == 'bar' ||widget.options.config.values[0].series_type == 'line'  || widget.options.config.values[0].series_type == 'doughnut' "><a href="javascript:void('0');" ng-click="switchChart(widget.id,'area',widget.options)" >Switch to Arealine</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'line' || widget.options.config.values[0].series_type == 'bar' || widget.options.config.values[0].series_type == 'column' || widget.options.config.values[0].series_type == 'arealine' || widget.options.config.values[0].series_type == 'pie' || widget.options.config.values[0].series_type == 'doughnut'"><a href="javascript:void('0');" ng-click="switchChart(widget.id,'line',widget.options)">Switch to Line</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'columnstackbar'|| widget.options.config.values[0].series_type == 'stackbar' ||widget.options.config.values[0].series_type == 'stackline' "><a href="javascript:void('0');" ng-click="switchChart(widget.id,'columnstackbar',widget.options)">Switch to Stacked Vertical Bar</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'stackbar' || widget.options.config.values[0].series_type == 'columnstackbar' ||widget.options.config.values[0].series_type == 'stackline' "><a href="javascript:void('0');" ng-click="switchChart(widget.id,'stackbar',widget.options)" >Switch to Stacked Horizontal Bar</a></li>
+														<li ng-if="widget.options.config.values[0].series_type == 'stackline' || widget.options.config.values[0].series_type == 'columnstackbar' || widget.options.config.values[0].series_type == 'stackbar'"><a href="javascript:void('0');" ng-click="switchChart(widget.id,'stackline',widget.options)">Switch to Stacked Line</a></li>
+						                                <li ng-if="widget.options.config.values[0].series_type == 'doughnut'"><a href="javascript:void('0');" ng-click="switchChart(widget.id,'doughnut',widget.options)" >Switch to Donut </a></li>
+						                            </ul>
+					                        	</div>
+
+
+											</div>
+											<h3
+												class="panel-title dashboard-panel-heading dashboad-panel-title"
+												title="{{widget.title}}">{{widget.title}}</h3>
+										</div>
+										<div style="height: 100%;">
+
+											<pannel-content model="options" content="widget" />
+										</div>
+
+
+
+
+
+
+
+
+
+									</div>
+
+								</li>
+							</ul>
+
+						</div>
+
+
+					</div>
+				</div>
+
+				<div id="add_widget_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Widgets</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<input type="text" ng-model="ctrl.search" class="form-control"
+										placeholder="Search widgets">
+								</div>
+								<div class="nano has-sidebar" style="height: 380px">
+									<div class="nano-content" style="right: -17px">
+
+
+										<div class="list-group">
+
+											<a class="list-group-item  list-item-sm "
+												ng-click="addWidget(data)" href="javascript:void('0')"
+												ng-repeat="data in existingWidgets | filter : ctrl.search">{{data.title}}</a>
+
+										</div>
+
+
+
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default waves-effect"
+									data-dismiss="modal">Close</button>
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+
+				<div id="newDashboard_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Add
+									Dashboards</h4>
+							</div>
+							<div class="modal-body">
+
+								<div class="row">
+
+									<div class="pad-all file-manager">
+
+										<div class="fixed-fluid">
+
+											<div class="fixed-sm-200 pull-sm-left file-sidebar">
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('all')">All
+														({{allDashboardsCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('public')">Public
+														({{publicDashboardCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('private')">Private
+														({{privateDashboardCount}})</a>
+
+												</div>
+
+												<div class="list-group bg-trans pad-ver bord-btm">
+
+													<a href="javascript:void('0')" class="btn-lin"
+														ng-click="showDashoardList('shared')">Shared
+														({{sharedDashboardCount}})</a>
+
+												</div>
+
+											</div>
+
+											<div class="fluid file-panel">
+
+												<table
+													class="table table-striped  dataTable no-footer dtr-inline"
+													datatable="ng" dt-options="vm.dtOptions"
+													dt-instance="vm.dtInstance" width="100%"
+													dt-column-defs="vm.dtColumnDefs">
+													<thead>
+
+														<tr>
+															<th>Name</th>
+															<th>Space Name</th>
+															<th></th>
+
+														</tr>
+
+
+
+													</thead>
+
+													<tbody>
+
+														<tr ng-repeat="data in currentDashboards">
+															<td>{{data.name}}</td>
+															<td>{{data.spaceName}}</td>
+															<td><a href="javascript:void('0')"
+																ng-click="addDashboadToTab(data)">Add</a></td>
+
+														</tr>
+
+													</tbody>
+
+												</table>
+
+
+											</div>
+
+										</div>
+
+									</div>
+
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+
+				<div id="edit_dashboard_dialog"
+					class="modal fade bs-example-modal-lg in" tabindex="-1"
+					role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none; padding-left: 0px;">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+								<h4 class="modal-title" id="myLargeModalLabel">Dashboard</h4>
+							</div>
+							<div class="modal-body">
+								<form role="form">
+									<div class="form-group">
+										<label for="dashboardTitle"
+											ng-bind="translate('ADF_COMMON_TITLE')">Title</label> <input
+											type="text" class="form-control" id="dashboardTitle"
+											ng-model="model.title" required="">
+									</div>
+
+
+									<div class="form-group">
+										<label for="dashboardTitle">Permission</label> <select
+											class="form-control" ng-model="model.permission"
+											id="permission">
+											<option value="Role">Role</option>
+
+										</select>
+									</div>
+
+
+
+									<div class="form-group">
+										<label for="dashboardTitle">Permission</label>
+										<ui-select class="form-control" multiple ng-model="model.role"
+											theme="bootstrap" title="Choose a Field"> <ui-select-match
+											placeholder="select Type">{{$item}}</ui-select-match> <ui-select-choices
+											repeat="data in model.rolesArray | filter : $select.search">
+										<div ng-bind-html="data | highlight:$select.search"></div>
+										</ui-select-choices> </ui-select>
+									</div>
+
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default waves-effect"
+									data-dismiss="modal">Close</button>
+
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal right fade" id="showAdvancedFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel2">Advanced Search</h4>
+				</div>
+
+				
+
+				<div class="modal-body">
+				
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+					class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+					close="closeAlert($index)">{{alert.msg}}</div>
+				
+					<div data-elastic-builder="ctrl.data"></div>
+					
+					<div class="text-right">
+							<button type="button" class="btn btn-danger" ng-click = "deleteFilter()">Delete Filter</button>
+							<button type="button" class="btn btn-primary" ng-click = "saveAndApplyFilter()">Save</button>
+					
+							<button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close" >Cancel</button>
+							
+					</div>
+					
+				</div>
+				
+				
+
+			</div><!-- modal-content -->
+		</div><!-- modal-dialog -->
+	</div>
+</div>
+

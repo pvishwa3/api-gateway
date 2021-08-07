@@ -1,0 +1,113 @@
+
+<div class="row" id="condition_div" ng-controller="sourceManagement as ctrl">
+
+
+	<div class="page-header page-header-default">
+		<div class="page-header-content border-bottom border-bottom-success">
+			<div class="page-title">
+				<h4>
+					<i class="icon-arrow-left52 position-left"></i> <span
+						class="text-semibold">Source Management</span>
+
+				</h4>
+			</div>
+		</div>
+		
+		<div  style="margin-top:50px;" uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+	</div>
+	
+	
+
+<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+<script type="text/ng-template" id="newLogType.html">
+
+		<div class="row pull-right">
+				<button class="btn btn-dark" ng-click="ctrl.logTypesView()">Back</button>
+			</div>
+		
+	<form ng-submit="ctrl.saveLogTypes()">
+		<div class="col-sm-12">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-7">
+				<div class="col-sm-2"><label><b>Log Type</b></label></div>
+				<div class="col-sm-7">
+					<input type="text" ng-model="ctrl.data.logType" class="form-control" ng-required="true">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12" style="padding-top:20px;">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-7">
+				<div class="col-sm-2"><label><b>Message Type</b></label></div>
+				<div class="col-sm-7">
+					<input type="text" ng-model="ctrl.data.messageType" class="form-control" ng-required="true">
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12" style="padding-top:20px;">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-7">
+				<div class="col-sm-2"><label><b>Format Type</b></label></div>
+				<div class="col-sm-7">
+					<select ng-model="ctrl.data.formatType" class="form-control" ng-required="true">
+						<option>Plain</option>
+						<option>JSON</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12" style="padding-top:20px;">
+			<div class="col-sm-4"></div>
+			<div class="col-sm-2">
+				<div class="col-sm-1 pull-right"><input class="btn btn-dark" type="submit" value="submit" ></div>
+			</div>
+		</div>
+		</form>
+	</script>
+	<script  type="text/ng-template" id="logTypeDetails.html">
+			
+			<div class="panel panel-flat">
+					<div class="panel-heading">
+
+						<div class="heading-elements">
+							<button class="btn btn-dark" ng-click="ctrl.showLogTypeView()">create LogType</button>
+						</div>	
+					</div>
+					<div class="panel-body">
+						<br/>
+					<table class="table table-striped" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+						<thead>
+							<tr>
+								<th>LogType</th>
+								<th>Message Type</th>
+								<th>Format Type</th>
+								<th class="text-center">Actions</th>
+							</tr>
+						</thead>
+
+
+						<tbody>
+							<tr ng-repeat="data  in ctrl.savedSource">
+								<td>{{data.logType}}</td>
+								<td>{{data.messageType}}</td>
+								<td>{{data.formatType}}</td>
+								<td class="text-center">
+									<a href="javascript:void('0')" ng-click="ctrl.displayUpdate(data.id)">
+										<i class="icon-pencil7" aria-hidden="true"></i>
+									</a>
+									<a href="javascript:void('0')" ng-click="ctrl.deleteCondition(data.id)">
+										<i class="icon-cross" aria-hidden="true"></i>
+									</a>
+								</td>	
+								
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				
+				</div>
+			
+	</script>
+	
+</div>

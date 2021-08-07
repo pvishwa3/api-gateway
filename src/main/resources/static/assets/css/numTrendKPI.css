@@ -1,0 +1,36 @@
+.num-trend-kpi-data-text {
+    font-family: KPIWidgetNumber;
+    font-size: 55px;
+    color: #4c4c4c;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.num-trend-kpi-data-text-small {
+    font-family: KPIWidgetNumber;
+    font-size: 42px;
+    color: #4c4c4c;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.num-trend-kpi-container {
+    font-family: KPIWidget;
+    color: #4c4c4c;
+    background-color: #f7f7f5;
+    box-shadow: 0 1px 5px rgba(0,0,0,.3), inset 0 10px 30px rgba(255,255,255,.3);
+}
+
+.num-trend-kpi-data {
+    text-align: center;
+    width: 100%;
+    font-size: 46px;
+}
+
+.num-trend-kpi-footer {
+    display: table;
+    text-align: center;
+    width: 100%;
+}

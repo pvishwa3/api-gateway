@@ -1,0 +1,561 @@
+<div ng-controller="dashboardController as ctrl" class="content-wrapper">
+
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Create Dashboards</h4>
+			</div>
+		</div>
+	</div>
+	
+
+	<div class="card">
+		<div class="card-body" style="height: 85vh">
+			<div fa-pane pane-anchor="center">
+				<div fa-pane pane-anchor="west" pane-size="20% + 2px" pane-min="100px" pane-handle="4">
+
+
+					<div class="row">
+
+						<div class="card-body">
+
+							<div class="row tree-container">
+
+
+								<div class="row col-md-12"
+									style="padding-top: 13px; margin-bottom: 15px; padding-left: 12px;">
+									<input search type="text" class="form-control" style=""
+										placeholder="search">
+								</div>
+								
+								<div class="tree-container" js-tree="ctrl.treeConfig"
+									ng-model="ctrl.treeData" tree="ctrl.treeInstance"
+									tree-events="select_node:ctrl.getNodeInfo;rename_node:ctrl.renameCB"></div>
+
+
+							</div>
+
+
+
+
+
+
+
+
+						</div>
+
+						<script type="text/ng-template" id="dashboardInformation.html">
+						<div class="col-md-12 d-flex align-items-center justify-content-between">
+					<div class="col-sm-6">
+						<h4 class="page-title mar-all">{{model.title}}</h4>
+					</div>
+					<div class="col-sm-6 ">
+						<div class="btn-group text-right pull-right">
+
+							<a href="javascript:void('0')" ng-if="editMode"
+								title="Add Widget" class="btn btn-link btn-float has-text"
+								title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}"
+								ng-click="openAddWidgetDialog()"> <i style="color:white" class="icon-md ion-plus-circled"></i>
+							</a> <a href="javascript:void('0')" title="Edit Dashboard"
+								class="btn btn-link btn-float has-text" ng-if="editMode"
+								title="{{ translate('ADF_COMMON_EDIT_DASHBOARD') }}"
+								ng-click="editDashboard()"> <i style="color:white" class="icon-md ion-edit"></i>
+							</a> 
+							<a href="javascript:void('0')" ng-if="editMode"
+								class="btn btn-link  btn-float has-text"
+								title="save dashboard"
+								ng-click="toggleEditMode()"> <i style="color:white" class="icon-md fa fa-check"></i>
+							</a>
+ 							<a href="javascript:void('0')" ng-if="!editMode"
+								class="btn btn-link  btn-float has-text"
+								title="Edit"
+								ng-click="toggleEditMode()"> <i style="color:white" class="icon-md ion-edit"></i>
+							</a>
+						<a href="javascript:void('0')" 
+								class="btn btn-link  btn-float has-text"
+								title="Delete {{model.title}}"
+								ng-click="delete()"> <i style="color:white" class="icon-md ion-trash-b"></i>
+							</a>
+							 <a href="javascript:void('0')" title="Undo"
+								class="btn btn-link  btn-float has-text" ng-if="editMode"
+								title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_UNDO') }}"
+								ng-click="edit(model.id)"> <i style="color:white" class="icon-md ion-reply"></i></a>
+						</div>
+					</div>
+				</div>
+<div style="padding-left:2%;padding-right:2%;padding-bottom:2%">
+					<div class="grid-stack-item-content" ng-repeat="widget in ctrl.widgets" style="width:100%;padding-top:20px;max-height:275px;">
+						<div class="panel dashboard-panel box card">
+							<div class="panel-heading dashboard-panel-header card-header header-sm d-flex justify-content-between align-items-center" style="padding: 10px 5px 10px 5px; border: none; height: 25px;">
+								<h5 style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" class="card-title" title="{{widget.title}}">{{widget.title}}</h5>
+								<div>
+									<a href="javascript:void('0')" class="btn btn-icon" style="padding-left: 5px;padding-right: 5px;" ng-click="remove($index)" ng-if="editMode" title="delete"><i class="ion-trash-b"></i></a>
+									<a href="javascript:void('0')" class="btn btn-icon" style="padding-left: 5px;padding-right: 5px;" ng-click="reloadWidget(widget.id,widget.options)" title="refresh the graph"><i class="fa fa-repeat"></i></a> 
+									<a href="javascript:void('0')" class="btn btn-icon" style="padding-left: 5px;padding-right: 5px;" ng-click="toggleFullScreen(widget.id)" title="fullscreen"><i class="fa fa-expand"></i></a>
+								</div>
+							</div>
+							<div style="height: 250px;">
+								<pannel-content model="options" content="widget" />
+							</div>
+						</div>
+					</div>
+</div>
+					</script>
+
+
+
+
+
+
+					</div>
+
+				</div>
+
+				<script type="text/ng-template" id="viewNodeInfo.html">
+	<div class="pad-btm col-md-12">
+		  <table class="table" datatable="ng">
+				 <thead>
+                                    <tr>
+                                        <th>Name</th>
+										<th>Path</th>
+										<th>Dashboard Name </th>
+										
+										
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr ng-repeat = "data  in subCategories track by $index">
+                                        <td>{{data.category_name}}</td>
+										 <td>{{data.path}}</td>
+										<td>{{data.dashboardName}}</td>
+                                    	
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+	
+
+	
+		  </table>
+</div>
+	</script>
+
+
+
+
+
+
+				<div fa-pane pane-anchor="east" pane-size="100% + 2px">
+
+
+					<div class="panel" style="overflow: hidden; padding-top: 4%;">
+
+						<div uib-alert ng-repeat="alert in alertMessagaes" class="alert"
+							ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<div id="my-element"></div>
+
+
+					</div>
+
+
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<div id="add_widget_dialog"
+		class="modal fade right bs-example-modal-lg in" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Widgets</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in ctrl.modalMessagaes"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+					<div class="form-group">
+						<input type="text" ng-model="ctrl.search" class="form-control"
+							placeholder="Search widgets">
+					</div>
+					<div class="d-none d-lg-block px-0 chat-sidebar"
+									style="max-height: 420px; overflow-y: scroll" >
+							<div class="list-group">
+								<a class="dropdown-item"
+									ng-click="addWidget(data)" href="javascript:void('0')"
+									ng-repeat="data in existingWidgets | filter:ctrl.search">{{data.title}}</a>
+
+							</div>
+					</div>
+
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="edit_dashboard_dialog"
+		class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Dashboard Settings</h4>
+				</div>
+
+				<div class="modal-body">
+
+
+					<uib-tabset active="active"> <uib-tab index="0"
+						heading="Settings">
+
+					<form class="form-horizontal" style="margin-top:5%" name="dashboardForm">
+						<div class="panel-body">
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Title</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="dashboardTitle"
+										ng-model="model.title" required pattern="[a-zA-Z0-9\s _-]+">
+										<div class="text-danger" ng-show="dashboardForm.title.$touched && dashboardForm.title.$error.required">Title is mandatory</div>
+									<div class="text-danger" ng-show="dashboardForm.title.$touched && dashboardForm.title.$error.pattern">Special characters are not allowed</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Category</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-model="model.categoryId" name="categoryId" required="required">
+										<option value="{{data.id}}"
+											ng-repeat="data in ctrl.allCategories">{{data.categoryName}}</option>
+									</select>
+									<div class="text-danger" ng-show="dashboardForm.categoryId.$touched && dashboardForm.categoryId.$error.required">Category is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Reports
+									Enabled</label>
+								<div class="col-sm-9">
+									<input type="checkbox" ng-model="model.reports"
+										class="checkbox">
+								</div>
+							</div>
+						</div>
+
+						<h4>Access</h4>
+						<hr />
+
+
+
+						<div class="row " style="margin-top: 12px"
+							ng-if="canEditDashboards">
+
+							<div uib-alert ng-repeat="alert in ctrl.accessAlerts"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+
+							<div class="col-md-7">
+
+
+
+								<ui-select ng-model="accessModel.name" theme="bootstrap"
+									style="width:100%" title="Add more users and/or roles">
+								<ui-select-match placeholder="Select Role Or Users">{{$select.selected.name}}</ui-select-match>
+								<ui-select-choices
+									repeat="t in accessList | filter: $select.search">
+								<span ng-bind-html="t.name | highlight: $select.search"></span>
+								</ui-select-choices> </ui-select>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control" ng-model="accessData.access">
+
+									<option value="viewer">Viewer</option>
+									<option value="editor">Editor</option>
+									<option value="admin" ng-if="model.isAdmin || model.isOwner">Admin</option>
+
+								</select>
+
+							</div>
+
+							<button class="btn btn-primary col-md-2 pull-right"
+								ng-click="addToList()" type="button">Share</button>
+
+						</div>
+
+
+
+
+
+						<div class="col-m-8 access-container" style="margin-top: 5%;">
+
+							<table class="table">
+
+								<tr>
+									<th style="border-top: 0px;">Name</th>
+									<th style="border-top: 0px;">Access</th>
+									<th style="border-top: 0px;">Action</th>
+
+								</tr>
+
+
+								<tbody>
+									<tr ng-repeat="data in model.existingRoles">
+										<td>{{data.role_name}}</td>
+										<td ng-if="canEditDashboards"><select
+											ng-change="updateRoles($index)" class="form-control"
+											ng-model="data.access">
+												<option value="viewer">Viewer</option>
+												<option value="editor">Editor</option>
+												<option value="admin" ng-if="model.isAdmin || model.isOwner">Admin</option>
+
+										</select></td>
+										<td ng-if="!canEditDashboards">{{data.access}}</td>
+
+										<td ng-if="canEditDashboards"><a
+											href="javascript:void('0')" ng-click="deleteRoles(data.id)">Delete</a>
+										</td>
+									</tr>
+
+								</tbody>
+
+
+							</table>
+
+						</div>
+
+
+
+						<hr />
+
+
+
+
+						<div class="modal-footer">
+									<button class="btn btn-success" ng-click="ctrl.saveDashboard()"
+										type="button">Save</button>
+
+						</div>
+					</form>
+
+
+
+
+
+
+
+
+
+
+					</uib-tab> <uib-tab index="2" heading="Reports">
+
+					<div uib-alert ng-repeat="alert in ctrl.reportAlerts" class="alert"
+						ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form class="form-horizontal" ng-submit="saveReports()" style="margin-top:5%" name="reportsForm" novalidate="novalidate">
+
+
+
+						<div class="panel-body">
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Title</label>
+								<div class="col-sm-9">
+									<input type="text" ng-disabled="isRepotsEditable"class="form-control" name="scheduleName" ng-model="reports.scheduleName" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.scheduleName.$touched) && reportsForm.scheduleName.$error.required">Title is mandatory</div>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.scheduleName.$touched) && reportsForm.scheduleName.$error.pattern">Special characters are not allowed</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Frequency</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequency" required="required" name="frequency">
+										<option value="daily">Daily</option>
+										<option value="weekly">Weekly</option>
+										<option value="monthly">Monthly</option>
+									</select>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.frequency.$touched) && reportsForm.frequency.$error.required">Frequency is mandatory</div>	
+								</div>
+							</div>
+
+							<div class="form-group row" ng-if="reports.frequency === 'weekly'">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Day
+									of Week</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequencyType" required="required" name="frequencyType">
+										<option value="SUN">Sunday</option>
+										<option value="MON">Monday</option>
+										<option value="TUE">Tuesday</option>
+										<option value="WED">Wednesday</option>
+										<option value="THU">Thrusday</option>
+										<option value="FRI">Friday</option>
+										<option value="SAT">Saturday</option>
+									</select>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.frequencyType.$touched) && reportsForm.frequencyType.$error.required">Frequency type is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row" ng-if="reports.frequency === 'monthly'">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label"
+									required>Day of Week</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.frequencyType" name="frequencyType" required="required">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+										<option value="7">7</option>
+										<option value="8">8</option>
+										<option value="9">9</option>
+										<option value="10">10</option>
+										<option value="11">11</option>
+										<option value="12">12</option>
+										<option value="13">13</option>
+										<option value="14">14</option>
+										<option value="15">15</option>
+										<option value="16">16</option>
+										<option value="17">17</option>
+										<option value="18">18</option>
+										<option value="19">19</option>
+										<option value="20">20</option>
+										<option value="21">21</option>
+										<option value="22">22</option>
+										<option value="23">23</option>
+										<option value="24">24</option>
+										<option value="25">25</option>
+										<option value="26">26</option>
+										<option value="27">27</option>
+										<option value="28">Last day</option>
+									</select>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.frequencyType.$touched) && reportsForm.frequencyType.$error.required">Frequency type is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Hour
+									of Day</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.hourOfDay" name="hourOfDay" required="required">
+										<option value="0">0:00</option>
+										<option value="1">1:00</option>
+										<option value="2">2:00</option>
+										<option value="3">3:00</option>
+										<option value="4">4:00</option>
+										<option value="5">5:00</option>
+										<option value="6">6:00</option>
+										<option value="7">7:00</option>
+										<option value="8">8:00</option>
+										<option value="9">9:00</option>
+										<option value="10">10:00</option>
+										<option value="11">11:00</option>
+										<option value="12">12:00</option>
+										<option value="13">13:00</option>
+										<option value="14">14:00</option>
+										<option value="15">15:00</option>
+										<option value="16">16:00</option>
+										<option value="17">17:00</option>
+										<option value="18">18:00</option>
+										<option value="19">19:00</option>
+										<option value="20">20:00</option>
+										<option value="21">21:00</option>
+										<option value="22">22:00</option>
+										<option value="23">23:00</option>
+									</select>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.hourOfDay.$touched) && reportsForm.hourOfDay.$error.required">Hour of day is mandatory</div>
+								</div>
+							</div>
+
+
+
+
+							<div class="form-group row" ng-model="reports.timeRange">
+								<label for="demo-is-inputnormal" class="col-sm-3 control-label">Export
+									Time Range</label>
+								<div class="col-sm-9">
+									<select class="form-control" ng-disabled="isRepotsEditable"
+										ng-if="reports.frequency === 'daily' "
+										ng-model="reports.timeRange" required="required" name="timeRange">
+										<option value="perviousDay">Pervious Day</option>
+										<option value="last24Hours">Last 24 Hours</option>
+									</select> <select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.timeRange"
+										ng-if="reports.frequency === 'weekly' " required="required" name="timeRange">
+										<option value="perviousWeek">Pervious Week</option>
+										<option value="last7Days">Last 7 Days</option>
+									</select> <select class="form-control" ng-disabled="isRepotsEditable"
+										ng-model="reports.timeRange"
+										ng-if="reports.frequency === 'monthly' " required="required" name="timeRange">
+										<option value="perviousMonth">Pervious Month</option>
+										<option value="last30Days">Last 30 Days</option>
+									</select>
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.timeRange.$touched) && reportsForm.timeRange.$error.required">Time range is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-3 control-label" for="title">Email
+									Address</label>
+								<div class="col-sm-9">
+									<input type="text" ng-disabled="isRepotsEditable" class="form-control" id="reportTitle" ng-model="reports.emailAddress" placeholder="Comma Seperated Email Address" required="required" name="emailAddress">
+									<div class="text-danger" ng-show="(reportsForm.$submitted || reportsForm.emailAddress.$touched) && reportsForm.emailAddress.$error.required">Email address is mandatory</div>									
+								</div>
+							</div>
+						</div>
+
+						<hr />
+
+						<div class="pull-right pad-all">
+							<button class="btn btn-success pull-right"
+								style="margin-right: 10px" type="submit"
+								ng-disabled="isRepotsEditable" ng-if="reportsForm.$valid">Schedule Report</button>
+							<button class="btn btn-primary pull-right"
+								style="margin-right: 10px" ng-click="enableReport()"
+								type="button" ng-if="isRepotsEditable">Edit Report</button>
+							<button class="btn btn-danger pull-right"
+								style="margin-right: 10px" ng-click="deleteReport(reports.id)"
+								type="button" ng-if="isRepotsEditable">Delete</button>
+						</div>
+					</form>
+
+
+
+					</uib-tab> </uib-tabset>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>

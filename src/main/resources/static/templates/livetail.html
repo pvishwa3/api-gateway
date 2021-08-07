@@ -1,0 +1,127 @@
+<div ng-controller="liveTrail as ctrl" id="content-container">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+						<div id="page-head">
+							<div id="page-title">
+								<h1 class="page-header text-overflow">Live Tail</h1>
+								</div>
+<!-- 							<ol class="breadcrumb"> -->
+<!-- 								<li><a href="/configuration#!">Home</a></li> -->
+<!-- 								<li class="active">Live Tail</li> -->
+<!-- 							</ol> -->
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2 pull-right">
+					<div class="row" style="padding-top: 20px;">
+						<div id="page-head">
+							<div id="page-title">
+								<button   ng-show='rule.canCreateRule && showHomeButton' ng-click="rule.nextPage(); rule.conditionForms.correlationName=''; rule.conditionForms.correlationDesc=''" class="btn btn-dark pull-right" title="Create new rules">New Rule</button>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+
+
+		<div class="panel">
+
+			<div class="panel-body" id="panel-body">
+				<form class="form-horizontal " ng-submit="controller.submitData()">
+					<div class="row">
+						<div class="col-md-10">
+
+							<div class="form-group">
+
+								<div class="col-md-6">
+									<input type="text" class="form-control" ng-model="searchFilter"
+										placeholder="Filter" value="">
+								</div>
+
+								<div class="col-md-6">
+									<input type="text" class="form-control" ng-model="searchText"
+										placeholder="Enter A text to highlight" value="">
+								</div>
+							</div>
+
+
+						</div>
+
+						<div class="col-md-2">
+
+							<button type="submit"
+								class="btn btn-dark"
+								title="run"
+								ng-click="runLiveTrail()" ng-disabled=disableRunButton>
+								Run</button>
+
+							<button type="submit"
+								class="btn btn-warning waves-effect  waves-light"
+								title="pause"
+								ng-click="pause()">
+								<i class="ion-pause"></i>
+							</button>
+
+
+
+
+							<button type="submit"
+								class="btn btn-danger waves-effect  waves-light"
+								title="stop"
+								ng-click="stopLiveTrail()">
+								<i class="ion-stop"></i>
+							</button>
+							
+							
+							<button type="button"
+								class="btn btn-defautl waves-effect  waves-light"
+								title="clear the data"
+								ng-click="clearLog()">
+								<i class="fa fa-eraser"></i>
+							</button>
+
+
+
+						</div>
+
+
+					</div>
+				</form>
+
+				<div class="row logmessage-div" style="height: 80%">
+					<div class="col-lg-12">
+
+						<ul class="newsticker list-unstyled" id="autoscroll"
+							style="height: 800px; overflow: scroll;">
+							<li class="tickerLi"
+								ng-repeat="data in loglines track by $index ">
+
+								<p class="text-success"
+									style="font-size: 16px; color: white;">
+									<strong>{{data.fomratedTime}}</strong> <strong>{{data.beat.hostname}}
+										: </strong> <span ng-bind-html="highlight(data.message)"></span>
+								</p>
+
+							</li>
+
+						</ul>
+
+					</div>
+				</div>
+
+
+
+			</div>
+
+
+
+		</div>
+	</div>
+
+</div>
+
+
+

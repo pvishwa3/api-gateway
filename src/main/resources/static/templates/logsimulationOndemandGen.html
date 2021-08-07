@@ -1,0 +1,372 @@
+<div ng-controller="logsimulationOndemandGen as ls"
+	ng-init="ls.loadSimulationPage();ls.getRuleNames();"
+	class="content-wrapper">
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">OnDemand Generation</h4>
+			</div>
+		</div>
+	</div>
+	<hr />
+
+	<div class="banners">
+		<div ng-repeat="baner in ls.alertMessages"
+			class="alert {{baner.type}}" close="closeAlert($index)">{{baner.msg}}
+		</div>
+	</div>
+
+	<div class="panel">
+		<div class="panel-body" id="panel-body" style="margin-bottom: 45px">
+			<form class="form-horizontal" ng-submit="ls.ondemandGen()"
+				name="simulation">
+				<fieldset>
+					<legend class="text-semibold">On-Demand Details</legend>
+
+					<div class="form-group" ng-show="!ls.newsim.eventsSize">
+						<label class="control-label col-sm-3"> Count <span
+							class="text-danger">*</span></label>
+						<div class="col-sm-3">
+							<input type="number" min="1" class="form-control"
+								title="Enter Count" ng-model="ls.newsim.count"
+								ng-class="(ls.newsim.count=='' || ls.newsim.count == undefined) && simulation.$submitted ? 'border-danger' : ''">
+							<div class="text-danger text-bold help-block with-errors"
+								ng-show="(ls.newsim.count=='' || ls.newsim.count == undefined) && simulation.$submitted">Count
+								is mandatory</div>
+						</div>
+					</div>
+
+					<div class="form-group" ng-show="ls.newsim.eventsSize">
+
+						<label class="col-sm-3 control-label">Size<span
+							class="text-danger">*</span></label>
+						<div class="col-sm-3 form-control-static">
+							<input type="number" min="0" class="form-control"
+								ng-model="ls.newsim.size">
+						</div>
+						<div class="col-sm-3 form-control-static">
+							<select class="form-control" ng-model="ls.newsim.capacity">
+								<option>KB</option>
+								<option>MB</option>
+								<option>GB</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9 pull-right checkbox">
+							<label><input type="checkbox"
+								ng-model="ls.newsim.eventsSize" ng-true-value="true"
+								ng-false-value="false">Generate By Size</label>
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> Correctness %</label>
+						<div class="col-sm-3">
+							<input type="number" min="0" max="100" class="form-control"
+								ng-model="ls.newsim.correctness" title="Enter Correctness">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Format Type<span
+							class="text-danger">*</span></label>
+						<div class="col-sm-3">
+							<select class="form-control" title="Select format type"
+								title="Select format" ng-model="ls.newsim.templateType"
+								ng-class="((ls.newsim.templateType == '' || ls.newsim.templateType == undefined ) && newEvent.$submitted) ? 'border-danger':'' ">
+								<option ng-repeat="data in ls.formatTypes" value="{{data}}">{{data}}</option>
+							</select>
+							<div class="text-danger text-bold help-block with-errors"
+								ng-show="(ls.newsim.templateType=='' || ls.newsim.templateType == undefined) && newEvent.$submitted">Format
+								is mandatory</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3">Template<span
+							class="text-danger">*</span></label>
+						<div class="col-sm-6" ng-show="ls.newsim.templateType=='JSON'">
+							<angular-jsoneditor title="Json editor" title="Enter json data"
+								ng-model="objGenNew.data" options="objGenNew.options"
+								style="width: 100%; height: 100%;"
+								ng-class="((objGenNew.data== '' || objGenNew.data == undefined ) && newEvent.$submitted) ? 'border-danger':'' "></angular-jsoneditor>
+							&nbsp;
+							<div class="pdL4">
+								<button type="button" class="btn btn-dark"
+									ng-click="changeData()">Reset data</button>
+								<button type="button" class="btn btn-dark"
+									ng-click="changeOptions()">change options</button>
+								<div class="text-danger text-bold help-block with-errors"
+									ng-show="(obj.data=='' || obj.data== undefined) && newEvent.$submitted">Template
+									is mandatory</div>
+							</div>
+						</div>
+						<div class="col-sm-6" ng-show="ls.newsim.templateType=='PLAIN'">
+							<textarea rows="6" cols="10" class="form-control"
+								title="Plain text editor" ng-model="ls.newsim.template"
+								ng-class="((ls.newEventDetails.template == '' || ls.newEventDetails.template == undefined ) && newEvent.$submitted) ? 'border-danger':'' "> </textarea>
+							<div class="text-danger text-bold help-block with-errors"
+								ng-show="(obj.data=='' || obj.data== undefined) && newEvent.$submitted">template
+								is mandatory</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> Meta Data </label>
+						<div class="col-sm-3 form-control-static">
+							<a href="javascript:void('0')" ng-click="ls.openMetaDataModal()"
+								title="Edit Environmental values">Edit Environmental Values</a>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> Timestamp </label>
+						<div class="col-sm-3 form-control-static">
+							<a href="javascript:void('0')"
+								ng-click='ls.openRandomTimeStampForm()' title="Select Timestamp">{{ls.newsim.simulationDate.type}}</a>
+						</div>
+					</div>
+
+					<div class="form-group form-control-static">
+						<label class="col-sm-3 control-label"> IP </label>
+						<div class="col-sm-3 form-control-static">
+							<a href="javascript:void('0')" ng-click='ls.openRandomIpForm()'
+								title="Select Random IP">{{ls.newsim.simulationIP.type}}</a>
+						</div>
+					</div>
+				</fieldset>
+				<div class="text-right">
+					<button type="submit" class="btn btn-dark">On-Demand</button>
+
+					<button type="reset" class="btn btn-default">Reset</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+
+	<!-- Meta Data -->
+	<div id="metadataModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Meta Data</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed">
+					<div class="modal-body">
+						<div class="panel panel-flat">
+							<table class="table table-borderless">
+								<tbody>
+									<tr ng-repeat="data in ls.newsim.metaFields">
+										<td><input type="text" class="form-control" required=""
+											placeholder="key" ng-model="data.key" title="Enter Key">
+										</td>
+										<td><input type="text" class="form-control" required=""
+											placeholder="value" ng-model="data.value" title="Enter Value">
+										</td>
+										<td>
+											<button type="button" ng-click='ls.addMetaFieldRow()'
+												class="btn  btn-link">
+												<i class="ion-plus"></i>
+											</button>
+											<button type="button"
+												ng-click='ls.deleteMetaFieldRow($index)'
+												class="btn  btn-link">
+												<i class="ion-minus"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="reset" class="btn btn-default">Reset</button>
+						<button type="submit" class="btn btn-dark" data-dismiss="modal">Save</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Meta Data -->
+
+	<!-- Timestamp -->
+
+	<div id="randomTimeModal" class="modal fade bs-example-modal-lg in"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true" style="display: none; padding-left: 0px;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">SIMULATION
+						TIMESTAMP</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed">
+					<div class="modal-body">
+						<div class="panel panel-flat">
+							<div class="panel-body">
+								<!--  <div uib-alert ng-repeat="alert in ls.conditionMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>  -->
+								<fieldset>
+									<legend class="text-semibold">Type</legend>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="time" value="REAL TIME"
+												ng-model="ls.newsim.simulationDate.type">&nbsp; REAL
+											TIME
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="time" value="HISTORIC TIME"
+												ng-model="ls.newsim.simulationDate.type">&nbsp;
+											HISTORIC
+										</div>
+										<div class="col-sm-9">
+											<input type="text" name="datetimesFrom" class="form-control"
+												ng-model="ls.sampledata" title="Enter Historic Time" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="time" value="RELATIVE"
+												ng-model="ls.newsim.simulationDate.type">&nbsp;
+											RELATIVE
+										</div>
+										<div class="col-sm-3">
+											<select class="form-control" ng-required="true"
+												ng-model="ls.newsim.simulationDate.relative.timeState"
+												title="Select Time State">
+												<option value="AFTER">AFTER</option>
+												<option value="BEFORE">BEFORE</option>
+											</select>
+										</div>
+										<div class="col-sm-3">
+											<input class="form-control" type="number"
+												ng-model="ls.newsim.simulationDate.relative.timeFrame"
+												title="Enter Time Frame">
+										</div>
+										<div class="col-sm-3">
+											<select class="form-control"
+												ng-model="ls.newsim.simulationDate.relative.timeMetric"
+												title="Select Time Units">
+												<option value="MINS">MINS</option>
+												<option value="SECS">SECS</option>
+												<option value="HRS">HRS</option>
+											</select>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-dismiss="modal">Done</button>
+						<button type="reset" class="btn btn-default">Reset</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Timestamp -->
+
+	<!-- Modal for RandomIp's -->
+	<div id="randomIpModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">IP</h4>
+				</div>
+				<form class="form-horizontal group-border-dashed"
+					ng-submit="ls.saveRandomIp()">
+					<div class="modal-body">
+						<div class="panel panel-flat">
+							<div class="panel-body">
+								<!--  <div uib-alert ng-repeat="alert in ls.conditionMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>  -->
+								<fieldset>
+									<legend class="text-semibold">Type Of IP</legend>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip"
+												ng-model="ls.newsim.simulationIP.type" value="RANDOM IP">&nbsp;
+											RANDOM IP
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip"
+												ng-model="ls.newsim.simulationIP.type" value="CIDR">&nbsp;
+											CIDR
+										</div>
+										<div class="col-sm-3">
+											<input type="text"
+												ng-model="ls.newsim.simulationIP.cidrValue"
+												class="form-control" placeholder="CIDR value"
+												title="Enter CIDR value">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip"
+												ng-model="ls.newsim.simulationIP.type" value="COUNTRY">&nbsp;
+											COUNTRY
+										</div>
+										<div class="col-sm-3">
+											<select class="form-control" ng-required="true"
+												ng-model="ls.newsim.simulationIP.countryValue"
+												title="Select Country">
+												<option ng-repeat="country in ls.countries"
+													value="{{country}}">{{country}}</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<input type="radio" name="ip"
+												ng-model="ls.newsim.simulationIP.type" value="RANGE">&nbsp;
+											RANGE
+										</div>
+										<div class="col-sm-3">
+											<input type="text"
+												ng-model="ls.newsim.simulationIP.range.fromIp"
+												class="form-control" placeholder="From"
+												title="Enter Range From">
+										</div>
+										<div class="col-sm-3">
+											<input type="text"
+												ng-model="ls.newsim.simulationIP.range.toIp"
+												class="form-control" placeholder="TO" title="Enter Range To">
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-dark" data-dismiss="modal">Done</button>
+						<button type="reset" class="btn btn-default">Reset</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

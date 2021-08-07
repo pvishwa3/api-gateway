@@ -1,0 +1,61 @@
+<div class="row" ng-controller="waitingTasksController as ctrl">
+  <div class="page-header page-header-default">
+    <div class="page-header-content border-bottom border-bottom-success">
+      <div class="page-title">
+        <h4>
+          <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Waiting Tasks</span>
+        </h4>
+      </div>
+    </div>
+  </div>
+  <div ng-class="ctrl.waitingClass">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <td>Task name</td>
+          <td>Acition</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="task in ctrl.allWaitingTasks">
+          <td><a href="javascript:void('0');" ng-click="ctrl.taskDescription(task.id)">{{task.title}}</a></td>
+          <td><a href="javascript:void('0');" ng-click="ctrl.assignThisTask(task.taskId);" class="btn btn-link">Start</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div ng-show="ctrl.waitingClass=='col-md-8'" class="col-md-4">
+
+    <div class="panel-body border-left border-left-default">
+      <h4 class="header title">{{ctrl.selectedTask.title}}<span class="pull-right"><label ng-click="ctrl.closeSideMenu()"
+            class="btn"><i class="icon-cross"></i></label></span></h4>
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-sm-3" for="Description">Description&nbsp;&nbsp;:</label>
+          <div class="col-sm-9 control-label">{{ctrl.selectedTask.description
+            || "no description available"}}</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3" for="owner">Owner&nbsp;&nbsp;:</label>
+          <div class="col-sm-9">
+            <a style="width:250px;" style="color:black" href="javascript:void('0');" editable-select="ctrl.selectedTask.owner"
+              e-ng-options="user as user for user in ctrl.allUsers" onbeforesave="ctrl.assignThisTaskTo($data,ctrl.selectedTask.taskId)">
+              {{ctrl.selectedTask.owner || "Assign this Task"}}</div>
+            </a>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3" for="Status">Status&nbsp;&nbsp;:</label>
+          <div class="col-sm-9 control-label">{{ctrl.selectedTask.status}}</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">Task logs</label>
+          <label class="control-label col-sm-3 pull-right "><a style="font-size:12px;" ng-click="self.showDescription[$index]=!self.showDescription[$index]"
+              href="javascript:void('0');" class="btn btn-link icon-plus3"></a></label>
+        </div>
+        <!-- <div class="form-group" ng-if="self.showDescription[$index]">
+          <text-angular ta-toolbar="[['bold','italics','underline','ul','ol'],['html','insertImage','insertLink']]"></text-angular>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1191 @@
+<div ng-controller="cortexJobsController as jobs"
+	ng-init="jobs.getAllAnalysis(); jobs.getEnabledAnalyzers(); jobs.getAllIntelligences(); jobs.getAllJobs(); showHomeButton= true">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Analysis</h1>
+						</div>
+						<ul class="breadcrumb" ng-show="showHomeButton">
+							<li><a href="/configuration#!">Home</a></li>
+							<li class="active">All Analysis</li>
+						</ul>
+						<ul class="breadcrumb" ng-show="showWatchEventButton">
+							<li><a href="/configuration#!">Home</a></li>
+							<li><a href="javascript:void('0')"
+								ng-click='jobs.backToAnalysis()'>All Analysis</a></li>
+							<li class="active">watch</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row" style="padding-top: 20px;">
+					<div id="page-head">
+						<div id="page-title">
+							<button ng-show="templateUrl == 'analysis.html'"
+								ng-click="jobs.openConditionForm()"
+								class="btn btn-dark pull-right">
+								<i class="md md-add"></i> New Analysis
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+		<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+		<div uib-alert ng-repeat="alert in jobs.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+		<script type="text/ng-template" id="analysis.html">
+       <!-- <div class="row">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="pad-btm form-inline">
+                        <div class="row">
+                            <div class="col-sm-6 table-toolbar-right pull-right">
+                                <button ng-click="jobs.openConditionForm()" class="btn btn-dark"> <i class="md md-add"></i> New Analysis </button>
+                            </div>
+                        </div>
+                    </div> -->
+				<div class="row">
+			<div class="panel panel-table">
+					    <div class="panel-body">
+					        <div class="table-responsive">
+                    <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1">Id</th>
+                                    <th class="col-sm-3">Analysis Name</th>
+                                    <th class="col-sm-3">Analysis Description</th>
+                                    <th class="col-sm-2">Started At</th>
+                                    <th class="col-sm-2">Ended At</th>
+                                    <th class="col-sm-2 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobs.allAnalysis">
+                                    <td>{{data.id}}</td>
+                                    <td>{{data.analysisName}}</td>
+                                    <td>{{data.analysisDescription}}</td>
+                                    <td>{{data.analysisStartedAt | date : 'dd-MM-yyyy hh:mm a'}}</td>
+                                    <td>{{data.analysisEndedAt | date : 'dd-MM-yyyy hh:mm a'}}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a href="javascript:void('0')" class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></a>
+                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                <li><a href="javascript:void('0')" class="btn-link" ng-click='jobs.getAnalysisJobsById(data.id)'>View Jobs</a></li>
+												<li><a href="javascript:void('0')" class="btn-link" data-toggle="modal" data-target="#createCase" ng-click="jobs.analysisId =data.id">Add to Case</a></li>
+                                                <li><a href="javascript:void('0')" class="btn-link" ng-click='jobs.deleteAnalysisJobsById(data.id)'> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </script>
+		<!--  Jobs main page -->
+		<script type="text/ng-template" id="jobs.html">
+        <div class="row">
+			<div class="panel panel-table" ng-init="rule.showButtons=false">
+					    <div class="panel-body">
+					        <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Job Status</th> -->
+                                    <th>Job Data Type</th>
+                                    <!-- <th>Job Analyzer Name</th> -->
+                                    <!-- <th>Job TLP</th> -->
+                                    <!-- <th>Job Data</th> -->
+                                    <th>Job Started At</th>
+                                    <th>Job Ended At</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data  in jobs.allJobsByIds">
+                                    <!-- <td>{{data.status}}</td> -->
+                                    <td>{{data.analysisType}}</td>
+                                    <!-- <td>{{data.analyzerName}}</td> -->
+                                    <td>{{data.jobStartedAt | date : 'dd-MM-yyyy hh:mm a'}}</td>
+                                    <td>{{data.jobEndedAt | date :'dd-MM-yyyy hh:mm a'}}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <!--<a href="javascript:void('0')" class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></a>-->
+                                            
+                                                <a href="javascript:void('0')" class="btn-link" ng-click='jobs.getJobReportById(data.jobESId)'> View Job</a> &nbsp;
+                                               <a href="javascript:void('0')" class="btn-link" ng-click='jobs.deleteJobById(data.id)'> Delete Job</a>
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+		<!--  modal to create new job -->
+		<div id="createJob" class="modal fade" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true"
+			style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">New Analysis</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="jobs.saveJob()" name="analysis">
+						<div class="modal-body">
+							<div class="panel panel-flat">
+								<div class="panel-body">
+									<div uib-alert ng-repeat="alert in jobs.alertMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Analysis Name <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" title="Enter Analysis name"
+												placeholder="" ng-model="jobs.job.analysisName" ng-class="(jobs.job.analysisName=='' || jobs.job.analysisName == undefined) && analysis.$submitted ? 'border-danger' : ''" >
+												<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.analysisName=='' || jobs.job.analysisName == undefined) && analysis.$submitted">Analysis name is mandatory</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Analysis
+											Description <span class="text-danger">*</span>
+										</label>
+										<div class="col-sm-6">
+											<textarea rows="10" cols="70" class="form-control" placeholder="" title="Enter description"
+												ng-model="jobs.job.analysisDescription" ng-class="(jobs.job.analysisDescription=='' || jobs.job.analysisDescription == undefined) && analysis.$submitted ? 'border-danger' : ''"></textarea>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.analysisDescription=='' || jobs.job.analysisDescription == undefined) && analysis.$submitted">Description is mandatory</div>	
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Source <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<select required class="form-control" ng-model="jobs.job.analysisSource" title="Select Source"
+												ng-options="source for source in jobs.analysisSources" ng-class="(jobs.job.analysisSource=='' || jobs.job.analysisSource == undefined) && analysis.$submitted ? 'border-danger' : ''">
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.analysisSource=='' || jobs.job.analysisSource == undefined) && analysis.$submitted">Source is mandatory</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">TLP <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<select required class="form-control" title="Select tlp"
+												ng-model="jobs.job.tlp" ng-options="tlp for tlp in jobs.tlp" ng-class="(jobs.job.tlp=='' || jobs.job.tlp == undefined) && analysis.$submitted ? 'border-danger' : '' ">
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.tlp=='' || jobs.job.tlp == undefined) && analysis.$submitted">Source is mandatory</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Data Type <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<select required class="form-control" title="Select Data type"
+												ng-change="jobs.OnChangeDataType()"
+												ng-model="jobs.job.dataType"
+												ng-options="datatype.intelligenceType for datatype in jobs.allIntelligences" ng-class="(jobs.job.dataType=='' || jobs.job.dataType == undefined) && analysis.$submitted ? 'border-danger' : '' ">
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.dataType=='' || jobs.job.dataType == undefined) && analysis.$submitted">Data type is mandatory</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Data <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" title="Enter Data"
+												placeholder="" ng-model="jobs.job.data" ng-class="(jobs.job.data=='' || jobs.job.data == undefined) && analysis.$submitted ? 'border-danger' : '' ">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.job.data=='' || jobs.job.data == undefined) && analysis.$submitted">Data is mandatory</div>	
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Start
+								Analysis</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--  modal to create score form-->
+		<div id="scoreForm" class="modal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true"
+			style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">�</button>
+						<h4 class="modal-title" id="myLargeModalLabel">New Analysis</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="jobs.getScore()">
+						<div class="modal-body">
+							<div class="panel panel-flat">
+								<div class="panel-body">
+									<div uib-alert ng-repeat="alert in jobs.conditionMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Indicator</label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" required=""
+												placeholder="" ng-model="jobs.score.indicator">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Data</label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" required=""
+												placeholder="" ng-model="jobs.score.analysisData">
+										</div>
+									</div>
+								</div>
+								<div class="panel-body" ng-if="jobs.scoreCard.status==true">
+									<table class="table">
+										<thead>
+											<tr>
+												<th>Score</th>
+												<th>confidence</th>
+												<th>isMalicious</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>{{jobs.scoreCard.score}}</td>
+												<td>{{jobs.scoreCard.confidence}}</td>
+												<td>{{jobs.scoreCard.isMalicious}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn  btn-xs waves-effect"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Calculate</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--  Jobs view job report -->
+		<script type="text/ng-template" id="jobReport.html">
+        <div class="row">
+            <!--<div class="panel">
+                <div class="panel-body">-->
+                    <div class="pad-btm form-inline">
+                        <div class="row">
+                            <div class="col-sm-6 table-toolbar-right pull-right">
+                                <button ng-click="jobs.backToJobs()" class="btn btn-dark">Back to Jobs</button>
+                            </div>
+                        </div>
+                    </div>
+	<div class="col-md-12">
+		<div class="panel col-sm-6 bord-rgt" style="height: 200px;">
+			<div class="panel-body">
+				<div class="">
+					<h4>
+						<b>Basic Information</b>
+					</h4>
+					<hr>
+					<div class="col-sm-6">
+						<dt>IP</dt>
+					</div>
+					<div class="col-sm-6">{{jobs.jobReportBasicInfo.ip}}</div>
+					<div class="col-sm-6">
+						<dt>COUNTRY NAME</dt>
+					</div>
+					<div class="col-sm-6">{{jobs.jobReportBasicInfo.country_name}}</div>
+					<div class="col-sm-6">
+						<dt>COUNTRY CODE</dt>
+					</div>
+					<div class="col-sm-6">{{jobs.jobReportBasicInfo.country_code}}</div>
+					<div class="col-sm-6">
+						<dt>CITY</dt>
+					</div>
+					<div class="col-sm-6">{{jobs.jobReportBasicInfo.city}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel  col-sm-6" style="height: 200px;">
+			<div class="panel-body ">
+				<div class="">
+					<h4>
+						<b>External Sources</b>
+					</h4>
+					<hr>
+					<a ng-if='jobs.jobReportExtSrc.virustotal'
+						href={{jobs.jobReportExtSrc.virustotal}} target="_blank"> Virus
+						Total <img border="0" alt="VirusTotal"
+						src="../assets/images/alexa.PNG" width="50" height="50">
+					</a> <a ng-if='jobs.jobReportExtSrc.doamintools'
+						href={{jobs.jobReportExtSrc.doamintools}} target="_blank"> WhoIs <img
+						border="0" alt="WhoIs" src="../assets/images/whois.PNG" width="50"
+						height="50">
+					</a> <a ng-if='jobs.jobReportExtSrc.alexa' href={{jobs.jobReportExtSrc.alexa}}
+						target="_blank"> Alexa <img border="0" alt="Alexa"
+						src="../assets/images/alexa.PNG" width="50" height="50">
+					</a> <a ng-if='jobs.jobReportExtSrc.urlvoid'
+						href={{jobs.jobReportExtSrc.urlvoid}} target="_blank"> UrlVoid <img
+						border="0" alt="UrlVoid" src="../assets/images/urlvoid.PNG"
+						width="50" height="50">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+<div class="col-md-12">
+<div class="panel">
+<div class="panel-body">
+                    <h4><b>Passive DNS</b></h4>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Host Name</th>
+                                    <th>Address</th>
+                                    <th>First Seen</th>
+                                    <th>Last Seen</th>
+                                    <th>Min TLP</th>
+                                    <th>Max TLP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobs.jobReportPassiveDns.data">
+                                    <td>{{data.query}}</td>
+                                    <td>{{data.answer}}</td>
+                                    <td>{{data.lastSeenTimestamp}}</td>
+                                    <td>{{data.firstSeenTimestamp}}</td>
+                                    <td>{{data.minTtl}}</td>
+                                    <td>{{data.maxTtl}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+</div>
+</div>
+</div>
+<div class="col-md-12">
+<div class="panel">
+<div class="panel-body">
+                    <h4><b>Inhouse Search</b></h4>
+                    <hr>
+					<div >
+						<p><b>First Seen in Environemt: </b> {{jobs.jobReportInhouse.firstSeen}}</p>
+                    	<p><b>Last Seen in Environemt: </b> {{jobs.jobReportInhouse.lastSeen}}</p>
+                    	<div class="table-responsive">
+                        	<table class="table table-striped dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Log Type</th>
+                                    <th>HostName</th>
+                                    <th>Log Device</th>
+                                    <th>ES Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobs.jobReportInhouse.hits">
+                                    <td>{{data['@timestamp']}}</td>
+                                    <td>{{data.log_type}}</td>
+                                    <td>{{data.beat.hostname}}</td>
+                                    <td>{{data.log_device}}</td>
+                                    <td>{{data._id}}</td>
+                                </tr>
+                            </tbody>
+                        	</table>
+                    	</div>				
+					</div>
+</div>
+</div>
+</div>
+					<!--<div ng-show="(jobs.jobReportInhouse | json) == '{}'">
+						<pre>NO DATA AVAILABLE</pre>
+					</div>-->
+
+
+<div class="col-md-12">
+<div class="panel">
+<div class="panel-body">
+
+                    <br />
+                    <h4><b>Feed Search</b></h4>
+                    <hr>
+					
+                    <p><b>Score: </b> {{jobs.jobScore}}</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Feed Name</th>
+                                    <th>Source</th>
+                                    <th>Value</th>
+                                    <th>Indicator</th>
+                                    <th>First Appearence</th>
+                                    <th>Last Appearence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobs.jobReportFeed">
+                                    <td>{{data.feedName}}</td>
+                                    <td>{{data.source}}</td>
+                                    <td>{{data.value}}</td>
+                                    <td>{{data.indicator}}</td>
+                                    <td>{{data.firstAppearance}}</td>
+                                    <td>{{data.lastAppearance}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+					</div>
+</div>
+					</div>
+					
+
+<div class="col-md-12">
+<div class="panel">
+<div class="panel-body"> 
+				<h4><b>WhoIs Details</b></h4>
+				<hr>
+				<p><b>First Seen in Environemt: </b> {{jobs.jobReportFeed.firstSeen}}</p>
+				<p><b>Last Seen in Environemt: </b> {{jobs.jobReportFeed.lastSeen}}</p>
+				<table datatable="ng" class="table datatable-pagination">
+					<thead>
+                        <tr>
+							<th>Timestamp</th>
+                            <th>Log Type</th>
+							<th>HostName</th>
+							<th>Log Device</th>
+							<th>ES Id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data in jobs.jobReportFeed.hits">
+							<td>{{data['@timestamp']}}</td>
+							<td>{{data.log_type}}</td>
+							<td>{{data.beat.hostname}}</td>
+							<td>{{data.log_device}}</td>
+							<td>{{data._id}}</td>
+                        </tr>
+                    </tbody>
+				</table>
+</div>
+</div>
+</div>
+<div class="col-md-12">
+<div class="panel">
+<div class="panel-body">
+				<br />
+				
+                    <h4><b>Previous Search Details</b></h4>
+                    <hr>
+                    
+				<p><b>First Seen in Previous Searches: </b> {{jobs.jobReportPrevRes.firstSeen}}</p>
+				<p><b>Last Seen in Previous Searches: </b> {{jobs.jobReportPrevRes.lastSeen}}</p>
+				
+<div ng-show="(jobs.jobReportPrevRes | json) != '{}'">
+                    <div class="table-responsive">
+                        <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Analysis Time</th>
+                                    <th>Analysis Name</th>
+                                    <th>Score</th>
+                                    <th>ES Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in jobs.jobReportPrevRes.hits">
+                                    <td>{{data.AnalysisTime}}</td>
+                                    <td>{{data.AnalysisName}}</td>
+                                    <td>{{data.score}}</td>
+                                    <td>{{data._id}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+ </div>
+ </div>
+</div>
+                    <br />
+                    <h4><b>Other Analyzer Results</b></h4>
+                    <hr>
+<br>
+<div class="col-md-12">
+		<div class="panel">
+			<div class="">
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.ipStackOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipStackOptions = !jobs.ipStackOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP STACK REPORT</h3>
+            </div>
+            <div class="panel-body">
+            
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.ipstackReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    <div ng-if="jobs.ipstackReport">
+                        <div class="row" ng-if="jobs.ipStackOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.ipstackReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipStackOptions">
+                        	<div class="col-md-12">
+                           		<angular-jsoneditor ng-model="jobs.ipstackReport" options="jsonEditor.options" isEditable="false"></angular-jsoneditor>
+                         	</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 pad-no" style="padding-left:0px" ng-init="jobs.ipApiOptions =  true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipApiOptions = !jobs.ipApiOptions ">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP API REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    	<div ng-if="!jobs.ipapiReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.ipapiReport">
+                        <div class="row" ng-if="jobs.ipApiOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.ipapiReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipApiOptions">
+                            <div class="col-md-12">
+                            	 <angular-jsoneditor  ng-model="jobs.ipapiReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--IPDATA REPORT-->
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.ipdataReportOptions =  true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.ipdataReportOptions = !jobs.ipdataReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">IP DATA REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.ipdataReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.ipdataReport">
+                        <div class="row" ng-if="jobs.ipdataReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.ipdataReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.ipdataReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor ng-model="jobs.ipdataReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--CYMON REPORT-->
+    <div class="col-md-6 pad-no" style="padding-left:0px" ng-init="jobs.cymonReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.cymonReportOptions = !jobs.cymonReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">CYMON Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.cymonReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.cymonReport">
+                        <div class="row" ng-if="jobs.cymonReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.cymonReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.cymonReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor  ng-model="jobs.cymonReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.cybercrimeReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.cybercrimeReportOptions = !jobs.cybercrimeReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">CYBER CRIME Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.cybercrimeReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.cybercrimeReport">
+                        <div class="row" ng-if="jobs.cybercrimeReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.cybercrimeReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.cybercrimeReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor  ng-model="jobs.cybercrimeReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 pad-no " style="padding-left:0px" ng-init="jobs.mywotReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.mywotReportOptions = !jobs.mywotReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">MY WOT Report</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.mywotReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.mywotReport">
+                        <div class="row" ng-if="jobs.mywotReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.mywotReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.mywotReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.mywotReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.greynoiseReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.greynoiseReportOptions = !jobs.greynoiseReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">GREY NOISE REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.greynoiseReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.greynoiseReport">
+                        <div class="row" ng-if="jobs.greynoiseReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.greynoiseReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.greynoiseReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.greynoiseReport" options="jsonEditor.options" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 pad-no " style="padding-left:0px" ng-init="jobs.hashddReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.hashddReportOptions = !jobs.hashddReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">HASH DD REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!jobs.hashddReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.hashddReport">
+                        <div class="row" ng-if="jobs.hashddReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.hashddReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.hashddReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.hashddReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.onphyeReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.onphyeReportOptions = !jobs.onphyeReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">ONPHYE REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.onphyeReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.onphyeReport">
+                        <div class="row" ng-if="jobs.onphyeReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.onphyeReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.onphyeReportOptions">
+                            <div class="col-md-12">
+                            	<angular-jsoneditor  ng-model="jobs.onphyeReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.otxReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.otxReportOptions = !jobs.otxReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">OTX REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.otxReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.otxReport">
+                        <div class="row" ng-if="jobs.otxReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.otxReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.otxReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor  ng-model="jobs.otxReport" options="jsonEditor.options" isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.passivetotalReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.passivetotalReportOptions = !jobs.passivetotalReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">PASSIVE TOTAL REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.passivetotalReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.passivetotalReport">
+                        <div class="row" ng-if="jobs.passivetotalReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.passivetotalReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.passivetotalReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor  ng-model="passivetotalReport" options="jsonEditor.options"
+            isEditable="false" style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.phishtankReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.phishtankReport = !jobs.phishtankReport">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">PHISH TANK REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!jobs.phishtankReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.phishtankReport">
+                        <div class="row" ng-if="jobs.phishtankReportOptions">
+                            <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.phishtankReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.phishtankReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.phishtankReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6" style="padding-left:0px" ng-init="jobs.robtexReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.robtexReportOptions = !jobs.robtexReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">ROBTEX REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                     <div ng-if="!jobs.robtexReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.robtexReport">
+                        <div class="row" ng-if="jobs.robtexReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.robtexReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.robtexReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.robtexReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+   <div class="col-md-6 " style="padding-left:0px" ng-init="jobs.shodanReportOptions = true">
+        <div id="demo-panel-ref" class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <div class="btn-group dropdown">
+                        <button data-toggle="dropdown" class="dropdown-toggle btn btn-icon btn-active-primary">
+                            <i class="demo-psi-dot-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascrpit:void('0')" ng-click="jobs.shodanReportOptions = !jobs.shodanReportOptions">toggle</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h3 class="panel-title">SHODAN REPORT</h3>
+            </div>
+            <div class="panel-body">
+                <div class="nano" style="height: 400px;">
+                    <div class="nano-content">
+                    <div ng-if="!jobs.shodanReport"><h5 class="text-center" style="padding-top:180px">No Records Found</h5></div>
+                    	<div ng-if="jobs.shodanReport">
+                        <div class="row" ng-if="jobs.shodanReportOptions">
+                            <table class="table table-event-details" data-table="ng">
+                                <tbody>
+                                    <tr ng-repeat="(key,value) in jobs.shodanReport">
+                                        <td class="td-field-label">{{key}}</td>
+                                        <td class="td-field-value">{{value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" ng-if="!jobs.shodanReportOptions">
+                            <div class="col-md-12"><angular-jsoneditor ng-model="jobs.shodanReport" options="jsonEditor.options" isEditable="false"
+            style="width: 100%; height: 100%;"></angular-jsoneditor></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+</div>
+		</div>
+	</div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+		<div id="createCase" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-lg">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Create Case</h4>
+					</div>
+					<div class="modal-body" ng-init="newCase = 'existing'">
+						<form class="form-horizontal" ng-submit="jobs.createCase()">
+							<div class="form-group">
+								<label class="col-md-4 control-label">Type</label>
+								<div class="col-md-6">
+									<label class="radio-inline"><input type="radio"
+										value="existing" ng-model="newCase">Existing Case</label> <label
+										class="radio-inline"><input type="radio" value="new"
+										ng-model="newCase">New Case</label>
+								</div>
+							</div>
+							<div class="form-group" ng-if="newCase == 'new'">
+								<label class="control-label col-md-4">Select a Template</label>
+								<div class="col-md-6">
+									<selectize options='jobs.allTemplate'
+										config="jobs.templateTypeConfig"
+										ng-model="jobs.selectedTemplateId" required='true'
+										ng-change="jobs.showCaseInvestigation()"
+										placeholder="please select a case"></selectize>
+								</div>
+							</div>
+							<div class="form-group" ng-if="newCase == 'existing'">
+								<label class="control-label col-md-4">Select a Case</label>
+								<div class="col-md-6">
+									<selectize options='jobs.allCases' config="jobs.caseTypeConfig"
+										ng-model="jobs.selectedCaseId" required='true'
+										ng-change="jobs.showCaseInvestigation()"
+										placeholder="please select a case"></selectize>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-5 pull-right">
+									<input type="submit" class="btn btn-dark" value="Create">
+									<button type="reset" class="btn btn-dark">Clear</button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer" style="border: none;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

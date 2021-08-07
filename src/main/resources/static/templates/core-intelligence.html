@@ -1,0 +1,117 @@
+<div ng-controller="coreIntelligenceController as jobs" ng-init="jobs.getAllIntelligences(); showHomeButton= true" >
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage IOCs</h1>
+						</div>
+						<ol class="breadcrumb" ng-show="showHomeButton">
+							<li><a href="/configuration#!">Home</a></li>
+							<li class="active">All IOCs</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row" style="padding-top: 20px;">
+					<div id="page-head">
+						<div id="page-title">
+							<button ng-click="jobs.openNewIntelligenceForm()"
+								class="btn btn-dark pull-right">
+								<i class="md md-add"></i> Configure IOCs
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+		<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+    </script>
+		<div uib-alert ng-repeat="alert in rule.ruleAlertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+			<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+		<script type="text/ng-template" id="intelligence.html">
+		<div class="row">
+			<div class="panel panel-table" >
+					    <div class="panel-body">
+					        <div class="table-responsive">
+                <table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-2">Id</th>
+                            <th class="col-sm-6">IOCs Type</th>
+                            <th class="col-sm-2 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data in jobs.allIntelligences">
+                            <td>{{data.id}}</td>
+                            <td>{{data.intelligenceType}}</td>
+                            <td class="text-center">
+                                <button class="btn btn-link" ng-click="jobs.deleteIntelligence(data.id)" title="delete IOC">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+</div>
+</div>
+    </script>
+
+		<!--  modal to create new intelligence-->
+		<div id="createIntelligence" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+			style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">New IOCs</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="jobs.saveIntelligence()" name="iocs">
+						<div class="modal-body">
+							<div class="panel panel-flat">
+								<div class="panel-body">
+									<div uib-alert ng-repeat="alert in jobs.alertMessages"
+										class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+										close="closeAlert($index)">{{alert.msg}}</div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label">IOCs Type <span
+											class="text-danger">*</span></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" title="Enter Iocs"
+												placeholder=""
+												ng-model="jobs.newIntelligence.coreIntelligenceType" ng-class="(jobs.newIntelligence.coreIntelligenceType=='' || jobs.newIntelligence.coreIntelligenceType == undefined) && iocs.$submitted ? 'border-danger' : ''">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(jobs.newIntelligence.coreIntelligenceType=='' || jobs.newIntelligence.coreIntelligenceType == undefined) && iocs.$submitted">Iocs is mandatory</div>	
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default waves-effect"
+								data-dismiss="modal">Close</button>
+							<button type="submit"
+								class="btn btn-dark waves-effect waves-light">Save
+								IOCs</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

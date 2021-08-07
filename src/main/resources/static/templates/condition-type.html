@@ -1,0 +1,116 @@
+<div ng-controller="conditionTypeController as controller"
+	id="content-container">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Conditions Type</h1>
+						</div>
+						<ol class="breadcrumb">
+							<li><a href="/configuration#!">Home</a></li>
+							<li class="active">Condition Types</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row" style="padding-top: 20px;">
+					<div id="page-head">
+						<div id="page-title">
+							<button type="button" data-target="#newType" data-toggle="modal"
+								ng-click="controller.type.typeName='';controller.type.type='';conditionType.$setPristine();"
+								class="btn btn-dark pull-right" title="New type">
+								New Type</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+		<div class="row">
+			<div class="panel panel-table" ng-init="controller.showButtons=false">
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-hover" datatable="ng">
+							<thead>
+								<tr>
+									<th>Type Name</th>
+									<th>Type category</th>
+									<th class="text-center">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data  in controller.conditionType">
+									<td>{{data.typeName}}</td>
+									<td>{{data.type}}</td>
+									<td class="text-center">
+												<a ng-click='controller.editConditionCategory(data.typeId)' class="btn-link">Edit</a> &nbsp;
+												<a ng-click='controller.deleteConditionCategory(data.typeId,data.typeName)' class="btn-link">Delete</a> &nbsp;
+												<a ng-click='controller.cloneConditionCategory(data.typeId)' class="btn-link">Clone</a></li>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="newType" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Condition Type</h4>
+					</div>
+					<div class="modal-body">
+					<div uib-alert ng-repeat="alert in controller.alertMessagaesModal"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+						<form class="form-horizontal group-border-dashed" ng-submit="controller.submitData()" name="conditionType">
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Condition Name</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" ng-model="controller.type.typeName" ng-class="((controller.type.typeName == '' ||controller.type.typeName == udefined ) && conditionType.$submitted  ) ? 'border-danger':''">
+									<div class="text-danger text-bold" ng-show="((controller.type.typeName == '' ||controller.type.typeName == udefined ) && conditionType.$submitted )">Condition name is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Condition Category</label>
+								<div class="col-sm-6">
+									<select class="form-control"  ng-model="controller.type.type" ng-class="((controller.type.type == '' || controller.type.type == undefined) && conditionType.$submitted) ? 'border-danger':''"> 
+										<option value="">Select Category Type</option>
+										<option value="rule">Rule</option>
+										<option value="condition">Condition</option>
+									</select>
+									<div class="text-danger text-bold" ng-show="((controller.type.type == '' || controller.type.type == undefined) && conditionType.$submitted)">Condition category is mandatory</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<input type="submit"
+									class="btn btn-dark waves-effect waves-light"
+									style="color: white" value="Submit">
+								<button type="button" class="btn3 btn-default"
+									data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

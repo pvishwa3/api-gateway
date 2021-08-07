@@ -1,0 +1,1200 @@
+<div ng-controller="manageusercontoller as ctrl" class="content-wrapper" ng-init = "init()">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Manage Users</h4>
+			</div>
+		</div>
+		<div class="col-sm-6 pull-right">
+			<button ng-show="navType === 'organisation' && ctrl.canCreateOrgs"
+				class="btn btn-primary pull-right"
+				ng-click="displayCreateOrganizationTemplate()">New
+				Organization</button>
+			<button ng-show="navType === 'users' && ctrl.canCreateUsers"
+				ng-click='displayCreateUserTemplate()'
+				class="btn btn-primary pull-right" title="create new user">New
+				User</button>
+			<button ng-show="navType === 'groups' && ctrl.canCreateGroups"
+				ng-click='displayCreateGroupTemplate()'
+				class="btn btn-primary pull-right">New Groups</button>
+			<button ng-show="navType === 'roles' && ctrl.canCreateRoles"
+				ng-click='displayCreateRoleTemplate()'
+				class="btn btn-primary pull-right">New Roles</button>
+
+			<button
+				ng-click="ctrl.deleteAsset(ctrl.selectedAssets[0].assertId, ctrl.selectedAssets[0].macAddress)"
+				class="btn btn-danger pull-right mar-rgt" id="deleteOrg">
+				Delete</button>
+
+			<button class="btn btn-primary  mar-rgt pull-right" id="editOrg"
+				ng-click="displayUpdateOrg(selectOrgs[0])">Edit</button>
+			<button class="btn btn-dark  mar-rgt pull-right" id="generateLicense"
+				ng-click="provisionOrg(selectOrgs[0])">Generate License</button>
+			<button class="btn btn-light  mar-rgt pull-right" id="showOrgToken"
+				ng-click="showToken(selectOrgs[0])">View Token</button>
+
+			<button id="rolesDelete" class="btn btn-danger pull-right mar-rgt"
+				ng-click="deleteRole(ctrl.rolesId[0].rolename)">Delete</button>
+			<button id="rolesEdit" class="btn btn-primary pull-right mar-rgt"
+				ng-click="displayUpdateRole(ctrl.rolesId[0].rolename,ctrl.rolesId[0].companyName)">
+				Edit
+				</buton>
+
+				<button id="usersDelete" class="btn btn-danger pull-right mar-rgt"
+					ng-click="deleteUser(ctrl.usersId[0].userName,ctrl.usersId[0].id)">Delete</button>
+				<button id="usersEdit" class="btn btn-primary pull-right mar-rgt"
+					ng-click="displayUpdateUser(ctrl.usersId[0].id)">
+					Edit
+					</buton>
+
+					<button id="showUsers"
+						ng-click="showUsers(ctrl.groupsId[0].groupName)"
+						class="btn btn-light pull-right mar-rgt">Show Users</button>
+					<button id="groupsDelete" class="btn btn-danger pull-right mar-rgt"
+						ng-click="deleteGroup(ctrl.groupsId[0].groupName)">Delete</button>
+					<button id="groupsEdit" class="btn btn-primary pull-right mar-rgt"
+						ng-click="displayUpdateGroup(ctrl.groupsId[0].groupName)">
+						Edit
+						</buton>
+		</div>
+	</div>
+
+	<div class="card" ng-init="init()">
+
+		<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+		<div class="card-body">
+
+			<ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+
+				<li ng-class="{'active': navType === 'users' }" class="tab nav-tab"
+					ng-click="ctrl.reloadGrisDetails()"><a class="nav-link"
+					href="javascript:void('0')" ng-click='openTab("users")'>Users</a>
+				</li>
+
+				<li ng-class="{'active': navType === 'groups' }" class="tab nav-tab"
+					ng-click="ctrl.reloadGrisDetails()"><a class="nav-link"
+					href="javascript:void('0')" ng-click='openTab("groups")'>Groups</a>
+				</li>
+
+				<li ng-class="{'active': navType === 'roles' }" class="tab nav-tab"
+					ng-click="ctrl.reloadGrisDetails()"><a class="nav-link"
+					href="javascript:void('0')" ng-click='openTab("roles")'>Roles</a></li>
+
+				<li ng-class="{'active': navType === 'organisation' }"
+					ng-click="ctrl.reloadGrisDetails()" class="tab nav-tab"><a
+					class="nav-link" href="javascript:void('0')"
+					ng-click='openTab("organisation")'>Organization</a></li>
+
+			</ul>
+
+
+			<div class="tab-pane" ng-show="navType === 'users' ">
+				<div style="margin-top: 1%">
+					<div id="allUsers-grid" style="height: 500px;"
+						class="{{theme}}"></div>
+				</div>
+			</div>
+
+			<div class="tab-pane active" ng-show="navType === 'groups' ">
+				<div style="margin-top: 1%">
+
+					<div id="group-grid" style="height: 500px;"
+						class="{{theme}}"></div>
+				</div>
+
+
+			</div>
+			<div class="tab-pane active" ng-show="navType === 'organisation' ">
+				<div style="margin-top: 1%">
+
+					<div id="org-grid" style="height: 500px;"
+						class="{{theme}}"></div>
+
+
+
+				</div>
+
+
+			</div>
+
+			<div class="tab-pane active" ng-show="navType === 'roles' ">
+				<div style="margin-top: 1%">
+
+					<div id="roles-grid" style="height: 500px;"
+						class="{{theme}}"></div>
+
+				</div>
+
+
+			</div>
+		</div>
+
+	</div>
+
+	<div id="create-user-modal" class="modal fade" tabindex="-1">
+
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" ng-show="userOperationType != 'update' ">Create
+						User</h4>
+					<h4 class="modal-title" ng-show="userOperationType === 'update' ">Update
+						User</h4>
+				</div>
+
+				<form class="form-horizontal" ng-submit="createUsers()"
+					name="manageusers" novalidate="novalidate">
+
+					<div class="modal-body">
+
+						<div uib-alert ng-repeat="alert in ctrl.errorMessage"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="col-lg-3 control-label">Email
+											*</label>
+
+										<div class="col-lg-9">
+											<input type="email" ng-model="userSettings.userName"
+												ng-disabled="userOperationType === 'update'" name="userName"
+												title="Enter Email" class="form-control" pattern="[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]*\.([a-z]+)" required="required">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.userName.$touched) && manageusers.userName.$error.required">Email is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.userName.$touched) && manageusers.userName.$error.pattern">Not a Valid email</div>
+										</div>
+
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="col-lg-3 control-label">First
+											name *</label>
+										<div class="col-lg-9">
+											<input type="text" ng-model="userSettings.firstName" name="firstName"
+												class="form-control" title="Enter first name" pattern="[a-zA-Z0-9\s]+"  required="required">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.firstName.$touched ) && manageusers.firstName.$error.required">First name is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.firstName.$touched ) && manageusers.firstName.$error.pattern">Special Characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="col-lg-3 control-label">Middle
+											name</label>
+										<div class="col-lg-9">
+											<input type="text" ng-model="userSettings.middleName" title="Enter middle name" class="form-control">
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class=" col-lg-3 control-label">Last
+											name *</label>
+										<div class="col-lg-9">
+											<input type="text" ng-model="userSettings.lastName" title="Enter last name" class="form-control" pattern="[a-zA-Z0-9\s]+" name="lastName">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.lastName.$touched) && manageusers.lastName.$error.required">Last name is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.lastName.$touched) && manageusers.lastName.$error.pattern">Special characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class=" col-lg-3 control-label">Active</label>
+										<div class="col-lg-9">
+											<input type = 'checkbox' ng-model = "userSettings.status" style = "width:3%;height:14px" class="form-control" >
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="col-lg-3 control-label">Default
+											Company *</label>
+										<div class="col-lg-9">
+
+											<select class="form-control" title="Select default company" ng-model="userSettings.defaultCompany" name="defaultCompany" required="required">
+												<option value="{{item.companyName}}" ng-repeat="item in ctrl.orgs">{{item.companyName}}</option>
+											</select>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(manageusers.$submitted || manageusers.defaultCompany.$touched) && manageusers.defaultCompany.$error.required">Default company is mandatory</div>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="col-lg-3 control-label">Company
+											*</label>
+										<div class="col-lg-9">
+
+											<select multiple="multiple" title="Select one of the company"
+												ng-options="av.companyName for av in ctrl.orgs track by av.companyName"
+												ng-class="(ctrl.tempCompanies=='' || ctrl.tempCompanies == undefined) && manageusers.$submitted ? 'border-danger' : ''"
+												ng-model="ctrl.tempCompanies" bs-duallistbox
+												move-on-select="false">
+
+											</select>
+											<div class="text-danger text-bold help-block with-errors"
+												ng-show="(ctrl.tempCompanies=='' || ctrl.tempCompanies == undefined) && manageusers.$submitted">company
+												is mandatory</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" id="CreateUsers" ng-disabled="manageusers.$invalid">Save
+							changes</button>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!--  Generate Token -->
+
+	<div id="generate_license_modal" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Generate License</h4>
+				</div>
+				<form class="form-horizontal" role="form"
+					ng-submit="generateLicense()" name="licenceForm">
+
+					<div uib-alert ng-repeat="alert in ctrl.tokenMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+					<div class="modal-body">
+
+						<div class="form-group">
+							<label for="field-2" class="col-lg-3 control-label">License*</label>
+							<div class="col-lg-9">
+
+								<textarea rows="5" class="form-control"
+									ng-disabled="isGenerateLiceButton"
+									ng-model="licenseDetails.license" required="required"></textarea>
+
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="field-2" class="col-lg-3 control-label">Private
+								Key*</label>
+							<div class="col-lg-9">
+
+								<textarea rows="5" class="form-control"
+									ng-disabled="isGenerateLiceButton"
+									ng-model="licenseDetails.privateKey" required="required"></textarea>
+
+							</div>
+						</div>
+
+
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-dark" id=""
+							ng-disabled="isGenerateLiceButton">Generate License</button>
+
+						<button class="btn btn-dark pull-right" style="margin-right: 10px"
+							ng-click="enableGenerateLicButton()" type="button"
+							ng-if="isGenerateLiceButton">Edit</button>
+
+					</div>
+				</form>
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+	<div id="view_token_dialog" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Access Token</h4>
+				</div>
+				<form class="form-horizontal" role="form" name="TokenForm">
+
+					<div uib-alert ng-repeat="alert in ctrl.tokenMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+					<div class="modal-body">
+
+						<p>{{orgToken}}</p>
+
+
+					</div>
+
+				</form>
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+
+	<div id="update-user-modal" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; height: 400px;">
+		<form class="form-horizontal" role="form" ng-submit="saveChanges()"
+			name="alertsForm">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true" ng-click="closeDailog()">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Create User</h4>
+					</div>
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.alertMessagaes"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-8">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-1" class="control-label">Email *</label> <input
+											type="email" ng-model="userSettings.userName"
+											readonly="readonly" class="form-control" required="required">
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-2" class="control-label">First Name
+											*</label> <input type="text" ng-model="userSettings.firstName"
+											class="form-control" required="required">
+
+									</div>
+								</div>
+								<input type="hidden" ng-model="userSettings.email">
+								<div class="form-group col-md-12">
+									<label for="field-2" class="control-label">User Status
+										*</label> <select class="form-control" ng-model="userSettings.status">
+										<option>Active</option>
+										<option>InActive</option>
+										<option>Password Reset</option>
+										<option>created</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" style="margin-top: -60px;">
+					<button type="submit" class="btn btn-success">Save changes</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- Groups -->
+
+
+	<div id="create-groups-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Create Group</h4>
+				</div>
+				<form class="form-horizontal" role="form" ng-submit="createGroups()"
+					name="newgroup" novalidate="novalidate">
+					<div class="modal-body">
+
+
+						<div uib-alert ng-repeat="alert in ctrl.groupErrorMessage"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="control-label col-md-3">Group
+											Name *</label>
+
+										<div class="col-md-9">
+											<input type="text" ng-model="group.groupName" title="Enter Group name" class="form-control" name="groupName" required="required" pattern="[a-zA-Z0-9\s]+" />
+											<div class="text-danger text-bold help-block with-errors" ng-show="(newgroup.$submitted || newgroup.groupName.$touched) && newgroup.groupName.$error.required">Group name is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(newgroup.$submitted || newgroup.groupName.$touched) && newgroup.groupName.$error.pattern">Special characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Users
+											*</label>
+										<div class="col-md-9">
+											<select multiple="multiple"  title="Select one of the user" ng-options="av.text for av in plainUsersArray track by av.id" ng-model="group.groupUsers" bs-duallistbox>
+
+											</select>
+
+											<div class="text-danger text-bold help-block with-errors"
+												ng-show="(groupTemp.groupUsers=='' || groupTemp.groupUsers == undefined) && newgroup.$submitted">User
+												is mandatory</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" id="createGroups" ng-disabled="newgroup.$invalid">Save changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<div id="update-groups-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Update Group Members</h4>
+				</div>
+
+				<form class="form-horizontal" role="form" ng-submit="updateGroups()"
+					name="alertsForm">
+
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.groupErrorMessage"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-12">
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Users
+											*</label>
+										<div class="col-md-9">
+											<select multiple="multiple"
+												ng-options="av.text for av in plainUsersArray track by av.id"
+												ng-model="groupTemp.groupUsers" bs-duallistbox>
+
+											</select>
+										</div>
+
+
+
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" id="updateGroups">Update</button>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+
+	<div id="show-company-users" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Users</h4>
+				</div>
+
+				<div class="modal-body">
+					<table class="table table-striped" datatable="ng">
+						<thead style="background: transparent;">
+							<tr>
+								<th style="color: #4d627b">Username</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in ctrl.companyUsers">
+								<td>{{data.userName}}</td>
+
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<div class="modal" id="show-memebers-modal" role="dialog" tabindex="-1"
+		aria-labelledby="demo-default-modal" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+
+				<!--Modal header-->
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Users in Group</h4>
+				</div>
+
+
+				<!--Modal body-->
+				<div class="modal-body">
+					<table class="table table-stipped table-sm" datatable="ng">
+						<thead style="background: transparent;">
+							<tr>
+								<th style="color: #4d627b">Username</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in ctrl.groupUsers">
+								<td>{{data}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="create-role-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Create Role</h4>
+				</div>
+				<form class="form-horizontal" role="form" ng-submit="createRoles()"
+					name="newRole" novalidate="novalidate">
+
+					<div class="modal-body">
+						<div class="nano nano-content">
+							<div class="nano-content">
+								<div uib-alert ng-repeat="alert in ctrl.rolesErrorMessage"
+									class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+									close="closeAlert($index)">{{alert.msg}}</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="col-md-12">
+											<div class="form-group row">
+												<label for="field-1" class="control-label col-md-3">Role
+													Name *</label>
+												<div class="col-md-9">
+													<input type="text" ng-model="role.roleName" class="form-control" title="Enter Role name" name="roleName" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+													<div class="text-danger text-bold" ng-show="(newRole.$submitted || newRole.roleName.$touched) && newRole.roleName.$error.required">Role name is mandatory</div>
+													<div class="text-danger text-bold" ng-show="(newRole.$submitted || newRole.roleName.$touched) && newRole.roleName.$error.pattern">Special characters are not allowed</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group row">
+												<label for="field-2" class="control-label col-md-3">Permission*</label>
+												<div class="col-md-9">
+													<select class="form-control" multiple="multiple"
+														ng-disabled="role.roleName==='Administrator'"
+														ng-options="av.text for av in ctrl.permissions track by av.id"
+														ng-model="ctrl.tempPermissions" bs-duallistbox>
+													</select>
+													<div class="text-danger text-bold help-block with-errors"
+														ng-show="(ctrl.tempPermissions=='' || ctrl.tempPermissions == undefined) && newRole.$submitted">Permission
+														is mandatory</div>
+												</div>
+											</div>
+										</div>
+
+
+
+
+
+										<div class="col-md-12">
+											<div class="form-group row">
+												<label class="display-block text-semibold col-md-3">Granted
+													To</label>
+
+												<div class="col-md-9">
+													<label class="radio-inline radio-right"> <input
+														type="radio" value="users" name="radio-inline-left"
+														ng-click='grantedTo()' ng-model="role.roleType">
+														User
+													</label> <label class="radio-inline radio-right"> <input
+														type="radio" name="radio-inline-left " value="groups"
+														ng-click='grantedTo()' ng-model="role.roleType"
+														class="styled"> Group
+													</label>
+													<div class="text-danger text-bold help-block with-errors"
+														ng-show="(role.roleType =='' || role.roleType == undefined) && newRole.$submitted">Granted
+														is mandatory</div>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="col-md-12" ng-show="role.roleType === 'users'">
+											<div class="form-group row">
+												<label for="field-1" class="control-label col-md-3">Users
+													*</label>
+
+												<!--ng-options = "obj as obj.text for obj in ctrl.permissions track by obj.id"  -->
+												<div class="col-md-9">
+													<select class="form-control" multiple="multiple"
+														title="Select one of the user"
+														ng-class="(ctrl.tempUsers=='' || ctrl.tempUsers == undefined) && (role.roleType === 'users')&& newRole.$submitted ? 'border-danger' : ''"
+														ng-options=" obj as obj.text for obj in plainUsersArray track by obj.id"
+														ng-model="ctrl.tempUsers" bs-duallistbox>
+													</select>
+													<div class="text-danger text-bold help-block with-errors" ng-show="(ctrl.tempUsers=='' || ctrl.tempUsers == undefined) && (role.roleType === 'users')&& newRole.$submitted">User is mandatory</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12" ng-show="role.roleType === 'groups'">
+											<div class="form-group row">
+												<label for="field-1" class="control-label col-md-3">Groups
+													*</label>
+												<div class="col-md-9">
+													<select class="form-control" multiple="multiple"
+														ng-class="(ctrl.tempGroups=='' || ctrl.tempGroups == undefined) && (role.roleType === 'groups')&& newRole.$submitted ? 'border-danger' : ''"
+														ng-options="av.text for av in ctrl.userGroups track by av.id"
+														ng-model="ctrl.tempGroups" bs-duallistbox>
+													</select>
+													<div class="text-danger text-bold help-block with-errors"
+														ng-show="(ctrl.tempGroups=='' || ctrl.tempGroups == undefined) && (role.roleType === 'groups')&& newRole.$submitted">Groups
+														is mandatory</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group row">
+												<label for="field-1" class="control-label col-md-3">Indices
+													*</label>
+												<div class="col-md-9">
+													<select class="form-control" ng-model="role.indexes" name="indexes" required="required">
+														<option ng-repeat="data in ctrl.indices" value="{{data}}">
+															{{data}}</option>
+													</select>
+													<div class="text-danger text-bold help-block with-errors" ng-show="(newRole.$submitted || newRole.indexes.$touched) && newRole.indexes.$error.pattern"">Indices is mandatory</div>
+													
+												</div>
+											</div>
+										</div>
+
+
+										<div class="col-md-12">
+											<div class="form-group row">
+												<label for="field-1" class="control-label col-md-3">Query
+													*</label>
+												<div class="col-md-9">
+													<div data-elastic-builder="ctrl.data"></div>
+													<div class="text-danger text-bold help-block with-errors"
+														ng-show="(role.filterDetails=='' || role.filterDetails  == undefined) && newRole.$submitted">Query
+														is mandatory</div>
+												</div>
+											</div>
+											
+										</div>
+
+									<div class="col-md-12">
+										<div class="form-group row">
+											<label for="field-1" class="control-label col-md-3">Mask Fields*</label>
+											<div class="col-md-9">
+												<ui-select  multiple  ng-model="ctrl.fields.maskFields"    title = "Fields">
+													<ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+													<ui-select-choices  repeat="t in ctrl.logFileds | filter: $select.search">
+														<span ng-bind-html="t | highlight: $select.search"></span>
+													</ui-select-choices>
+												</ui-select>
+											</div>
+										</div>
+
+									</div>
+
+									<div class="col-md-12">
+										<div class="form-group row">
+											<label for="field-1" class="control-label col-md-3">Document Fields*</label>
+											<div class="col-md-9">
+												<ui-select  multiple  ng-model="ctrl.fields.documentFields"    title = "Fields">
+													<ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+													<ui-select-choices  repeat="t in ctrl.logFileds | filter: $select.search">
+														<span ng-bind-html="t | highlight: $select.search"></span>
+													</ui-select-choices>
+												</ui-select>
+											</div>
+										</div>
+
+									</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" id="saveRules" ng-disabled="newRole.$invalid">Save
+							changes</button>
+					</div>
+
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/ng-template" id="queryBuilderDirective.html">
+    <div class="alert-group col-md-12 text-md-center">
+	
+
+<div class="text-center text-md-center">
+		
+<table class="table cloneTable bord-btm" >
+			<tr>
+				<td class="clonetd" style="width:20%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td>
+				<td class="clonetd" style="width:5%"><button  ng-click="addCondition(group)" class="btn btn-dark">Add Condition</button></td>
+           		<td class="clonetd" style="width:5%"> <button ng-click="addGroup()" class="btn  btn-dark"> Add Group</button></td>
+				<td class="clonetd" ><button  ng-click="removeGroup()" class="btn btn-default ">Remove Group</button></td>
+			 </tr>
+		</table>
+	</div>
+		
+
+
+	
+        <div class="group-conditions">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        
+									
+
+
+						<table class="table cloneTable">
+							<tr>
+								
+								<td  class="clonetd" style="width:30%"> 
+		<ui-select  ng-model="rule.field"  theme="select2" style="width:100%"> title = "Fields"
+            <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices  repeat="t in fields | filter: $select.search">
+              <span ng-bind-html="t.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
+								
+									
+                                 </td>
+ 								<td class="clonetd"  style="width:30%">
+									
+
+								<select   ng-model="rule.condition" class="form-control input-sm">
+									<option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option>
+								</select>
+								</td>
+
+							
+								<td class="clonetd" style="width:30%" ><input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/></td>
+
+								<td class="clonetd"><a ng-click="removeCondition($index)" class="btn btn-link "><i class="fa fa-trash"></i></a></td>
+							</tr>	
+                        
+						</table>
+
+
+						
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+	
+
+    </script>
+
+
+	<!--  Roles -->
+
+	<div id="update-role-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Create Role</h4>
+				</div>
+				<form class="form-horizontal" role="form" ng-submit="updateRoles()"
+					name="alertsForm">
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.rolesErrorMessage"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="col-lg-3  control-label">Role
+											Name *</label>
+										<div class="col-lg-9">
+											<input type="text"
+												ng-disabled="role.roleName==='Administrator'"
+												ng-model="role.roleName" class="form-control"
+												required="required">
+										</div>
+
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class=" col-lg-3 control-label">Permission*</label>
+										<div class="col-lg-9">
+
+											<select class="form-control" multiple="multiple"
+												ng-disabled="role.roleName==='Administrator'"
+												ng-options="av.text for av in ctrl.permissions track by av.id"
+												ng-model="ctrl.tempPermissions" bs-duallistbox>
+											</select>
+										</div>
+
+									</div>
+								</div>
+								<div class="col-md-12">
+
+
+
+
+									<div class="form-group pad-ver row">
+										<label class=" col-lg-3 control-label text-semibold">Granted
+											To</label>
+										<div class="col-lg-9">
+
+
+											<div class="radio">
+
+												<!-- Inline radio buttons -->
+
+
+
+
+												<input value="users" id="demo-inline-form-radio"
+													class="magic-radio" type="radio" name="inline-form-radio"
+													ng-click='grantedTo()' ng-model="role.roleType"> <label
+													for="demo-inline-form-radio">Users</label> <input
+													value="groups" ng-click='grantedTo()'
+													ng-model="role.roleType" id="demo-inline-form-radio-2"
+													class="magic-radio" type="radio" name="inline-form-radio">
+												<label for="demo-inline-form-radio-2">Groups</label>
+
+
+
+											</div>
+
+
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-md-12" ng-show="role.roleType === 'users'">
+									<div class="form-group row ">
+										<label for="field-1" class="col-lg-3  control-label">Users
+											*</label>
+
+										<!--ng-options = "obj as obj.text for obj in ctrl.permissions track by obj.id"  -->
+										<div class="col-lg-9">
+											<select class="form-control" multiple="multiple"
+												ng-options=" obj as obj.text for obj in plainUsersArray track by obj.id"
+												ng-model="ctrl.tempUsers" bs-duallistbox>
+											</select>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12" ng-show="role.roleType === 'groups'">
+									<div class="form-group row">
+										<label for="field-1" class="col-lg-3 control-label">Groups
+											*</label>
+										<div class="col-lg-9">
+											<select class="form-control" multiple="multiple"
+												ng-options="av.text for av in ctrl.userGroups track by av.id"
+												ng-model="ctrl.tempGroups" bs-duallistbox>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1 " class="col-lg-3 control-label">Indices
+											*</label>
+										<div class="col-lg-9">
+											<select class="form-control" ng-model="role.indexes">
+												<option ng-repeat="data in ctrl.indices" value="{{data}}">
+													{{data}}</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="col-lg-3  control-label">Filter
+											Query *</label>
+										<div class="col-lg-9" ng-if = "canShowQueryCode">
+											<div class="col-lg-6">
+												<pre id="custom-spacing">{{ role.filterDetails | json:4 }}</pre>
+											</div>
+											<div class="col-lg-6">
+												<a href = "javascript:void('0')" ng-click = "switchToAdvacned()">Edit</a>
+											</div>
+
+
+
+										</div>
+										<div class="col-lg-9" ng-if = "!canShowQueryCode">
+											<div data-elastic-builder="ctrl.data"></div>
+
+
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="control-label col-md-3">Mask Fields*</label>
+										<div class="col-md-9">
+
+											<ui-select multiple ng-model="ctrl.fields.maskFields" theme="bootstrap"
+													   title="Mask Fileds">
+												<ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+												<ui-select-choices
+														repeat="t in ctrl.logFileds | filter: $select.search">
+													<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices>
+											</ui-select>
+
+										</div>
+									</div>
+
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class="control-label col-md-3">Document Fields*</label>
+										<div class="col-md-9">
+											<ui-select  multiple  ng-model="ctrl.fields.documentFields"    title = "Fields">
+												<ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+												<ui-select-choices  repeat="t in ctrl.logFileds | filter: $select.search">
+													<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices>
+											</ui-select>
+										</div>
+									</div>
+
+								</div>
+
+
+
+
+
+
+
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" id="updateRoles">Save
+							changes</button>
+					</div>
+				</form>
+
+
+			</div>
+
+
+
+		</div>
+	</div>
+	<div id="create-organization-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title" id="myLargeModalLabel">Organization</h4>
+				</div>
+				<form class="form-horizontal" role="form"
+					ng-submit="createOrganization()" name="organizationForm">
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.orgMessages" class="alert"
+							ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="">
+							<div class="">
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Name
+											*</label>
+										<div class="col-md-9">
+											<input type="text" ng-model="organization.organizationName" class="form-control" name="organizationName" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+											<div class="text-danger text-bold" ng-show="(organizationForm.$submitted || organizationForm.organizationName.$touched )&& organizationForm.organizationName.$error.required">Name is mandatory</div>
+											<div class="text-danger text-bold" ng-show="(organizationForm.$submitted || organizationForm.organizationName.$touched )&& organizationForm.organizationName.$error.pattern">Special characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-1" class=" control-label col-md-3">Email
+											*</label>
+										<div class="col-md-9">
+
+											<input type="email" ng-model="organization.userName" title="Enter Email" class="form-control" name="userName" required="required" pattern="[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]*\.([a-z]+)" >
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.userName.$touched) && organizationForm.userName.$error.required">Email is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.userName.$touched) && organizationForm.userName.$error.pattern">Not a valid email </div>
+										</div>
+
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="form-group row ">
+										<label for="field-2" class=" control-label col-md-3">First
+											name *</label>
+										<div class="col-md-9">
+											<input type="text" ng-model="organization.firstName" class="form-control" title="Enter first name" name="firstName" required="required" pattern="[a-zA-Z0-9\s-_]+" >
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.firstName.$touched) && organizationForm.firstName.$error.required">First name is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.firstName.$touched) && organizationForm.firstName.$error.pattern">Special characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Last name *</label>
+										<div class="col-md-9">
+											<input type="text" ng-model="organization.lastName" title="Enter last name" class="form-control" name="lastName" required="required">
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.lastName.$touched) && organizationForm.lastName.$error.required">last name is mandatory</div>
+											<div class="text-danger text-bold help-block with-errors" ng-show="(organizationForm.$submitted || organizationForm.lastName.$touched) && organizationForm.lastName.$error.pattern">Special characters are not allowed</div>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Logo
+											*</label>
+										<div class="col-md-9">
+											<input type="file" file-model="clientLogo" class="form-control" required="required">
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-12">
+									<div class="form-group row">
+										<label for="field-2" class="control-label col-md-3">Status
+											*</label>
+										<div class="col-md-9">
+											<input type="checkbox"
+												ui-switch="{color: '#E43B11', secondaryColor: '#F89279',size:'small'}"
+												ng-model="organization.status" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success" ng-disabled="organizationForm.$invalid">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- OrganizationTemplate -->
+
+
+
+</div>

@@ -1,0 +1,170 @@
+<div ng-controller="manualAssetController as ctrl">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manual Asset</h1>
+						</div>
+							<ol class="breadcrumb" ng-if="showHomeButton">
+								<li><a href="/configuration#!">Home</a></li>
+								<li class="active">Asset</li>
+			                 </ol>
+			                 <ol class="breadcrumb" ng-if="!showHomeButton">
+								<li><a href="/configuration#!">Home</a></li>
+								<li><a href="javascript:void('0')" ng-click="ctrl.goBack()">Asset</a></li>
+								<li class="active">New Asset</li>
+			                 </ol>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="row" style="padding-top: 20px; padding-right: 29px;">
+					<div id="page-head">
+						<div class="pull-right btn-group" ng-if="showHomeButton">
+							<button class="btn btn-dark" ng-click="ctrl.newAsset();">new assest</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div uib-alert ng-repeat="alert in ctrl.alertMessages" class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+	 close="closeAlert($index)">{{alert.msg}}</div>
+	 
+		<div ng-include src="templateUrl"></div>
+	</div>
+	
+	<script type="text/ng-template" id="asset.html">
+		
+		<div class="row">
+			<div class="panel panel-table" ng-init="rule.showButtons=false">
+				<div class="panel-body-alt">
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" width="100%">
+							<thead>	
+								<tr>
+									<th>Asset Name</th>
+									<th>Asset Tag</th>
+									<th>Device Type</th>
+									<th>Group</th>
+									<th>IP</th>
+									<th>MAC</th>
+									<th>Location</th>
+									<th>Domain</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+									<tr ng-repeat="data in ctrl.allSavedAssets">
+										<td>{{data.assetName}}</td>
+										<td>{{data.assetTag}}</td>
+										<td>{{data.deviceType}}</td>
+										<td>{{data.groupName}}</td>
+										<td>{{data.ip}}</td>
+										<td>{{data.mac}}</td>
+										<td>{{data.location}}</td>
+										<td>{{data.domain}}</td>
+										<td>{{data.status}}</td>
+										<td><a href="javascript:void('0')" ng-click="ctrl.deleteAsset(data.id)">Delete</a></td>
+									</tr>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+	<script type="text/ng-template" id="newAsset.html">
+			<div class="panel">
+			    <div class="panel-body" style="border:none" id="panel-body">
+        			<div class="col-md-12">
+            			<div class="content-wrapper">
+                			<div class="panel-body" style="padding-top:12px;border:none;" id="panel-body">
+                    			<form class="form-horizontal">
+									<div class="form-group">
+										<label class="col-md-3 control-label">Asset Name</label>
+										<div class="col-md-7">
+											<input type="text" class="form-control" ng-model="ctrl.newasset.assetName" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-3 control-label">Asset Tag</label>
+										<div class="col-md-7">
+												<selectize options='ctrl.allAssetTag' config="ctrl.assetTagConfig" ng-model="ctrl.newasset.assetTag" required='true'></selectize>
+										</div>
+									</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">Device Type</label>
+	<div class="col-md-7">
+		<selectize options='ctrl.allassetDeviceType' config="ctrl.assetDeviceTypeConfig" ng-model="ctrl.newasset.deviceType" required='true'></selectize>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">Group</label>
+	<div class="col-md-7">
+		<input type="text" class="form-control" ng-model="ctrl.newasset.groupName">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">Location</label>
+	<div class="col-md-7">
+	<selectize options='ctrl.allNetworkZonesDetails' config="ctrl.assetLocationConfig" ng-model="self.allNetworkZonesDetails" required='true'></selectize>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">Domain</label>
+	<div class="col-md-7">
+
+		 <selectize options="ctrl.allNetworkZonesDomainDetails" config="ctrl.assetDomainType" ng-model="ctrl.newasset.domain" required='true'></selectize>
+		<!--<input type="text" class="form-control" ng-model="ctrl.newasset.domain">-->
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">CIDR</label>
+	<div class="col-md-7">
+ <selectize options="ctrl.allNetworkZonesCidrDetails" config="ctrl.assetcidr" ng-model="ctrl.newasset.cidr" required='true'></selectize>
+		<!-- <input type="text" class="form-control" ng-model="ctrl.newasset.cidr"> -->
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-md-3 control-label">IP</label>
+	<div class="col-md-7">
+		<input type="text" class="form-control" ng-model="ctrl.newasset.ip">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-3 control-label">MAC Address</label>
+	<div class="col-md-7">
+		<input type="text" class="form-control" ng-model="ctrl.newasset.mac">
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-md-3 control-label">Status</label>
+	<div class="col-md-7">
+<select class="form-control" ng-model="ctrl.newasset.status">
+<option>Enable</option>
+<option>Disable</option>
+</select>
+	</div>
+</div>
+<div class="form-group">
+<div class="col-md-8 control-label">
+	<input type="submit" class="btn btn-dark" value="save" ng-click="ctrl.saveAssets()"/>
+	<input type="reset" class="btn btn-dark" value="reset" />
+</div>
+</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</script>
+</div>

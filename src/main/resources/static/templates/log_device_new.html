@@ -1,0 +1,1216 @@
+<div ng-controller="logDevicesController as ctrl"
+	ng-init="ctrl.pageName = 'deviceType'" class="content-wrapper">
+	<div class="row page-header  d-flex justify-content-between">
+		<div class="col-sm-4">
+			<div id="page-head">
+				<h4 class="page-title">Manage Device Types</h4>
+			</div>
+		</div>
+		<div class="col-sm-6">
+
+			<button ng-click="ctrl.createDeviceType()"
+				ng-show="showManageDevicesPage" class="btn btn-primary pull-right"
+				title="Create Device Type">Create Device</button>
+
+			<button ng-click="ctrl.createLogType()"
+				ng-show="showManageDevicesPage"
+				class="btn btn-primary pull-right mar-rgt" title="Create Log Type">Create
+				Log Type</button>
+
+			<button ng-click="showVendors()" ng-show="showManageDevicesPage"
+				class="btn btn-primary pull-right mar-rgt" title="Create Log Type">Vendors</button>
+
+			<button id="onboardDevices"
+				class="btn btn-success pull-right mar-rgt"
+				ng-click="onBoardDevice()">Onboard Device</button>
+
+			<button id="editButton" class="btn btn-success pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-show="ctrl.canUpdate && showManageDevicesPage"
+				ng-click='ctrl.editDeviceType(ctrl.deviceTypeId[0].id)'>
+				Edit</button>
+
+			<button id="deleteButton" class="btn btn-danger pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-show="ctrl.canUpdate && showManageDevicesPage"
+				ng-click=' ctrl.deleteDeviceType(ctrl.deviceTypeId[0].id,ctrl.deviceTypeId[0].deviceName)'>
+				Delete</button>
+
+			<button id="showLogTypesButton" ng-show="showManageDevicesPage"
+				class="btn btn-secondary pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-click=' ctrl.showLogTypes(ctrl.deviceTypeId[0].id,ctrl.deviceTypeId[0].deviceName)'>
+				Show LogTypes</button>
+
+			<button ng-click="ctrl.createLogType()" ng-show="showManageLogTypes"
+				class="btn btn-primary pull-right" title="create new widget">Create
+				Log Type</button>
+
+			<button id="onboardDevices"
+				class="btn btn-success pull-right mar-rgt"
+				ng-click="onBoardDevice(ctrl.logTypeId[0])">Onboard Device</button>
+
+			<button id="editLogButton" class="btn btn-success pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-show="ctrl.canUpdate && showManageLogTypes"
+				ng-click=' ctrl.editLogType(ctrl.logTypeId[0].id)'>Edit</button>
+
+			<button id="showLogSources"
+				class="btn btn-primary pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-show="ctrl.canUpdate && showManageLogTypes"
+				ng-click='showSources(ctrl.logTypeId[0].id)'>Show Devices</button>
+
+			<button id=deleteLogButton class="btn btn-danger pull-right mar-rgt"
+				href="javascript:void('0')"
+				ng-show="ctrl.canUpdate && showManageLogTypes"
+				ng-click=' ctrl.deleteLogTypesById(ctrl.logTypeId[0].id)'>
+				Delete</button>
+
+			<button id="showLogTypesButton" ng-show="showManageLogTypes"
+				class="btn btn-secondary pull-right mar-rgt"
+				href="javascript:void('0')" ng-click=' ctrl.backToDevices()'>
+				Back</button>
+
+		</div>
+	</div>
+	<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+		ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div id="panel-body-alt">
+
+
+		<div class="alert {{ctrl.licenceMessage.type}}" role="alert">
+			<i class="mdi mdi-alert-circle"></i> {{ctrl.licenceMessage.data}}
+		</div>
+
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+		<script type="text/ng-template" id="devices.html">
+			
+
+		
+				
+
+			
+			<div class="card">
+              <div class="card-body">
+				<div id = "logDeviceTypes" class="{{theme}}" style="height: 500px;"></div>
+				
+				</div>
+			</div>
+			
+			
+			
+			
+			</script>
+
+
+
+
+
+
+
+
+
+
+
+		<script type="text/ng-template" id="logTypes.html">
+
+		
+			
+		
+	<div class="card">
+              <div class="card-body">
+				<div id = "logTypes" class="{{theme}}" style="height: 500px;"></div>
+				
+				</div>
+			</div>
+		
+		
+			
+			
+	</script>
+
+
+
+
+		<div id="onBoardDeviceModel" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Onboard Device</h4>
+					</div>
+					<form class="forms-sample" ng-submit="saveS3Configuration()"
+						name="onBoardDevieFormS3" ng-if="aws_cloud">
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.deviceErrors"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+							<div>
+
+
+
+								<!-- 								<fieldset class="col-md-12"> -->
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Log Type <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<select class="form-control"
+											ng-model="ctrl.deviceDetails.logTypeId | unique:'id'">
+
+											<option value="{{data.id}}">{{data.displayName}}</option>
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Name <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="ctrl.aws.name"
+											ng-keyup="generateAWSKey()">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Device Key <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-disabled="!ctrl.deviceDetails.canEdit" required="required"
+											ng-model="ctrl.deviceDetails.deviceKey">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Collector <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<select class="form-control" ng-model="ctrl.aws.collectorId">
+											<option value="{{data.id}}"
+												ng-repeat="data in ctrl.cloudCollectors">{{data.collectorName}}</option>
+										</select>
+									</div>
+								</div>
+
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Description</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-model="ctrl.aws.description">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">S3 Regions</label>
+									<div class="col-sm-12">
+										<select class="form-control" ng-model="ctrl.aws.s3Region">
+
+											<option value="ap-south-1">Asia Pacific (Mumbai)</option>
+											<option value="ap-northeast-3">Asia Pacific
+												(Osaka-Local)</option>
+											<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+											<option value="ap-southeast-1">Asia Pacific
+												(Singapore)</option>
+											<option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+											<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+											<option value="ca-central-1">Canada (Central)</option>
+											<option value="cn-north-1">China (Beijing)</option>
+											<option value="cn-northwest-1">China (Ningxia)</option>
+											<option value="eu-central-1">EU (Frankfurt)</option>
+											<option value="eu-west-1">EU (Ireland)</option>
+											<option value="eu-west-2">EU (London)</option>
+											<option value="eu-west-3">EU (Paris)</option>
+											<option value="eu-north-1">EU (Stockholm)</option>
+											<option value="sa-east-1">South America (Sao Paulo)</option>
+											<option value="us-east-1">US East (N. Virginia)</option>
+											<option value="us-east-2">US East (Ohio)</option>
+											<option value="us-west-1">US West (Oregon)</option>
+
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Bucket Name <span
+										style="color: red">*</span></label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="ctrl.aws.bucketName">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Path Expression
+										<span style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="ctrl.aws.pathExpression">
+
+										<small class="help-block"> Path expression to match
+											one or more S3 objects.</small> <small class="help-block">For
+											example: ABC*.log or ABC.log</small> <small class="help-block">NOTE:
+											Make sure the path does NOT start with a leading slash. </small>
+									</div>
+
+								</div>
+								<!-- 								</fieldset> -->
+
+								<p class="bord-btm pad-ver text-main text-bold">AWS Access</p>
+
+								<fieldset>
+									<div class="form-group">
+										<label class="col-sm-12 control-label">Access Key ID <span
+											style="color: red">*</span></label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" placeholder=""
+												required="required" ng-model="ctrl.aws.accessId"> <small
+												class="help-block"> Your AWS Access Key ID </small>
+										</div>
+
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-12 control-label">Secret Access
+											Key <span style="color: red">*</span>
+										</label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" placeholder=""
+												required="required" ng-model="ctrl.aws.accessKey"> <small
+												class="help-block"> Your AWS Secret Access Key </small>
+										</div>
+
+									</div>
+								</fieldset>
+
+								<p class="bord-btm pad-ver text-main text-bold">Log File
+									Discovery</p>
+
+								<div class="form-group">
+									<label class="col-sm-3 control-label">SNS Subscription
+										EndPoint</label>
+									<div class="col-sm-6">
+										<div class="col-md-12">
+											<p class="form-control-static" ng-if="ctrl.aws.token === ''">All
+												fields will be saved when you create a URL and OBELUS will
+												start the scanning process.</p>
+											<div class="form-control-static" ng-if="ctrl.aws.url !='' "
+												style="background-color: #f1f4f5; border: 1px solid #e9f5fc; padding: 8px; display: flex; width: 260px; height: 46px;">
+												<div style="white-space: nowrap; overflow-x: auto; flex: 1;">
+													{{ctrl.aws.url}}</div>
+
+											</div>
+
+										</div>
+										<div class="col-md-6">
+											<button type="button" class="btn btn-primary"
+												ng-click="generateSubScriptionLink()">Create URL</button>
+
+										</div>
+
+									</div>
+								</div>
+
+								<div class="form-group"
+									ng-if="singleCloudConnector === 'Amazon S3' ">
+									<label class="col-sm-12 control-label">Log Type</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="ctrl.aws.logType">
+									</div>
+								</div>
+
+
+
+
+							</div>
+
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+
+
+
+
+						</div>
+
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Save</button>
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+						</div>
+					</form>
+
+
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.deviceErrors"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<!-- 							<div> -->
+
+
+
+						<!-- 								<fieldset> -->
+						<div ng-if="!aws_cloud">
+							<form class="forms-sample" ng-submit="ctrl.saveDevice()"
+								name="onBoardDevieForm">
+								<div class="form-group" ng-if = "ctrl.deviceDetails.id==0">
+									<label class="col-sm-12 control-label">Log Type <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-md-12">
+										<select class="form-control"
+											ng-model="ctrl.deviceDetails.logTypeId" name="logTypeId"
+											required="required">
+											<option value="{{data.id}}"
+												ng-repeat="data in ctrl.logTypesList">{{data.displayName}}</option>
+										</select>
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.logTypeId.$touched) && onBoardDevieForm.logTypeId.$error.required">Log
+											Type is required</div>
+									</div>
+								</div>
+								<!-- 									</div> -->
+
+								<div class="form-group" ng-if = "ctrl.deviceDetails.id==0">
+									<label class="col-sm-12 control-label">Collector <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<select class="form-control"
+											ng-model="ctrl.deviceDetails.collectorId" name="collectorId"
+											required="required" ng-change="getCollectorType(ctrl.deviceDetails.collectorId)">
+											<option value="{{data.id}}"
+												ng-repeat="data in ctrl.nonCloudCollectors">{{data.collectorName}}</option>
+										</select>
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.collectorId.$touched) && onBoardDevieForm.collectorId.$error.required">Collector
+											is required</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Name <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="ctrl.deviceDetails.deviceName"
+											ng-keyup="generateAWSKey()" name="deviceName">
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.deviceName.$touched) && onBoardDevieForm.deviceName.$error.required">Name
+											is required</div>
+									</div>
+								</div>
+															
+								
+
+								
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Device key <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-disabled="!ctrl.deviceDetails.canEdit" required="required"
+											ng-model="ctrl.deviceDetails.deviceKey" name="deviceKey">
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.deviceKey.$touched) && onBoardDevieForm.deviceKey.$error.required">Device
+											Key is required</div>
+									</div>
+								</div>
+
+								<div class = "form-group" ng-if = "collectorType === 'cloud' && ctrl.deviceDetails.id==0 " >
+								
+									
+								
+
+									<label class="col-sm-12 control-label">Source <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<select class="form-control" ng-model = "ctrl.deviceDetails.collectorSource" ng-change = "loadConfiguration(ctrl.deviceDetails.collectorSource)">
+
+											<option value="{{data.cloudName}}" ng-repeat = "data in ctrl.couldSupportedDevices">{{data.cloudName}}</option>
+											
+											<option value="awsS3">AWS S3</option>
+										
+										</select>
+										
+									</div>
+
+								</div>
+
+								<div class="form-group" ng-if = "ctrl.deviceDetails.collectorSource!='awsS3' " ng-repeat = "data in cloudConfig">
+									<label class="col-sm-12 control-label">{{data.displayName}} <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="data.fieldValue"
+											>
+										
+									</div>
+
+								</div>
+								
+								<div  ng-if = "collectorType === 'cloud' && ctrl.deviceDetails.collectorSource==='awsS3' ">
+									
+									
+									<div class="form-group">
+									<label class="col-sm-12 control-label">S3 Regions</label>
+									<div class="col-sm-12">
+										<select class="form-control" ng-model="cloudConfig[0].s3Region">
+
+											<option value="ap-south-1">Asia Pacific (Mumbai)</option>
+											<option value="ap-northeast-3">Asia Pacific
+												(Osaka-Local)</option>
+											<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+											<option value="ap-southeast-1">Asia Pacific
+												(Singapore)</option>
+											<option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+											<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+											<option value="ca-central-1">Canada (Central)</option>
+											<option value="cn-north-1">China (Beijing)</option>
+											<option value="cn-northwest-1">China (Ningxia)</option>
+											<option value="eu-central-1">EU (Frankfurt)</option>
+											<option value="eu-west-1">EU (Ireland)</option>
+											<option value="eu-west-2">EU (London)</option>
+											<option value="eu-west-3">EU (Paris)</option>
+											<option value="eu-north-1">EU (Stockholm)</option>
+											<option value="sa-east-1">South America (Sao Paulo)</option>
+											<option value="us-east-1">US East (N. Virginia)</option>
+											<option value="us-east-2">US East (Ohio)</option>
+											<option value="us-west-1">US West (Oregon)</option>
+
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Bucket Name <span
+										style="color: red">*</span></label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="cloudConfig[0].bucketName">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Path Expression
+										<span style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											required="required" ng-model="cloudConfig[0].pathExpression">
+
+										<small class="help-block"> Path expression to match
+											one or more S3 objects.</small> <small class="help-block">For
+											example: ABC*.log or ABC.log</small> <small class="help-block">NOTE:
+											Make sure the path does NOT start with a leading slash. </small>
+									</div>
+
+								</div>
+								<!-- 								</fieldset> -->
+
+
+
+								<fieldset>
+									<div class="form-group">
+										<label class="col-sm-12 control-label">Access Key ID <span
+											style="color: red">*</span></label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" placeholder=""
+												required="required" ng-model="cloudConfig[0].accessId"> <small
+												class="help-block"> Your AWS Access Key ID </small>
+										</div>
+
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-12 control-label">Secret Access
+											Key <span style="color: red">*</span>
+										</label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" placeholder=""
+												required="required" ng-model="cloudConfig[0].accessKey"> <small
+												class="help-block"> Your AWS Secret Access Key </small>
+										</div>
+
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-12 control-label">Bucket Scan Interval <span style="color: red">*</span>
+										</label>
+										<div class="col-sm-12">
+											<select class="form-control" ng-model = "cloudConfig[0].scanInterval">
+
+												<option value="automatic">Automatic</option>
+												<option value="5">5 Minutes</option>
+												<option value="10">10 Minutes</option>
+												<option value="15">15 Minutes</option>
+												<option value="60">60 Minutes</option>
+
+											</select>
+
+										</div>
+
+									</div>
+
+								</fieldset>
+
+
+								
+
+								<div class="form-group">
+									
+									<div class="col-sm-12">
+										
+										<div class="col-md-12">
+											<button type="button" class="btn btn-primary pull-right" style="margin-top: 18px" ng-click="generateSubScriptionLink()">Create Subscription  URL</button>
+
+										</div>
+
+									</div>
+								</div>
+									
+
+								</div>
+								
+								
+
+								<div ng-if = "collectorType === 'installed'"> 
+
+								
+
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">IP <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-model="ctrl.deviceDetails.deviceIp" required="required"
+											name="deviceIp" minlength="7" maxlength="15" size="15"
+											pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.deviceIp.$touched) && onBoardDevieForm.deviceIp.$error.required">IP
+											is required</div>
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.deviceIp.$touched) && onBoardDevieForm.deviceIp.$error.pattern">Invalid
+											IP Address</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Protocol <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<select class="form-control"
+											ng-model="ctrl.deviceDetails.protocol" name="protocol"
+											required="required">
+
+											<option value="syslog">Syslog</option>
+											<option value="rpc">RPC</option>
+
+										</select>
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.protocol.$touched) && onBoardDevieForm.protocol.$error.required">Protocol
+											is required</div>
+
+									</div>
+								</div>
+									<div class="form-group"
+										 ng-if="ctrl.deviceDetails.protocol === 'syslog'">
+										<label class="col-sm-12 control-label">Syslog Format <span
+												style="color: red">*</span>
+										</label>
+										<div class="col-sm-12">
+											<select class="form-control" ng-model = "ctrl.deviceDetails.syslogFormat">
+												<option value="cef">CEF</option>
+												<option value="rfc_3164">RFC 3164</option>
+												<option value="rfc_5424">RFC 5424</option>
+											</select>
+
+										</div>
+									</div>
+
+
+								<div class="form-group"
+									ng-if="ctrl.deviceDetails.protocol === 'rpc'">
+									<label class="col-sm-12 control-label">Domain <span
+										style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-model="ctrl.deviceDetails.deviceDomain">
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.deviceDomain.$touched) && onBoardDevieForm.deviceDomain.$error.required">Domain
+											is required</div>
+
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-12 control-label">Stale
+										Configuration(Mins) <span style="color: red">*</span>
+									</label>
+									<div class="col-sm-12">
+										<input type="number" class="form-control" placeholder=""
+											ng-model="ctrl.deviceDetails.staleInMins" name="staleInMins"
+											required="required">
+										<div class="text-danger"
+											ng-if="(onBoardDevieForm.$submitted || onBoardDevieForm.staleInMins.$touched) && onBoardDevieForm.staleInMins.$error.required">Domain
+											is required</div>
+
+									</div>
+								</div>
+
+
+								<div class="form-group"
+									ng-if="ctrl.deviceDetails.protocol === 'rpc'">
+									<label class="col-sm-12 control-label">Username</label>
+									<div class="col-sm-12">
+										<input type="text" class="form-control" placeholder=""
+											ng-model="ctrl.deviceDetails.username">
+									</div>
+								</div>
+
+								<div class="form-group"
+									ng-if="ctrl.deviceDetails.protocol === 'rpc'">
+									<label class="col-sm-12 control-label">Password</label>
+									<div class="col-sm-12">
+										<input type="password" class="form-control" placeholder=""
+											ng-model="ctrl.deviceDetails.password">
+									</div>
+								</div>
+
+								</div>
+							</div>
+
+
+
+
+
+
+								<!-- 								</fieldset> -->
+
+								<div class="modal-footer">
+									<button type="button" ng-if="ctrl.deviceDetails.id > 0"
+										class="btn btn-danger"
+										ng-click="deleteDevice(ctrl.deviceDetails.id)">Delete</button>
+									<button type="button" ng-if="ctrl.deviceDetails.id > 0"
+										class="btn btn-danger"
+										ng-click="enableOrDisableDevice(ctrl.deviceDetails.id)">Enable/Disable</button>
+
+									<button type="button" ng-click = "ctrl.saveDevice()"  class="btn btn-primary"
+										ng-disabled="onBoardDevieForm.$invalid">Save</button>
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">Close</button>
+								</div>
+
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+
+			</div>
+		</div>
+
+		<div id="newLogType" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Create Log Type</h4>
+
+					</div>
+					
+					<form class="forms-sample" ng-submit="ctrl.saveLogTypes()"
+						name="logTypeForm">
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.logTypesErrorMessage"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Device
+									Type</label>
+								<div class="col-md-12">
+									<select class="form-control" id="deviceTypeid"
+										name="deviceTypeid" ng-model="ctrl.newLogType.deviceTypeId"
+										required="required">
+										<option value="{{data.deviceTypeId}}"
+											ng-repeat="data in ctrl.deviceTypes">{{data.deviceTypedisplayName}}</option>
+									</select>
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.deviceTypeid.$touched) && logTypeForm.deviceTypeid.$error.required">Device
+										type is mandatory</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Display
+									Name</label>
+								<div class="col-md-12">
+									<input type="text" pattern="[a-zA-Z0-9_-\s]*$"
+										ng-model="ctrl.newLogType.displayName" class="form-control"
+										required="required" name="displayName" />
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.displayName.$touched) && logTypeForm.displayName.$error.required">Display
+										name is mandatory</div>
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.displayName.$touched) && logTypeForm.displayName.$error.pattern">Special
+										characters are not allowed</div>
+
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Name</label>
+								<div class="col-md-12">
+									<input type="text" pattern="[a-zA-Z_]*$"
+										ng-model="ctrl.newLogType.logType" required="required"
+										name="logType" class="form-control" />
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.logType.$touched) && logTypeForm.logType.$error.required">Name
+										is mandatory</div>
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.logType.$touched) && logTypeForm.logType.$error.pattern">Special
+										characters are not allowed</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12">Description</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.newLogType.description"
+										class="form-control" name="description" required="required" />
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.description.$touched) && logTypeForm.description.$error.required">Description
+										is mandatory</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12">Vendor </label>
+								<div class="col-md-12">
+
+									<select class="form-control"
+										ng-model="ctrl.newLogType.vendorId" name="vendorId"
+										required="required">
+
+										<option value="{{data.id}}"
+											ng-repeat="data in ctrl.vendorDetails">{{data.vendorName}}->{{data.deviceModel}}->{{data.deviceVersion}}</option>
+
+									</select>
+									<div class="text-danger"
+										ng-if="(logTypeForm.$submitted || logTypeForm.vendorId.$touched) && logTypeForm.vendorId.$error.required">Vendor
+										is mandatory</div>
+
+								</div>
+							</div>
+
+
+
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger"
+								ng-if="ctrl.newLogType.id > 0"
+								ng-click="ctrl.deleteLogTypesById(ctrl.newLogType.id)">Delete</button>
+							<button type="submit" class="btn btn-primary"
+								ng-disabled="logTypeForm.$invalid">Save</button>
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+
+		<div id="newDeviceType" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Create Device Type</h4>
+					</div>
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.alertErrorMessagaesModal"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<form class="forms-sample" ng-submit="ctrl.saveDeviceType()"
+							name="deviceTypeform">
+
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Display
+									Name</label>
+								<div class="col-md-12">
+									<input type="text" pattern="[a-zA-Z_ \s]*$"
+										ng-model="ctrl.newlogDevice.displayName" name="displayName"
+										class="form-control" required="required" />
+									<div class="text-danger"
+										ng-if="(deviceTypeform.$submitted || deviceTypeform.displayName.$touched) && deviceTypeform.displayName.$error.required">Display
+										name is mandatory</div>
+									<div class="text-danger"
+										ng-if="(deviceTypeform.$submitted || deviceTypeform.displayName.$touched) && deviceTypeform.displayName.$error.pattern">Special
+										character are not allowed</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Name</label>
+								<div class="col-md-12">
+									<input type="text" pattern="[a-zA-Z_]*$"
+										ng-model="ctrl.newlogDevice.deviceName" name="deviceName"
+										class="form-control" required="required" />
+									<div class="text-danger"
+										ng-if="(deviceTypeform.$submitted || deviceTypeform.deviceName.$touched) && deviceTypeform.deviceName.$error.required">Name
+										is mandatory</div>
+									<div class="text-danger"
+										ng-if="(deviceTypeform.$submitted || deviceTypeform.deviceName.$touched) && deviceTypeform.deviceName.$error.pattern">Special
+										character are not allowed</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12">Description</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.newlogDevice.description"
+										name="description" class="form-control" required="required" />
+									<div class="text-danger"
+										ng-if="(deviceTypeform.$submitted || deviceTypeform.description.$touched) && deviceTypeform.description.$error.required">Description
+										is mandatory</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" ng-if="ctrl.newlogDevice.id > 0"
+									ng-click="ctrl.deleteDeviceType(ctrl.newlogDevice.id)">Delete</button>
+								<button type="submit" class="btn btn-primary"
+									ng-disabled="deviceTypeform.$invalid">Save</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div id="vendorDetails" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						
+
+						
+
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">{{tabName }} {{currentVendorDetails.vendor}}</h4>
+					</div>
+					<div class="modal-body"  ng-if="tabName === 'Vendors'">
+					
+						<button class="btn pull-right"
+							style="background: transparent; margin-left: 15px; margin-top: -8px"
+							ng-click="openVendorForm()" ng-if = "!showVendorForm">
+							<i class="fa fa-plus"></i>
+						</button>
+						
+						<button class="btn pull-right" style="background: transparent; margin-left: 15px; margin-top: -7px"
+							ng-click="backToVendors()" ng-if="showVendorForm"><i class="fa fa-arrow-circle-o-left"></i></button>
+						
+						<div class="col-md-11" ng-if = "!showVendorForm">
+							<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" dt-options="vm.dtOptions"
+							dt-instance="vm.dtInstance" width="100%"
+							dt-column-defs="vm.dtColumnDefs" >
+
+							<thead>
+								<tr>
+									<th>Vendor ID</th>
+									<th>Vendor Name</th>
+									<th>Action</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in ctrl.vendorDetails">
+									<td>{{data.vendorId}}</td>
+									<td><a href="javascript:void('0')" ng-click = "openDevicesmodel(data)"> {{data.vendorName}}</a></td>
+
+									<td><a href="javascript:void('0')"
+										class="btn btn-outline-primary"
+										ng-click="editVendorForms(data)"> Edit</a> <a
+										href="javascript:void('0')" class="btn btn-outline-danger"
+										ng-click="ctrl.deleteVendor(data.id)"> Delete</a></td>
+
+
+
+								</tr>
+
+							</tbody>
+
+						</table>
+							
+						</div>
+							
+						<div class="" ng-if="showVendorForm">
+						<div uib-alert ng-repeat="alert in ctrl.vendorAlertMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<form class="forms-sample" ng-submit="ctrl.saveVendorNames()"
+							name="vendorForm" ng-show="showVendorForm">
+
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Vendor
+									Name</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.vendorFrom.vendorName"
+										class="form-control" required="required" />
+
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Device
+									Model</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.vendorFrom.deviceModel"
+										class="form-control" required="required" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12">Device Version</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.vendorFrom.deviceVersion"
+										class="form-control" required="required" />
+								</div>
+							</div>
+
+
+
+
+
+
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+						
+
+
+
+
+					</div>
+					
+					<div class="modal-body" ng-if="tabName === 'Device Model'">
+						
+						<button class="btn pull-right"
+							style="background: transparent; margin-left: 15px; margin-top: -8px"
+							ng-click="openDeviceModelForm()" ng-if = "!showDeviceModelForm">
+							<i class="fa fa-plus"></i>
+						</button>
+						
+						
+						<button class="btn pull-right" style="background: transparent; margin-left: 15px; margin-top: -7px"
+							ng-click="backToVendors()" ng-if="tabName === 'Device Model' && !showDeviceModelForm"><i class="fa fa-arrow-circle-o-left"></i></button>
+						
+						
+						<button class="btn pull-right" style="background: transparent; margin-left: 15px; margin-top: -7px"
+							ng-click="backToDevicesModels()" ng-if="showDeviceModelForm"><i class="fa fa-arrow-circle-o-left"></i></button>
+						
+						<div ng-show= "!showDeviceModelForm">
+							<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" dt-options="vm.dtOptions"
+							dt-instance="vm.dtInstance" width="100%"
+							dt-column-defs="vm.dtColumnDefs">
+
+							<thead>
+								<tr>
+									
+									<th>Model ID</th>
+									<th>Device</th>
+									<th>Name</th>
+									<th>Version</th>
+									<th>Action</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in ctrl.deviceModels">
+									<td>{{data.modelId}}</td>
+									<td>{{currentVendorDetails.vendor}}</td>
+									<td>{{data.modelName}}</td>
+									<td>{{data.modelVersion}}</td>
+									
+									
+									<td><a href="javascript:void('0')"
+										class="btn btn-outline-primary"
+										ng-click="editVendorModelDetails(data)"> Edit</a> <a
+										href="javascript:void('0')" class="btn btn-outline-danger"
+										ng-click="ctrl.deleteVendorModelDetails(data.id)"> Delete</a></td>
+
+
+
+								</tr>
+
+							</tbody>
+
+						</table>
+							
+						</div>
+						
+						<div class="" ng-if="showDeviceModelForm">
+						<div uib-alert ng-repeat="alert in ctrl.vendorAlertMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+						<form class="forms-sample" ng-submit="ctrl.saveDeivceModels()"
+							name="vendorForm" >
+
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Model</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.vendorModelDetails.modelName"
+										class="form-control" required="required" />
+
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-12 text-capitalize">Version</label>
+								<div class="col-md-12">
+									<input type="text" ng-model="ctrl.vendorModelDetails.modelVersion"
+										class="form-control" required="required" />
+								</div>
+							</div>
+						
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+
+
+					</div>
+
+					
+					
+					
+					
+					
+					
+					
+				</div>
+
+			</div>
+		</div>
+
+		<div id="logSourcesModal" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Log Sources</h4>
+					</div>
+					<div class="modal-body">
+						<div uib-alert ng-repeat="alert in ctrl.deviceAlertMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" dt-options="vm.dtOptions"
+							dt-instance="vm.dtInstance" width="100%"
+							dt-column-defs="vm.dtColumnDefs">
+
+							<thead>
+								<tr>
+									<th>Device Name</th>
+									<th>First Seen</th>
+									<th>Last Seen</th>
+									<th>Messages</th>
+									<th>State</th>
+									<th>Status</th>
+									<th>Action</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data in ctrl.logSources">
+									<td>{{data.deviceName}}</td>
+									<td>{{data.firstSeen}}</td>
+									<td>{{data.lastSeen}}</td>
+									<td>{{data.numberOfMessage}}</td>
+									<td><span ng-if="data.state === 'Stalled' "
+										class="label label-danger" style="color: white !important">Stalled</span>
+										<span ng-if="data.state != 'Stalled' "
+										class="label label-success" style="color: white !important">Listening</span>
+									</td>
+									<td><span ng-if="data.status != 'Active' "
+										class="label label-danger" style="color: white !important">InActive</span>
+										<span ng-if="data.status == 'Active' "
+										class="label label-success" style="color: white !important">Active</span>
+									</td>
+
+
+									<td><a href="javascript:void('0')"
+										class="btn btn-outline-primary"
+										ng-click="enableOrDisable(data.deviceName)">
+											Enable/Disable</a> <a href="javascript:void('0')"
+										class="btn btn-outline-primary"
+										ng-click="editLogSoruce(data.deviceName)"> Edit</a> <a
+										href="javascript:void('0')" class="btn btn-outline-danger"
+										ng-click="deleteDevice(data.deviceName)"> Delete</a></td>
+
+
+
+								</tr>
+
+							</tbody>
+
+						</table>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</div>

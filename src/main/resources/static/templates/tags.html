@@ -1,0 +1,89 @@
+
+<div ng-controller="tagController as controller" ng-init = "controller.init()" class="content-wrapper">
+		<div class="row page-header d-flex justify-content-between">
+			<div class="col-sm-6 ">
+					<div id="page-head">
+							<h4 class="page-title text-overflow">Manage Tags</h4>
+					</div>
+			</div>
+			<div class="col-sm-6 pull-right">
+				<button ng-click="controller.deleteMultipleTags()" ng-if="controller.selectedTags.length > 0" class="btn btn-danger pull-right mar-rgt">Delete</button>
+				<button ng-click='controller.openCreateTag()' class="btn btn-primary pull-right mar-rgt" title="New Tag">New Tag</button>
+				<button id="viewButton" href= "javascript:void('0')"  class="btn btn-primary pull-right mar-rgt"  ng-click='controller.editTag(controller.tagsId[0].id)'>Edit</button>
+				<button id="deleteButton" href= "javascript:void('0')" class="btn btn-danger pull-right mar-rgt"  ng-click='controller.deleteTags(controller.tagsId[0].id,controller.tagsId[0].tagName)'>Delete</button>
+			</div>
+		</div>
+
+
+		<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+		<script type="text/ng-template" id="viewTagDetails.html">
+
+			<div class="card">
+					    <div class="card-body">
+				<div id = "tagsContent" class="{{theme}}" style="height: 500px;"></div>
+			<!-- <table class="table" datatable="ng">
+				<thead>
+					<tr>
+						<th style="width:18px;text-align:center;"><input type="checkbox" id="tagFields" ng-model="controller.selectAll" ng-change="controller.selectAllFunction(controller.selectAll)"></th>
+						<th>Tag</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>
+
+
+				<tbody>
+					<tr ng-repeat="data  in controller.tagDetails">
+						<td><input type="checkbox" ng-model="data.checked" ng-change="controller.selectById(data.checked,data.id)"></td>
+						<td>{{data.tagName}}</td>
+						<td class="text-center">
+									<button href= "javascript:void('0')"  class="btn btn-outline-primary"  ng-click='controller.editTag(data.id)'>Edit</button>
+                            		<button  href= "javascript:void('0')" class="btn btn-outline-danger"  ng-click='controller.deleteTags(data.id,data.tagName)'>Delete</button>
+						</td>
+					</tr>
+				</tbody>
+			</table> -->
+		</div>
+		</div>
+</script>
+
+
+		<div id="createNewTag" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Create New Tag</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed" ng-submit="controller.submitData()" name="tagsForm" >
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in controller.conditionMessagesModal" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="form-group row">
+								<label class="col-sm-3 control-label">Tag</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" placeholder="" required="required" ng-model="controller.tag.tagName" name="tagName" pattern="[a-zA-Z0-9\s _-]+">
+									<div class="text-danger text-bold help-block with-errors" ng-show="(tagsForm.$submitted || tagsForm.tagName.$touched) && tagsForm.tagName.$error.required ">Tag name is mandatory</div>
+									<div class="text-danger text-bold help-block with-errors" ng-show="(tagsForm.$submitted || tagsForm.tagName.$touched) && tagsForm.tagName.$error.pattern ">Special Characters are not allowed</div>
+								</div>
+							</div>
+						</div>
+						 <div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+							<input type="submit" class="btn btn-success" value="Save" ng-disabled="tagsForm.$invalid">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

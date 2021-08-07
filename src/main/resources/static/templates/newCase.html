@@ -1,0 +1,672 @@
+
+<div id="container" ng-controller="casenewController as ctrl"
+	class="effect  aside-bright mainnav-lg aside-in">
+
+	<div class="row">
+		<div class="col-sm-8">
+			<div class="row">
+				<div id="page-head">
+					<div id="page-title">
+						<h1 class="page-header text-overflow">Cases</h1>
+					</div>
+					<ol class="breadcrumb">
+						<li><a href="/configuration#!">Home</a></li>
+						<li class="active">Cases</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="row" style="padding-top: 20px; padding-right: 29px;">
+				<div id="page-head">
+					<div class="pull-right btn-group">
+
+						<a href="javascript:void('0')" title="Export To Pdf"
+							class="btn btn-link btn-float has-text" ng-click="exportToPdf()">
+							<i class="fa fa-download"></i>
+						</a> <a href="javascript:void('0')" title="Filter"
+							class="btn btn-link btn-float has-text"
+							ng-click="controller.toggleFilter()"> <i class="fa fa-filter"></i></a>
+						<a href="javascript:void('0')" data-toggle="dropdown"
+							class="btn btn-link btn-float has-text dropdown-toggle ng-binding"
+							aria-expanded="true"> <i class="ion-clock"></i> {{labelName}}
+						</a>
+						<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+							<div class="row">
+								<div class="col-sm-4 col-md-3">
+
+									<h3 class="panel-title">Custom range</h3>
+
+									<form class="form-horizontal ng-pristine ng-valid" action=""
+										style="padding-left: 12px; padding-bottom: 12px;">
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label">From</label>
+											<div class="col-sm-9">
+												<input type="text" id="from-date"
+													ng-model="displayStartDate"
+													class="form-control ng-pristine ng-untouched ng-valid ng-empty">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label">To</label>
+											<div class="col-sm-9">
+												<input type="text" ng-model="displayEndDate" id="to-date"
+													class="form-control ng-pristine ng-untouched ng-valid ng-empty">
+											</div>
+										</div>
+
+										<br>
+
+										<div class="row text-right">
+											<button class="btn btn-primary" type="button"
+												ng-click="apply()">Apply</button>
+
+										</div>
+
+									</form>
+
+
+								</div>
+								<div class="col-sm-8 col-md-9">
+									<h3 class="panel-title">Quick ranges</h3>
+
+									<div class="col-sm-4 col-md-3">
+
+										<ul class="list-unstyled">
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+													2 days</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+													7 days</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+													30 days</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+													90 days</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last6months','Last 6 months')">Last
+													6 months</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last1year','Last 1 year')">Last
+													1 year</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last2years','Last 2 years')">Last
+													2 years</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last5years','Last 5 years')">Last
+													5 years</a></li>
+										</ul>
+									</div>
+									<div class="col-sm-4 col-md-3">
+
+										<ul class="list-unstyled">
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+													before yesterday</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+													day last week</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+													week</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+													month</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+													year</a></li>
+
+										</ul>
+									</div>
+
+									<div class="col-sm-4 col-md-3">
+
+										<ul class="list-unstyled">
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('today','Today')">Today</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+													so far</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisWeek','This week')">This
+													week</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+													week so far</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisMonth','This month')">This
+													month</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+													month so far</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisYear','This year')">This
+													year</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+													year so far</a></li>
+
+										</ul>
+									</div>
+									<div class="col-sm-4 col-md-3">
+
+										<ul class="list-unstyled">
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+													15 minutes</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+													30 minutes</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+													1 hour</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+													3 hours</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+													6 hours</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+													12 hours</a></li>
+											<li><a href="javascript:void('0')"
+												ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+													24 hours</a></li>
+										</ul>
+									</div>
+								</div>
+
+
+							</div>
+						</div>
+<a href="/configuration#!/cases-history" class="btn btn-success pull-right" title="View All Cases">View All Cases</a>
+
+
+
+
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+	<hr />
+
+	<div class="boxed">
+		<div id="newcasetemp">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-md-4">
+						<div id="charalgoritham" class="row">
+							<div class="col-md-12 bg-trans">
+								<div class="panel-heading">
+									<h3 class="panel-title">Cases by Priority</h3>
+								</div>
+
+								<div class="panel">
+
+									<div class="panel-body">
+										<div id="casesByPriority" style="height: 250px"></div>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-md-12 mar-top bg-trans">
+								<div class="panel-heading">
+									<h3 class="panel-title">Cases by Status</h3>
+								</div>
+								<div class="panel">
+									<div class="panel-body">
+										<div id="casesByStatus" style="height: 300px"></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-12 mar-top bg-trans">
+								<div class="panel-heading">
+									<h3 class="panel-title">Cases Distribution By Priority</h3>
+								</div>
+								<div class="panel">
+									<div class="panel-body">
+										<div id="casesByOverTime" style="height: 250px"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- col end -->
+
+					<div class="col-md-4">
+						<div class="row">
+							<div id="caselistone" class="eq-box-lg">
+								<div class="panel-heading">
+									<h3 class="panel-title">All Cases</h3>
+								</div>
+								<div class="panel panel-dark">
+									<div class="panel-body has-panscroll" style="height: 955px;">
+
+										<div class="list-group bg-trans">
+											<div ng-repeat="data in ctrl.cases">
+												<a class="list-group-item litem">
+													<div class="panel media left lbg-primary">
+														<div class="panel-heading text-center">
+															<p class="text-1x mar-no pad-no text-main text-bold">{{data.title}}</p>
+														</div>
+														<div class="panel-body">
+															<div class="media-left mleft-primary col-md-4 pad-all">
+																<span class="icon-wra icon-wap-sm bg-ifo pad-all">
+																	<p class="mar-no pad-lft text-main"><time am-time-ago="data.createDate"></time></p>
+<!-- 																	<p class="text-1x pad-lft text-main">Days</p> -->
+																</span>
+															</div>
+															<div class="pad-all col-md-8">
+
+
+																<div class="list-group bg-trans mar-no text-sm">
+																	<a class="list-group-item list-item-sm">
+																		<strong>Description</strong>: {{data.description}}</a> <a
+																		class="list-group-item list-item-sm"> <strong>Priority</strong>
+																		{{data.priority}}
+																	</a> <a class="list-group-item list-item-sm"> <strong>Status</strong>
+																		{{data.status}}
+																	</a> <a class="list-group-item list-item-sm"> <strong>
+																			Created </strong> {{data.createDate |date:'medium'}}
+																	</a> 
+																</div>
+															</div>
+														</div>
+																										<div class="panel-footer pad-no">
+																											<small class="text-muteds"><strong>
+																			Due Date </strong> <span>Scheduled {{date.dueDate | amDifference : null : 'days' }} days from now</span></small>
+																										</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="caselistthree" class="col-md-4 eq-box-lg">
+						<div class="panel-heading">
+							<h3 class="panel-title">Case History</h3>
+						</div>
+						<div class="panel panel-dark">
+
+							<div class="panel-body has-panscroll" style="height: 955px;">
+
+								<!--TRANSPARENT-->
+								<!--===================================================-->
+								<div class="list-group bg-trans">
+									<div class="list-group-item bord-all"
+										href="javascript:void('0')" ng-repeat="data in ctrl.cases">
+										<div class="comment-header"
+											ng-repeat="data1 in data.notes | limitTo:1">
+											<a href="javascript:void('0')"
+												class="media-heading box-inline text-main text-semibold">{{data1.createdBy}}</a>
+											added notest {{data1.notes}} to <a
+												href="javascript:void('0')"
+												ng-click="ctrl.showCaseInformation(data.id)"
+												class="btn-link"> <strong> {{data.title}} </strong>
+											</a>
+											<p class="text-muted text-sm">{{data.createDate |
+												date:'medium'}}</p>
+										</div>
+										<div class="comment-header"
+											ng-repeat="data1 in data.files | limitTo:1">
+											<a href="javascript:void('0')"
+												class="media-heading box-inline text-main text-semibold">{{data1.fileUploadedBy}}</a>
+											added file <a
+												href="/case-management/user/case/downloadFile/{{data1.fileName}}"
+												class="btn-link"> <strong> {{data1.fileName}} </strong>
+											</a> to <a href="javascript:void('0')"
+												ng-click="ctrl.showCaseInformation(data.id)"
+												class="btn-link"> <strong> {{data.title}} </strong>
+											</a>
+											<p class="text-muted text-sm">{{data1.fileCreatedDate |
+												date:'medium'}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mar-top"></div>
+			</div>
+			<div class="modal right fade" id="case_details_modal" tabindex="-1"
+				role="dialog" aria-labelledby="myModalLabel2">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+
+
+
+							<h4 class="modal-title" id="myModalLabel2">{{caseInformation.title}}</h4>
+
+
+						</div>
+
+						<div class="modal-body">
+
+							<div class="panel panel-flat bord-no">
+
+								<div class="panel-body ">
+
+									<table class="table table-event-details"
+										id="table-event-details">
+
+										<tbody>
+
+											<tr>
+												<td class="td-field-label">Priority</td>
+												<td class="td-field-value"><select class="form-control"
+													name="priority" ng-model="ctrl.caseDetails.priority"
+													required>
+														<option value="Critical">Critical</option>
+														<option value="High">High</option>
+														<option value="Medium">Medium</option>
+														<option value="Low">Low</option>
+
+
+												</select></td>
+
+											</tr>
+
+											<tr>
+												<td class="td-field-label">Status</td>
+												<td class="td-field-value"><select class="form-control"
+													name="status" ng-model="ctrl.caseDetails.status"
+													ng-change="ctrl.changeStatus()" required>
+														<option value="Open">Open</option>
+														<option value="In Progress">In Progress</option>
+														<option value="Resolved">Resolved</option>
+														<!--															<option value="Closed">Closed</option> -->
+
+
+												</select></td>
+
+											</tr>
+
+											<tr>
+												<td class="td-field-label">Created Date</td>
+												<td class="td-field-value">{{caseInformation.createDate
+													| date:'medium'}}</td>
+
+											</tr>
+
+											<tr>
+												<td class="td-field-label">Last Updated</td>
+												<td class="td-field-value">{{caseInformation.lastUpdate
+													| date:'medium' }}</td>
+
+											</tr>
+
+
+
+											<tr>
+												<td class="td-field-label">Collaborators</td>
+												<td class="td-field-value">{{caseInformation.collaboratiors}}</td>
+
+											</tr>
+
+
+
+
+
+										</tbody>
+									</table>
+								</div>
+
+								<br />
+
+
+
+								<hr />
+
+								<uib-accordion close-others="false">
+
+
+								<div uib-accordion-group class="panel-default">
+									<uib-accordion-heading> Alerts <i
+										class="pull-right fa-accordin fa "
+										ng-class="{'fa-chevron-circle-down': status.open, 'fa-chevron-circle-right': !status.open}"></i>
+									</uib-accordion-heading>
+
+
+									<ul id="demo-tasklist-upcoming"
+										class="tasklist list-unstyled ui-sortable">
+										<li id="demo-tasklist-1"
+											class="task-{{data.priority}} ui-sortable-handle"
+											ng-repeat="data in ctrl.alerts" style="height: 78px;">
+
+
+
+											<div class="col-md-12 pad-btm bord-btm">
+
+												<p class="text-bold text-main text-sm">
+													<a href="javascript:void('0')"
+														ng-click="ctrl.showCaseInformation(data.id)"
+														class="btn-link"> {{data.Rule}} </a>
+												</p>
+												<p class="">{{data.Description}}</p>
+
+
+
+
+
+											</div>
+
+										</li>
+
+
+
+									</ul>
+
+
+								</div>
+
+
+								<div uib-accordion-group class="panel-default">
+									<uib-accordion-heading> Logs <i
+										class="pull-right fa-accordin fa "
+										ng-class="{'fa-chevron-circle-down': status.open, 'fa-chevron-circle-right': !status.open}"></i>
+									</uib-accordion-heading>
+
+									<h6 ng-show="caseInformation.logEvidence.searchName">
+										<strong> Prasanth</strong> added set of logs
+										{{caseInformation.logEvidence.createdDate | date:'medium'}}
+									</h6>
+
+									<p ng-show="!caseInformation.logEvidence.searchName">
+										No logs found <a href="/configuration#!/search" target="_blank"
+											class="btn-link">Click here to add logs</a>
+									</p>
+
+									<a target="_blank"
+										href="/configuration#!/search?searchId={{caseInformation.logEvidence.searchId}}">
+										{{caseInformation.logEvidence.searchName}} </a>
+
+								</div>
+
+								<div uib-accordion-group class="panel-default">
+									<uib-accordion-heading> Notes <i
+										class="pull-right fa-accordin fa "
+										ng-class="{'fa-chevron-circle-down': status.open, 'fa-chevron-circle-right': !status.open}"></i>
+									</uib-accordion-heading>
+
+
+									<div class="pad-btm" ng-repeat="data in caseInformation.notes">
+										<p class="text-main text-dark text-semibold">{{data.createdBy}}
+											added notes {{data.createDate | date:'medium'}}</p>
+										<p>{{data.notes}}</p>
+
+
+									</div>
+								</div>
+
+								<div uib-accordion-group class="panel-default">
+									<uib-accordion-heading> Attachments <i
+										class="pull-right fa-accordin fa "
+										ng-class="{'fa-chevron-circle-down': status.open, 'fa-chevron-circle-right': !status.open}"></i>
+									</uib-accordion-heading>
+
+
+									<div class="pad-btm" ng-repeat="data in caseInformation.files">
+										<p class="text-main text-dark text-semibold">{{data.fileUploadedBy}}
+											added file {{data.fileCreatedDate | date:'medium'}}</p>
+										<a
+											href="/case-management/user/case/downloadFile/{{data.fileName}}"
+											class="btn-link">{{data.fileName}}</a>
+
+									</div>
+
+
+
+								</div>
+
+								</uib-accordion>
+
+
+								<div class="panel-footer text-right">
+									<button class="btn btn-default"
+										ng-click="openNotesModal(caseInformation.id)" type="button">Add
+										Notes</button>
+
+									<button class="btn btn-default"
+										ng-click="openFileModal(caseInformation.id)" type="button">Attach
+										File</button>
+								</div>
+
+
+
+							</div>
+
+
+
+						</div>
+
+					</div>
+					<!-- modal-content -->
+				</div>
+				<!-- modal-dialog -->
+			</div>
+
+			<div class="modal  fade" id="upload_files_modal" tabindex="-1"
+				role="dialog" aria-labelledby="myModalLabel2">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<form ng-submit="uploadFile()">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+
+
+
+								<h4 class="modal-title" id="myModalLabel2">Add Files to
+									Case</h4>
+
+
+							</div>
+
+							<div class="modal-body">
+
+								<div uib-alert
+									ng-repeat="alert in controller.alertNoteMessagaes"
+									class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+									close="closeAlert($index)">{{alert.msg}}</div>
+
+								<div class="form-group">
+
+									<input type="file" file-model="caseFiles">
+
+								</div>
+
+
+
+
+							</div>
+
+							<div class="panel-footer text-right">
+								<button class="btn btn-success" type="submit">Save</button>
+							</div>
+						</form>
+
+					</div>
+					<!-- modal-content -->
+				</div>
+				<!-- modal-dialog -->
+			</div>
+
+			<div class="modal  fade" id="add_notes_modal" tabindex="-1"
+				role="dialog" aria-labelledby="myModalLabel2">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<form ng-submit="addNotesToCase()">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">
+									<i class="pci-cross pci-circle"></i>
+								</button>
+
+
+
+								<h4 class="modal-title" id="myModalLabel2">Add Notes to
+									Case</h4>
+
+
+							</div>
+
+							<div class="modal-body">
+
+								<div uib-alert
+									ng-repeat="alert in controller.alertNoteMessagaes"
+									class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+									close="closeAlert($index)">{{alert.msg}}</div>
+
+								<div class="form-group">
+
+									<textarea required="required" ng-model="notes.note" rows="7"
+										class="form-control"></textarea>
+
+								</div>
+
+
+
+
+							</div>
+
+							<div class="panel-footer text-right">
+								<button class="btn btn-success" type="submit">Save</button>
+							</div>
+						</form>
+
+					</div>
+					<!-- modal-content -->
+				</div>
+				<!-- modal-dialog -->
+			</div>
+			</br> </br>
+			<div class="container mar-top"></div>
+		</div>
+	</div>
+
+</div>
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+
+
+

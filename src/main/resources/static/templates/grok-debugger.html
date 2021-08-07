@@ -1,0 +1,177 @@
+<div class="row" ng-controller="grokdebuggerController as ctrl">
+
+	<ul class="nav navbar-nav " ng-init="isbackTrue=false;isNextTrue=true">
+		<li>
+			<h1 style="padding-left: 50px">{{header_name}}</h1>
+		</li>
+
+	</ul>
+	<ul class="nav navbar-nav navbar-right"
+		style="padding-top: 15px; padding-right: 50px">
+		<li ng-show="isNextTrue">
+			<button ng-click="next();" class="btn btn-dark">Next</button>
+		</li>
+		<li style="padding-left: 5px" ng-show="isbackTrue">
+			<button ng-click="back(); isError=false;" class="btn btn-dark">Back</button>
+		</li>
+	</ul>
+
+
+
+	<div class="col-sm-12" ng-show="isDataWizard" id="datawizard">
+
+		<h4>
+			<u>CHOOSE DATA SOURCE</u>
+		</h4>
+
+		<form method="post" style="font-size: 18px">
+			<span ng-show="isError" style="color: red">Please select one
+				Option </span>
+			<div class="col-xs-12 form-group">
+				<label style="width: 200px" class="radio-inline col-xs-5"> <input
+					type="radio" name="optradio" checked="checked">Use Shipped
+					Logs
+				</label> 
+				<select class="form-control" id="sel1" style="width: 250px"
+					ng-model="shippedLogs" required="required">
+					<option value="" disabled selected>Select your option</option>
+					<option ng-repeat="x in indices">{{x}}</option>
+				</select> <br> 
+				<label class="radio-inline"> <input type="radio"
+					name="optradio" disabled="disabled">Upload Log Sample <l
+						style="color:orange">(Coming Soon)</l>
+				</label>
+			</div>
+		</form>
+	</div>
+	<div ng-show="isParse" class="col-s-12">
+		<table>
+			<tr>
+				<td>
+					<h3 id="size">Pattern Name</h3>
+				</td>
+				<td><input type="text" ng-model="logName" class="form-control">
+				</td>
+			<tr>
+			<tr>
+				<td>
+					<h3>Sample log line</h3>
+				</td>
+				<td><input type="button" class="btn btn-dark"
+					data-toggle="modal" data-target="#myModal" value="Select"
+					ng-click="showAlert()"></td>
+			<tr>
+		</table>
+
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog" style="background-color:white">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Select upto 5 log lines for this
+							pattern</h4>
+					</div>
+
+					<div class="modal-body">
+						<p>
+							<input type="text" ng-model="test" class="form-control"
+								placeholder="Filter Log lines">
+						</p>
+						<hr>
+						<span ng-repeat="t in text_orig | filter:test"> <span
+							class="glyphicon glyphicon-plus" ng-click="saveLog(t)"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+							<span style="font-size: 20px">{{t}}</span>
+							<hr>
+						</span>
+						<hr>
+						<div class="modal-body">
+							<h3 style="color: orange">Selected Logs</h3>
+							<span ng-repeat="t in savedLogs"> <span
+								class="glyphicon glyphicon-trash" ng-click="removeLog(t)"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+								<span style="font-size: 20px">{{t}}</span>
+								<hr>
+							</span>
+
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<span ng-show="isMaxCount" style="color: red">You can
+							select maximum of 5</span>
+						<h3>
+							<span>{{countLog}}</span> Of <span
+								style="Color: red; font-size: 25px">5</span> Logs allowed
+						</h3>
+						<button type="button" ng-click="displayContent()" id="closemodal"
+							class="btn btn-dark">Select</button>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	<div ng-show="isSelected" class="col-sm-12">
+		<h3 style="color: orange">Selected Logs</h3>
+		<span ng-repeat="t in savedLogs "> <span
+			style="font-size: 20px">{{t}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span
+			style="color: red" class="glyphicon glyphicon-trash"
+			ng-click="removeLog(t)"></span>
+			<hr>
+		</span>
+		<table>
+			<tr>
+				<td>
+					<h3>Parse Method</h3>
+				</td>
+				<td><select class="form-control" id="size">
+						<option>Grok</option>
+						<option dis>Key Value</option>
+						<option>Delimiter</option>
+						<option>JSON</option>
+				</select></td>
+			</tr>
+		</table>
+		<hr>
+		<textarea rows="5" cols="150" ng-model="data.pattern"></textarea>
+		&nbsp;&nbsp;&nbsp;<input type="button" value="Go"
+			class="btn btn-dark" ng-click="submitData()">
+		<hr>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Sample 1</th>
+					<th>Sample 2</th>
+					<th>Sample 3</th>
+					<th>Sample 4</th>
+					<th>Sample 5</th>
+					<th>Field name</th>
+					<th>Field Type</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+				<tr ng-repeat="field in fieldName">
+					<td>{{sample1[$index]}}</td>
+					<td>{{sample2[$index]}}</td>
+					<td>{{sample3[$index]}}</td>
+					
+					<td>{{sample4[$index]}}</td>
+					<td>{{sample5[$index]}}</td>
+					<td>{{field}}</td>
+					<td><select class="form-control" id="">
+							<option ng-repeat="f in fieldType">{{f}}</option>
+					</select></td>
+				</tr>
+
+		</table>
+	</div>
+	<div ng-if="isNextTrue==false">
+		<div ng-show="isGrokPage" class="col-sm-12">
+			<h3>Grok patern for Logs</h3>:<h4>{{data.pattern}}</h4>
+		</div>
+	</div>
+	
+</div>

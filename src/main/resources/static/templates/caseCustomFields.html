@@ -1,0 +1,102 @@
+<div class="row" ng-controller="caseCustomFieldsController as ctrl">
+    <div class="page-header page-header-default">
+        <div class="page-header-content border-bottom border-bottom-success">
+            <div class="page-title">
+                <h4>
+                    <i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Case Custom Fields</span>
+                </h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="pull-right"><a href="javascript:void('0');" data-toggle="modal" data-target="#newCaseCustomFields"><i
+                    class="icon-plus22 position-left"></i>New case Custom Fields</a></div>
+    </div>
+
+
+
+    <br>    <br>
+    <div class="row">
+        <table class="table table-hover" datatable="ng">
+            <thead>
+                <tr>
+                    <td>name</td>
+                    <td>title</td>
+                    <td>Description</td>
+                    <td>Type</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="case in ctrl.allCustomFields"> 
+                    <td>{{case.name}}</td>
+                    <td>{{case.title}}</td>
+                    <td>{{case.description}}</td>
+                    <td>{{case.type}}</td>
+                    <td><i class="icon-cross"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="newCaseCustomFields" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New Case Custom Fields</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" >
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Name</label>
+                            <div class="col-md-9">
+                                <input type="text" ng-model="ctrl.newCustomFields.name" class="form-control" ng-required="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Title</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" ng-model="ctrl.newCustomFields.title" ng-required="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Description</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" ng-model="ctrl.newCustomFields.description" ng-required="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Type</label>
+                            <div class="col-md-9">
+                                <select class="form-control" ng-model="ctrl.newCustomFields.type" ng-required="true">
+                                    <option>boolean</option>
+                                    <option>void</option>
+                                    <option>int</option>
+                                    <option>String</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="ctrl.newCustomFields.type == 'String' || ctrl.newCustomFields.type == 'int'">
+                            <label class="control-label col-md-3">Type Description</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control" cols="50" rows="5" ng-model="ctrl.newCustomFields.typeDescription" ></textarea>
+                            </div>
+                        </div>
+                        <div class="model-footer pull-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-dark" ng-click="ctrl.addNewCustomField()" value="submit">
+                        </div> 
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

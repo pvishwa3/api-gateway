@@ -1,0 +1,933 @@
+
+
+<div ng-controller="widgetCtrl as controller" class="content-wrapper">
+	<div ng-init="controller.init()">
+		<div class="row page-header  d-flex justify-content-between">
+			<div class="col-sm-6">
+				<div id="page-head">
+					<h4 class="page-title">Manage Widgets
+				</div>
+			</div>
+			<div class="col-sm-6">
+
+				<button ng-click="controller.openWidgetCreateForm()"
+					ng-show="showHomeButton && canCreateVis"
+					class="btn btn-primary pull-right" title="create new widget">New
+					Widget</button>
+				<button ng-if="!showHomeButton"
+					class="btn pull-right btn-default pad-lft"
+					ng-click="controller.goBack()">Back To Widgets</button>
+				<button id="deleteButton" class="btn btn-danger pull-right mar-rgt"
+					href="javascript:void('0')"
+					ng-click='controller.deleteWidget(controller.widgetId[0].title,controller.widgetId[0].id)'
+					ng-show="canDeleteVis">Delete</button>
+				<button id="editButton" class="btn btn-primary pull-right mar-rgt"
+					href="javascript:void('0')" ng-show="canUpdateVis"
+					ng-click='controller.edit(controller.widgetId[0].id)'>
+					Edit</button>
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/ng-template" id="alert.html">
+   						 <div ng-transclude></div>
+  					</script>
+
+	<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div ng-include src="templateUrl" onload='myFunction()'></div>
+
+
+
+
+	<script type="text/ng-template" id="viewWidgets.html">
+			<div class="card">
+              <div class="card-body">
+				<div id = "widgetContent" class="{{theme}}" style="height: 500px;"></div>
+				</div>
+			</div>
+			  </script>
+
+
+	<script type="text/ng-template" id="createCategoryConditions.html">
+		    <div class="card">
+		        <div class="card-body align-justify">
+			<div class="panel panel-flat">
+		    <div class="panel-heading">
+		        <h5 class="page-title">Create Widget</h5>
+		    </div>
+<br><br>
+		            <form class="form-horizontal group-border-dashed" ng-submit="controller.doPreview()" name="widget">
+		                <div class="form-group">
+		                    <label class="col-sm-3 control-label">Title <span class="text-danger">*</span> </label>
+		                    <div class="col-sm-5">
+		                        <input type="text" class="form-control" title="Enter Name" placeholder="" ng-model="controller.widget.title" name="title" required="required"  pattern="[a-zA-Z0-9\s-_]+">
+		                        <div class="text-danger text-bold help-block with-errors" ng-show="widget.title.$touched && widget.title.$error.required "> Title is mandatory</div>
+		                        <div class="text-danger text-bold help-block with-errors" ng-show="widget.title.$touched && widget.title.$error.pattern "> Special characters are not allowed</div>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                    <label class="col-sm-3 control-label">Choose One of the following <span
+		                            class="text-danger">*</span></label>
+		                    <div class="col-sm-5">
+
+		                        <select class="form-control" title="Select one of the options" ng-model="controller.widget.option" required="required" name="option">
+		                            <option value="events">Events</option>
+		                            <option value="rules">Rules</option>
+		                            <option value="case">Case</option>
+		                            <option value="alert">Alert</option>
+		                        </select>
+		                        <div class="text-danger text-bold help-block with-errors" ng-show="widget.option.$touched && widget.option.$error.required "> Option is mandatory</div>
+		                    </div>
+		                </div>
+		                <div class="form-group" ng-show="controller.widget.option === 'create'">
+		                    <label class="col-sm-3 control-label">Sql Text</label>
+		                    <div class="col-sm-5">
+		                        <div ui-ace="queryAceOpt" ng-model="controller.widget.query" class="form-control"></div>
+		                    </div>
+		                </div>
+		                <div class="text-right modal-footer" style="border:none">
+		                    <button type="submit" class="btn btn-primary" ng-disabled="widget.$invalid"> Preview</button>
+		                </div>
+		            </form>
+		        </div>
+		    </div>
+		</div>
+</script>
+
+
+
+
+
+
+
+
+	<script type="text/ng-template" id="editWidgetDetails.html">
+<div class="panel pad-btm ">
+    <div class="panel-body">
+        <div class="fixed-fluid row">
+
+            <div class="col-md-12 panel-container" style="width: 98%;
+    height: 500px;
+    margin-left: 12px;
+    margin-bottom: 33px;">
+                <div class="panel-header">
+                    <div class="panel-title-container">
+                        <div class="panel-title">
+                            <span class="panel-title-text">{{controller.widget.title}}</span>
+
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="panel-content panel-content--no-padding">
+                    <div id="chartContainer"></div>
+
+                </div>
+
+
+
+            </div>
+
+
+            <div class=" col-md-3 fixed-sm-250 pull-sm-left fixed-right-border" style="height:500px">
+                <div class="" >
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">
+                                Fields
+                            </h5>
+                        </div>
+                        <div class="panel-collapse" aria-expanded="true">
+                            <div class="panel-body">
+                                <div class="form-group" style="margin-left:0px">
+
+                                    <input type="text" class="form-control" ng-model="searchSelect" placeholer="Search">
+                                </div>
+                                <div class="list-group bg-trans pad-btm ">
+                                    <div class="card chat-app-wrapper" style="height:550px">
+                                        <div class="d-none d-lg-block px-0 chat-sidebar" style="height:550px">
+                                            <ul class='list-group' style="list-style-type: none;">
+                                                <li ng-repeat="o in schema.selects|filter:filterDimension |filter:searchSelect |orderBy: 'column'"
+                                                    class="dropdown-item" style='font-weight: 600'><span dnd-draggable="o"
+                                                        dnd-type="'select'" dnd-dragstart="onDragstart('select')"
+                                                        dnd-dragend="onDragCancle()"> <img
+                                                            src="assets/images/schema/bullet_red.png">{{o.column}}
+                                                    </span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fluid col-md-9" style="overflow: -webkit-paged-x;">
+                <form class="form-horizontal group-border-dashed" ng-submit="controller.submitData()">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Title <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" required="" placeholder=""
+                                ng-model="controller.widget.title">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Widget Type</label>
+                        <div class="col-sm-10 chart-type">
+
+                            <div class="template-demo" ng-model="curWidget.config.chart_type">
+                                <button ng-repeat="chart in chart_types" class="ng-scope nav-item" style="background: transparent;border: none;"
+                                    popover-trigger="'mouseenter'" popover-title="{{chart.name}}" title="{{chart.name}}"
+                                    popover-placement="bottom" popover-animation="false"
+                                    ng-click="changeChart(chart.value)"><a class="ng-scope"
+                                        ng-class="[chart_types_status[chart.value]] && chart.value == curWidget.config.chart_type ? 'active':''">
+                                        <i class="chart-type-icon {{chart.class}} "
+                                            ng-class="{true:'',false:'disabled' }[chart_types_status[chart.value]]"></i>
+                                    </a></button>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Column</label>
+                        <div class="col-sm-10">
+                            <div dnd-list="curWidget.config.groups"
+                                dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.groups,index,item,type)"
+                                dnd-allowed-types="['dimension','select','group','key','filter']" class="form-control"
+                                style="min-height: 35px; height: auto; padding: 0px"
+                                ng-class="{highlight: targetHighlight.column}">
+                                <div class="dndPlaceholder sort-highlight"
+                                    style="height: 24px; width: 93px; margin: 3px 3px; display: inline-block; vertical-align: middle;">
+                                </div>
+                                <div ng-repeat="o in curWidget.config.groups" dnd-draggable="o"
+                                    dnd-effect-allowed="move" dnd-moved="curWidget.config.groups.splice($index, 1)"
+                                    dnd-type="'group'" dnd-dragstart="onDragstart('dimension')"
+                                    dnd-dragend="onDragCancle()" class="btn-group"
+                                    style="cursor: move; margin: 3px 3px;">
+                                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                                        ng-click="curWidget.config.groups.splice($index, 1);">
+                                        {{o.col}}</button>
+                                    <button type="button" class="btn btn-default btn-sm"
+                                        ng-click="editSort(o)">
+                                        <i class="fa"
+                                            ng-class="{undefined:'fa-sort-amount-asc','asc':'fa-sort-amount-asc','desc':'fa-sort-amount-desc'}[o.sort]"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Row</label>
+                        <div class="col-sm-10">
+                            <div dnd-list="curWidget.config.keys"
+                                dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.keys,index,item,type)"
+                                dnd-allowed-types="['dimension','select','group','key','filter']" class="form-control"
+                                style="min-height: 35px; height: auto; padding: 0px"
+                                ng-class="{highlight: targetHighlight.row}">
+                                <div class="dndPlaceholder sort-highlight"
+                                    style="height: 24px; width: 93px; margin: 3px 3px; display: inline-block; vertical-align: middle;">
+                                </div>
+                                <div ng-repeat="o in curWidget.config.keys" dnd-draggable="o" dnd-effect-allowed="move"
+                                    dnd-moved="curWidget.config.keys.splice($index, 1)" dnd-type="'key'"
+                                    dnd-dragstart="onDragstart('dimension')" dnd-dragend="onDragCancle()"
+                                    class="btn-group" style="cursor: move; margin: 3px 3px;">
+                                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                                        ng-click="curWidget.config.keys.splice($index, 1);">
+                                        {{o.col}}</button>
+                                    <button type="button" class="btn btn-default btn-sm"
+                                        ng-click="editSort(o);cleanVSort();">
+                                        <i class="fa"
+                                            ng-class="{undefined:'fa fa-sort-amount-asc','asc':'fa fa-sort-amount-asc','desc':'fa fa-sort-amount-desc'}[o.sort]"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Is Requried
+                            DrillDown</label>
+                        <div class="col-sm-10">
+                            <select ng-model="controller.widget.requriedDrillDown" class="form-control">
+
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-show="controller.widget.requriedDrillDown === 'Yes'">
+                        <label class="col-sm-2 control-label">Select Existing
+                            Widget</label>
+                        <div class="col-sm-10">
+                            <select ng-model="controller.widget.drillDownId" class="form-control">
+
+                                <option ng-repeat="data in widgets" value="{{data.id}}">{{data.title}}</option>
+
+                            </select>
+
+                        </div>
+                    </div>
+                    <div ng-include src="chartTypeTemplate"></div>
+                    <div class="modal-footer" style="margin-top: 70px;border:none;">
+                        <button type="button" ng-click="controller.doSave()" class="btn btn-success mar-all">Submit</button>
+                        <button type="button" ng-click="doPreviewForChart()" class="btn btn-primary mar-all">Preview</button>
+                    </div>
+
+
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row form-horizontal">
+
+            <div class="col-md-12">
+
+                <ul class="nav nav-tabs nav-tabs-basic" id="widgetNav" role="tablist">
+
+                    <li class="nav-item"  ><a ng-class="{'active': navType === 'legend' }" href="javascript:void('0')" class="nav-link"
+                            ng-click='openTab("legend")' id="legend-tab" data-toggle="tab" href="javascript:void('0')" data-target="#legend-tab" role="tab" aria-controls="legend-tab" aria-selected="false">
+                            Legend </a></li>
+
+                    <li class="nav-item" ><a href="javascript:void('0')" class="nav-link"
+                           ng-class="{'active': navType === 'axes' }" ng-click='openTab("axes")' id="axes-tab" data-toggle="tab" href="javascript:void('0')" data-target="#axes-tab" role="tab" aria-controls="axes-tab" aria-selected="false"> Axes
+                        </a></li>
+
+                    <li class="nav-item" >
+                        <a href="javascript:void('0')" class="nav-link"
+                           ng-class="{'active': navType === 'thresholds' }" ng-click='openTab("thresholds")' id="thresholds" data-toggle="tab" href="javascript:void('0')" data-target="#thresholds" role="tab" aria-controls="display-tab" aria-selected="false"> Thresholds
+                        </a>
+                    </li>
+
+                    <li class="nav-item" ng-if = "curWidget.config.chart_type=== 'table'">
+                        <a href="javascript:void('0')" class="nav-link"
+                           ng-class="{'active': navType === 'tableoptions' }" ng-click='openTab("tableoptions")' id="tableoptions" data-toggle="tab" href="javascript:void('0')" data-target="#tableoptions" role="tab" aria-controls="display-tab" aria-selected="false"> Table Options
+                        </a>
+                    </li>
+
+                    <li class="nav-item" >
+                        <a href="javascript:void('0')" class="nav-link"
+                             ng-class="{'active': navType === 'display' }" ng-click='openTab("display")' id="display-tab" data-toggle="tab" href="javascript:void('0')" data-target="#display-tab" role="tab" aria-controls="display-tab" aria-selected="false"> Display
+                        </a>
+                    </li>
+
+                    <li class="nav-item" ><a href="javascript:void('0')" class="nav-link"
+                            ng-class="{'active': navType === 'drillDown' }"  ng-click='openTab("drillDown")' id="drilldown-tab" data-toggle="tab" href="javascript:void('0')" data-target="#drilldown-tab" role="tab" aria-controls="drilldown-tab" aria-selected="false"> Drill Down
+                        </a></li>
+
+                    <li class="nav-item"  ><a href="javascript:void('0')" class="nav-link"
+                            ng-class="{'active': navType === 'filter' }" ng-click='openTab("filter")' id="filer-tab" data-toggle="tab" href="javascript:void('0')" data-target="#filter-tab" role="tab" aria-controls="filter-tab" aria-selected="false"> Filter
+                        </a></li>
+
+
+
+
+
+                </ul>
+
+                <div class="tab-content tab-content-basic" >
+                    <div id="preview-tab" ng-show="navType==='chartContainer'">
+
+                        <div id="chartContainer"></div>
+
+                    </div>
+
+                    <div id="legend-tab" ng-show="navType==='legend'">
+						<div style="padding-top:2%">
+                        	<div ng-include="getOptionsView()"></div>
+						</div>
+                    </div>
+
+                    <div id="thresholds-tab" ng-show="navType==='thresholds'">
+                        <a href="javascript:void('0')" class="btn btn-link pull-right" ng-click = "addThresholds()">Add Thresholds</a>
+                        <table class="table">
+                            <tr ng-repeat = "data in curWidget.config.thresholds">
+                                <td><input type="text" class="form-control" ng-model="data.color"> </td>
+                                <td><input type="text"  class="form-control" ng-model="data.fromValue"> </td>
+
+                            </tr>
+                        </table>
+
+                        <div class="form-group col-md-12">
+                            <label class="col-md-3">Cell Display Mode</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" ng-model = "curWidget.config.tableType">
+
+                                    <option value="Auto">Auto</option>
+                                    <option value="color_text">Color Text</option>
+                                    <option value="color_background">Color Background</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div  ng-show="navType==='tableoptions'">
+
+
+
+
+
+                        <div class="form-group col-md-12">
+                            <label class="col-md-3">Enable Sparkline</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" ng-model = "curWidget.config.sparkLine">
+                                     <option value="Yes">Yes</option>
+                                     <option value="no">No</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+							
+					 <div id="display-tab" ng-show="navType==='display'">
+
+                        <br />
+
+                        <div class="row col-md-12" >
+
+                            <form class="forms-sample col-md-12">
+
+
+                                <div class="form-group col-md-12" ng-if = "curWidget.config.chart_type=== 'line'">
+                                    <label class="col-md-3">StairCase</label>
+                                    <div class="col-sm-3">
+                                        <select class = "form-control" ng-model = "curWidget.config.stairCase">
+                                            <option value= "true">True</option>
+                                            <option value= "false">False</option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-12" ng-if = "curWidget.config.chart_type=== 'line'">
+                                    <label class="col-md-3">Area Fill</label>
+                                    <div class="col-sm-3">
+                                        <select class = "form-control" ng-model = "curWidget.config.areaFill">
+                                            <option value= "0">0</option>
+                                            <option value= "1">1</option>
+                                            <option value= "1">2</option>
+                                            <option value= "3">3</option>
+                                            <option value= "4">4</option>
+                                            <option value= "5">5</option>
+                                            <option value= "6">6</option>
+                                            <option value= "7">7</option>
+                                            <option value= "8">8</option>
+                                            <option value= "9">9</option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                    <div class="form-group col-md-12">
+                                        <label class="col-md-3">Include Visual Map</label>
+                                        <div class="col-sm-3">
+											<select class = "form-control" ng-model = "curWidget.config.inculdeVisualMap">
+												<option value= "yes">Yes</option>
+												<option value= "no">No</option>
+											</select>
+                                            
+                                        </div>
+										
+                                    </div>
+									<div class="form-group col-md-12" ng-if = "curWidget.config.inculdeVisualMap === 'yes'">
+                                        <label class="col-sm-3 control-label">Bound</label>
+                                        <div class="col-sm-3">
+											<input  class = "form-control" type = 'number' value = "2" ng-model = "curWidget.config.visualMapBound"/>
+                                            
+                                     </div>
+
+                                
+
+
+
+                            </form>
+
+
+                        </div>
+
+                        
+
+
+
+                    </div>
+                </div>
+				
+                    <div id="filter-tab" ng-show="navType==='filter'">
+
+                        <br />
+
+                        <div class="row col-md-12	" >
+
+                            <form class="form-horizontal row col-md-12">
+                                <div class="col-md-8">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 control-label">Filter</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" type="number"
+                                                ng-model="curWidget.config.limit" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                            </form>
+
+
+                        </div>
+
+                        <div data-elastic-builder="controller.data"></div>
+
+
+
+                    </div>
+                </div>
+
+                <div id="drilldown-tab" ng-show="navType==='drillDown'">
+
+                    <br /><br />
+
+                    <div class="row col-md-12">
+
+                        <form class='form-horizontal col-md-12'>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 control-label">Drill Down Type</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control	" ng-model="curWidget.config.option.drillDownType">
+
+                                            <option value="search">Search</option>
+                                            <option value="dashboard">Dashboard</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row" ng-show="curWidget.config.option.drillDownType === 'dashboard'">
+                                    <label class="col-sm-6 control-label">Dashboards</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control	" ng-model="curWidget.config.option.dashboardName">
+                                            <option ng-repeat="data in dashboards" value="{{data.id}}">{{data.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 control-label">Include time range</label>
+                                    <div class="checkbox">
+                                        <input id="timerange" class="magic-checkbox" type="checkbox"
+                                            ng-model="curWidget.config.option.includeTimeRange">
+                                        <label for="timerange"></label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-6 control-label">Open in new tab</label>
+                                    <div class="checkbox">
+                                        <input id="openNewtab" class="magic-checkbox" type="checkbox"
+                                            ng-model="curWidget.config.option.openNewTab">
+                                        <label for="openNewtab"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+
+	<script type="text/ng-template" id="queryBuilderDirective.html">
+    <div class="alert-group col-md-12 text-md-center">
+	
+
+<div class="text-center text-md-center">
+		
+<table class="table cloneTable bord-btm" >
+			<tr>
+				<td class="clonetd" style="width:20%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td>
+				<td class="clonetd" style="width:5%"><button  ng-click="addCondition(group)" class="btn  btn-dark"><i class="icon-plus22"></i> Add Condition</button></td>
+           		<td class="clonetd" style="width:5%"> <button ng-click="addGroup()" class="btn  btn-dark"><i class="icon-plus22"></i> Add Group</button></td>
+				<td class="clonetd" ><button  ng-click="removeGroup()" class="btn btn-default "><span class="icon-minus2"></span> Remove Group</button></td>
+			 </tr>
+		</table>
+	</div>
+		
+
+
+	
+        <div class="group-conditions">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        
+									
+
+
+						<table class="table cloneTable">
+							<tr>
+								
+								<td  class="clonetd" style="width:30%"> 
+		<ui-select  ng-model="rule.field"  theme="select2" style="width:100%"> title = "Fields"
+            <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices  repeat="t in fields | filter: $select.search">
+              <span ng-bind-html="t.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>	
+								
+									
+                                 </td>
+ 								<td class="clonetd"  style="width:30%">
+									
+
+								<select   ng-model="rule.condition" class="form-control input-sm">
+									<option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option>
+								</select>
+								</td>
+
+							
+								<td class="clonetd" style="width:30%" ><input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/></td>
+
+								<td class="clonetd"><a ng-click="removeCondition($index)" class="btn btn-link "><i class="fa fa-trash"></i></a></td>
+							</tr>	
+                        
+						</table>
+
+
+						
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+	
+
+    </script>
+
+
+	
+<div class="modal " id="percentile-modal" tabindex="-1" role="dialog"
+		aria-modal="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Configure Percentiles</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<form action="" class="forms-simple">
+					
+						<input class="form-control" type="number"
+											ng-model="currentCol.percentile">
+					
+					</form>
+					
+					
+
+				</div>
+				<div class="modal-footer">
+					
+					<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-click = "percentilOK(currentCol)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal " id="configuration-modal" tabindex="-1" role="dialog"
+		aria-modal="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Series Configuration</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<form action="" class="forms-sample">
+						
+						<div class="form-group" ng-if = "curWidget.config.chart_type!= 'table'">
+						
+							<label>Color</label>
+							<input class="form-control" type="text" ng-model="currentCol.configuration.color">
+						
+						</div>
+						
+						<div class="form-group" ng-if = "curWidget.config.chart_type=== 'line'">
+						
+							<label>Stack Type</label>
+							<select class="form-control" ng-model = "currentCol.configuration.stacktype">
+								<option value="confidence-band">Confidence Band</option>
+							</select>
+						
+						</div>
+					
+						<div class="form-group" ng-if = "curWidget.config.chart_type=== 'line'">
+						
+							<label>Area Style</label>
+							<input class="form-control" type="text" ng-model="currentCol.configuration.areaStyle">
+						
+						</div>
+						<div class="form-group" ng-if = "curWidget.config.chart_type=== 'line'"> 
+						
+							<label>Required Series</label>
+							<select class="form-control" ng-model = "currentCol.configuration.displaySeries">
+								<option value="yes">Yes</option>
+								<option value="no">No</option>
+							
+							</select>
+						
+						</div>
+						
+						
+						
+						<div class="form-group">
+						
+							<label>Format</label>
+							<select class="form-control" ng-model = "currentCol.configuration.format">
+								<option value="bytes">Bytes</option>
+								<option value="number">Number</option>
+								<option value="percent">Percent</option>
+							</select>
+						
+						</div>
+						
+						
+						
+						<div class="form-group">
+							<label>Function</label>
+							<select class="form-control" ng-model = "currentCol.configuration.function">
+								
+								<option value="max_bucket">Max</option>
+								<option value="min_bucket">Min</option>
+								<option value="derivative">Derivative</option>
+								<option value="avg_bucket">Avg</option>
+								<option value="cumulative_sum">Cumulative Sum</option>
+								<option value="time_shift">Time Shift</option>
+								<option value="moving_avg">Moving Average</option>
+							</select>
+						
+						</div>
+						
+						<div class="form-group">
+							<label>Unit</label>
+							<select class="form-control" ng-model = "currentCol.configuration.unit">
+								
+								<option value="rate_per_second">Rate Per Second</option>
+								<option value="rate_per_minute">Rate Per Minute</option>
+								<option value="rate_per_hour">Rate Per Hour</option>
+								<option value="abs">ABS</option>
+								<option value="log2">Log 2</option>
+								<option value="log10">Log 10</option>
+							</select>
+						</div>
+						
+						<div class="form-group" ng-if = "currentCol.configuration.function=== 'time_shift'">
+							<label>TimeShift Value</label>
+							<input type="number" class="form-control" ng-model = "currentCol.configuration.timeShitValue">
+							<select class="form-control" ng-model = "currentCol.configuration.timeShiftUnit">
+								<option value="hours">Hours</option>  
+								<option value="days">Days</option>  
+							</select>
+						</div>
+						
+						<div class="form-group" ng-if = "currentCol.configuration.function=== 'moving_avg'">
+							<label>Moving Average Model</label>
+							
+							<select class="form-control" ng-model = "currentCol.configuration.movingAvgFunction">
+								<option value="max">Max</option>  
+								<option value="min">Min</option>  
+								<option value="stdDev">StdDev</option>  
+								<option value="unweightedAvg">unweightedAvgoption</option>
+								<option value="linearWeightedAvg">LinearWeightedAvg</option>
+								<option value="ewma">EWMA</option>  
+								<option value="holt">Holt</option>
+							</select>
+						</div>
+						
+						<div class="form-group" ng-if = "currentCol.configuration.function=== 'moving_avg'">
+							<label>Moving Average Window</label>
+							
+							<input type="number" class="form-control" ng-model = "currentCol.configuration.movingAvgWindow">
+							
+						</div>
+						
+						<div class="form-group" ng-if = "currentCol.configuration.movingAvgFunction=== 'ewma' || currentCol.configuration.movingAvgFunction=== 'holt'">
+							<label>Alpha</label>
+							
+							<input type="number" class="form-control" ng-model = "currentCol.configuration.alpha">
+							
+						</div>
+						<div class="form-group" ng-if = "currentCol.configuration.movingAvgFunction=== 'holt'">
+							<label>Beta</label>
+							
+							<input type="number" class="form-control" ng-model = "currentCol.configuration.beta">
+							
+						</div>
+						
+					
+					</form>
+					
+					
+
+				</div>
+				<div class="modal-footer">
+					
+					<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-click = "configurationOK(currentCol)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	<div class="modal " id="calculate-modal" tabindex="-1" role="dialog"
+		aria-modal="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Configure Calc</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<form action="" class="forms-simple">
+					
+						<input class="form-control" type="text"
+											ng-model="currentCol.calculate">
+					
+					</form>
+					
+					
+
+				</div>
+				<div class="modal-footer">
+					
+					<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+
+
+	<div id="mapConfigurationModal"
+		class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none; padding-left: 0px;">
+		<form class="form-horizontal group-border-dashed">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">�</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Configure Map</h4>
+					</div>
+					<div class="modal-body">
+
+
+						<div class="pull-right">
+							<button type="button"
+								class="btn btn-dark waves-effect waves-light"
+								ng-click="addRow()">Add Row</button>
+						</div>
+
+						<table class="table">
+							<thead>
+								<tr>
+									<th>IP Address</th>
+									<th>Category</th>
+									<th>Color</th>
+
+								</tr>
+
+							</thead>
+
+							<tbody>
+
+								<tr ng-repeat="data in mapOptions">
+
+									<td><ui-select multiple ng-model="data.ipAddress"
+											style="width: 300px;" theme="bootstrap" width=200px"">
+										<ui-select-match placeholder="Select colors...">{{$item}}</ui-select-match>
+										<ui-select-choices
+											repeat="item in controller.elasticsearchFields | filter: $select.search">
+										<span ng-bind-html="item | highlight: $select.search"></span>
+										</ui-select-choices> </ui-select></td>
+									<td><input type="text" class="form-control"
+										ng-model="data.category"></td>
+									<td><input type="text" class="form-control"
+										ng-model="data.color" colorpicker
+										colorpicker-with-input="true"></td>
+								</tr>
+
+							</tbody>
+
+						</table>
+
+
+
+
+
+
+
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn3 btn-default waves-effect"
+							data-dismiss="modal">Close</button>
+						<button type="button"
+							class="btn btn-dark waves-effect waves-light"
+							ng-click="saveMapConfiguration()">Save</button>
+					</div>
+
+				</div>
+
+			</div>
+		</form>
+	</div>
+
+</div>
+

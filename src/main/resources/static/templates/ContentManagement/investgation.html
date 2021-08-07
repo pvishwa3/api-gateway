@@ -1,0 +1,154 @@
+<div ng-controller="investigationPanelController as controller"
+	ng-init = "controller.init()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Panels</h1>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<button type="button" ng-click = "controller.openCreatePanel()"
+								class="btn btn-dark pull-right" title="New Panel">
+								New Panel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+		<div class="row">
+			<div class="panel panel-table">
+				<div class="panel-body" style="border:none">
+					<div class="table-responsive">
+						<table class="table table-hover" datatable="ng">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Description</th>
+									<th>Status</th>
+									<th class="text-center">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data  in controller.panelDetails">
+									<td>{{data.panelName}}</td>
+									<td>{{data.panelDescription}}</td>
+									
+									<td ng-if= "data.status==='active'"> Enable  |  <a href="javascript:void('0')" ng-click='controller.changeStatus(data.id,"inactive")' class="btn-link">Disable</a> </td>
+									<td ng-if= "data.status==='inactive'"><a href="javascript:void('0')" ng-click='controller.changeStatus(data.id,"active")' class="btn-link">Enable</a> | Disable</td>
+									
+									<td class="text-center">
+												<a href="javascript:void('0')" ng-click='controller.editPanel(data.id)' class="btn-link">Edit</a> &nbsp;
+												<a href="javascript:void('0')" ng-click='controller.deletePanel(data.id,data.panelName)' class="btn-link">Delete</a> &nbsp;
+												
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="createPanel" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Configure Investigation Panel</h4>
+					</div>
+					<div class="modal-body">
+					<div uib-alert ng-repeat="alert in controller.alertMessagaesModal"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+						<form class="form-horizontal group-border-dashed" ng-submit="controller.submitData()" name="investigationPanel">
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Panel Name</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" ng-model="controller.panel.panelName" ng-class="((controller.panel.panelName == '' ||controller.panel.panelName == udefined ) && investigationPanel.$submitted  ) ? 'border-danger':''">
+									<div class="text-danger text-bold" ng-show="((controller.panel.panelName == '' ||controller.panel.panelName == udefined ) && investigationPanel.$submitted  )">Panel Name is mandatory</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Description </label>
+								<div class="col-sm-6">
+								
+									<textarea rows="5" cols="5" class="form-control" ng-model="controller.panel.panelDescription" ng-class="((controller.panel.panelDescription == '' ||controller.panel.panelDescription == udefined ) && investigationPanel.$submitted  ) ? 'border-danger':''"></textarea>
+									<div class="text-danger text-bold" ng-show="((controller.panel.panelDescription == '' ||controller.panel.panelDescription == udefined ) && investigationPanel.$submitted  )">Description is mandatory</div>
+								</div>
+							</div>
+							
+							
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Device Type</label>
+								<div class="col-sm-6">
+									<select class="form-control"  ng-model="controller.panel.panelLogType" ng-class="((controller.panel.panelLogType == '' || controller.panel.panelLogType == undefined) && investigationPanel.$submitted) ? 'border-danger':''"> 
+										<option value="{{data}}" ng-repeat = "data in controller.logTypes">{{data}}</option>
+										
+									</select>
+									<div class="text-danger text-bold" ng-show="((controller.panel.panelLogType == '' || controller.panel.panelLogType == undefined) && investigationPanel.$submitted)">Select atleast one log type </div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Fields</label>
+								<div class="col-sm-6">
+									
+									
+									<ui-select  multiple ng-model="controller.elasticsearchFields" title="Select fields">
+            <ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+            <ui-select-choices  repeat="item  in controller.logFields | filter: $select.search">
+              <span ng-bind-html="item | highlight: $select.search"></span>
+            </ui-select-choices>
+									<div class="text-danger text-bold" ng-show="((controller.panel.logFields == '' || controller.panel.logFields == undefined) && investigationPanel.$submitted)">Select atleast one log type </div>
+								</div>
+							</div>
+							
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Filter Query</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" ng-model="controller.panel.filterQuery">
+									
+								</div>
+							</div>
+							
+							
+							
+							
+							<div class="modal-footer">
+								<input type="submit"
+									class="btn btn-success"
+									style="color: white" value="Submit">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

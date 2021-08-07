@@ -1,0 +1,1346 @@
+<div ng-controller="filedExtractorController as ctrl"
+	ng-init="ctrl.canGenerateCustomPatterns = true" class="content-wrapper">
+
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title text-overflow">Extract Fields</h4>
+			</div>
+		</div>
+		<div class="col-sm-6">
+
+			<button class="btn btn btn-default pull-right mar-rgt"
+				ng-if="showBackButton" ng-click="goBack()" title="back">Back</button>
+				
+			<button class="btn btn-primary pull-right mar-rgt"
+				ng-click="creatNewParser()" ng-if="showHomeButton"
+				title="create new widget">New Parser</button>
+
+			<button class="btn btn-primary pull-right mar-rgt"
+				ng-if="showEditButton && !importLogs"
+				ng-click="editForDisplay(ctrl.logparser.id)"
+				title="create new widget">Edit Parser</button>
+
+
+			<button class="btn btn-primary pull-right mar-rgt"
+				ng-if="showEventsButton && !importLogs"
+				ng-click="showEvents(ctrl.logparser.id)" title="create new widget">View
+				Events</button>
+
+			<button class="btn btn-primary pull-right mar-rgt"
+				ng-if="eventsTab === 'Events' " ng-click="showCreateEventForm(ctrl.logparser.id)"
+				title="create new widget">Create Event</button>
+			
+			<button class="btn btn-primary pull-right mar-rgt"
+				ng-if="!showEventsButton && eventsTab === 'eventsTemplates' " ng-click="showCreateTemplateForm(ctrl.logparser.id)"
+				title="create new widget">Create Template</button>
+			
+			<button class="btn btn-primary pull-right mar-rgt" id = "editEventTemplate"
+				 ng-click="showEditTemplateForm(ctrl.logparser.id)"
+				title="create new widget">Edit </button>
+				
+			<button class="btn btn-danger pull-right mar-rgt" id = "deleteEventTemplate"
+				 ng-click="deleteEventTemplates(ctrl.logparser.id)"
+				title="create new widget">Delete</button>
+			
+
+			<button class="btn btn-dark pull-right mar-rgt" ng-if="importLogs"
+				ng-click="openImportLogsModal()" title="create new widget">Import
+				Logs</button>
+
+
+			<button id="viewButton" class="btn btn-primary pull-right mar-rgt" ng-if = "!showViewDetails"
+				ng-click="viewDetails(ctrl.parserId[0].id)">View Details</button>
+				
+			
+			<button id="editEvent" class="btn btn-primary pull-right mar-rgt" 
+				ng-click="editEeventDetails()">Edit Event</button>
+			
+			<button id="deleteEvent" class="btn btn-danger pull-right mar-rgt" 
+				ng-click="deleteEvent()">Delete Event</button>
+				
+			<button id="deleteButton" class="btn btn-danger pull-right mar-rgt"
+				ng-click="deleteParser(ctrl.parserId[0].id)">Delete</button>
+
+		</div>
+	</div>
+
+
+
+
+
+
+	<div ng-include="templateUrl"></div>
+
+
+
+
+
+	<script type="text/ng-template" id="viewParserInformation.html">
+		<div class="card">
+<div class="card-body">
+		<form ng-submit="saveParsers()" class="form-horizontal form-padding" >
+
+
+
+			<div class="tab-base">
+
+				<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+					class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+					close="closeAlert($index)">{{alert.msg}}</div>
+
+				<div ng-show="ctrl.canGenerateCustomPatterns">
+
+
+					<div class="row">
+
+
+
+
+
+
+
+
+						<div class="col-sm-6">
+
+							<div class="row col-md-12 form-group">
+								<label class="col-md-3 control-label">Parser Name </label> 
+							
+								<div class="col-md-9" >
+							
+									<p class="form-control-static">{{ctrl.logparser.parserName}}</p>
+							
+
+								</div>
+
+							</div>
+
+							<div class="row form-group col-md-12">
+								<label class="col-md-3 control-label">Log Device </label> 
+
+								<div class="col-md-9">
+								<p class="form-control-static">{{fieldData.logDevice}}</p>
+								
+								</div>
+
+
+							</div>
+
+
+							<div class="row form-group col-md-12">
+								<label class="col-md-3 control-label">Parser Type </label> 
+
+							<div class="col-md-9">
+								<p class="form-control-static">{{ctrl.logparser.parserType}}</p>
+							</div>
+							
+
+
+							</div>
+
+
+
+
+
+
+
+
+						</div>
+
+						<div class="col-sm-6">
+
+							<div class="row form-group col-md-12">
+								<label class="col-md-3 control-label">Parser Description </label> 
+
+							<div class="col-md-9" >
+									<p class="form-control-static">{{ctrl.logparser.parserDesc}}</p>
+							
+							</div>
+
+							</div>
+
+							<div class="row form-group col-md-12">
+
+								<label class="col-md-3 control-label">Log Device </label> 
+
+								<div class="col-md-9">
+								<p class="form-control-static">{{fieldData.logType}}</p>
+								
+								</div>
+
+							
+
+							</div>
+
+
+						</div>
+
+
+
+
+
+
+
+
+
+					</div>
+
+
+
+
+
+<div class="accordion basic-accordion" id="accordion" role="tablist" style="overflow:inherit">
+    <div class="card" ng-if="ctrl.logparser.parserType === 'json'">
+        <div class="card-header" role="tab" id="headingOne">
+            <h6 class="mb-0">
+                <a data-toggle="collapse" href="javascript:void('0')" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Field Mapping </a>
+            </h6>
+        </div>
+        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne"
+            >
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th>Mapping Field</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="data in unMappedLogFields">
+                            <td>{{data.field}}</td>
+                            <td>{{data.mappedField}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" role="tab" id="headingTwo">
+            <h6 class="mb-0">
+                <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseTwo" aria-expanded="false"
+                    aria-controls="collapseTwo">
+                    Regex </a>
+            </h6>
+        </div>
+        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" >
+            <div class="card-body">
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Pattern</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="data in patternDetails">
+                                <td style="width: 20%">{{data.field}}</td>
+                                <td style="width: 20%">{{data.pattern}}</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="overflow:inherit">
+        <div class="card-header" role="tab" id="headingThree">
+            <h6 class="mb-0">
+                <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseThree" aria-expanded="false"
+                    aria-controls="collapseThree">
+                    Condition </a>
+            </h6>
+        </div>
+        <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree"
+            >
+            <div class="card-body"> {{editCondition}} </div>
+        </div>
+    </div>
+</div>
+
+
+
+				</div>
+			</div>
+		</form>
+</div></div>
+			</script>
+
+
+
+
+
+
+	<script type="text/ng-template" id="newPraser.html">
+				<form ng-submit="saveParsers()" class="card card-body pad-all" name="regexForm" novalidate="novalidate">
+
+
+
+		    <div class="tab-base">
+
+		        <div uib-alert ng-repeat="alert in controller.alertMessagaes" class="alert"
+		            ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+
+		        <div ng-show="ctrl.canGenerateCustomPatterns">
+
+
+		            <div class="row">
+		                <div class="col-sm-3">
+
+		                    <div class="form-group">
+		                        <label class="control-label">Parser Name *</label> 
+								<input type="text" class="form-control" required="required" name="parserName" ng-model="ctrl.logparser.parserName" pattern="[a-zA-Z0-9\s- _]+" > 
+								<div class="text-danger" ng-show="(regexForm.$submitted || regexForm.parserName.$touched ) && regexForm.parserName.$error.required">Parser name is mandatory</div>
+								<div class="text-danger" ng-show="(regexForm.$submitted || regexForm.parserName.$touched ) && regexForm.parserName.$error.pattern">special characters are not allowed</div>
+
+		                    </div>
+
+		                    <div class="form-group">
+		                        <label class="control-label">Log Device *</label> 
+								<select ng-model="fieldData.logDevice"
+		                            class="form-control" ng-change="ctrl.getDataBasedOnLogDevice()" required="required" name="logDevice"> 
+		                            <option ng-repeat="data in logDevices | unique : 'deviceType' | orderBy : 'deviceTypedisplayName'" value="{{data.deviceType}}">{{data.deviceTypedisplayName}}</option>
+		                        </select>
+								<div class="text-danger" ng-show="(regexForm.$submitted || regexForm.logDevice.$touched) && regexForm.logDevice.$error.required">Log Device is mandatory</div>
+		                    </div>
+
+
+		                    <div class="form-group">
+		                        <label class="control-label">Parser Type *</label> <select class="form-control"
+		                            required="required" ng-change="changePraserType()" ng-model="ctrl.logparser.parserType" name="paserType">
+
+		                            <option value="json">Json</option>
+		                            <option value="delimter">Delimter</option>
+		                            <option value="regex">Regex</option>
+		                        </select>
+
+								<div class="text-danger" ng-show="(regexForm.$submitted || regexForm.parserType.$touched) && regexForm.parserType.$error.required">Parser Type is mandatory</div>
+
+		                    </div>
+
+		                    <div class="form-group" ng-if="ctrl.logparser.parserType === 'delimter' ">
+		                        <label class="control-label">Escape Char</label>
+		                        <input type="text" class="form-control" ng-modal="ctrl.logparser.escpaeChar" />
+
+
+		                    </div>
+
+
+
+
+
+
+
+
+		                </div>
+
+		                <div class="col-sm-3">
+
+		                    <div class="form-group">
+		                        <label class="control-label">Parser Description *</label> 
+								<input type="text" class="form-control" ng-model="ctrl.logparser.parserDesc" required="required" name="parserDesc">
+	<div class="text-danger" ng-show="(regexForm.$submitted || regexForm.parserDesc.$touched )&& regexForm.parserDesc.$error.required">Description is mandatory</div>
+		                    </div>
+
+		                    <div class="form-group">
+		                        <label for="demo-inline-inputpass">Log Type *</label> <select required="required"
+		                            ng-model="fieldData.logType" class="form-control"
+		                            ng-change="ctrl.getDataBasedOnLogType()">
+		                            <!-- 									<option selected="selected" disabled="disabled" value="">Select Log Type</option> -->
+		                            <option ng-repeat="data in logType">{{data}}</option>
+		                        </select>
+
+		                    </div>
+
+		                    <div class="form-group" ng-if="ctrl.logparser.parserType === 'delimter' ">
+		                        <label class="control-label">Delimter Type</label> <select class="form-control"
+		                            required="required" ng-model="ctrl.logparser.delimterType">
+		                            <option value="Space">Space</option>
+		                            <option value="Comma">Comma</option>
+		                            <option value="Tab">Tab</option>
+		                            <option value="Pipe">Pipe</option>
+		                            <option value="Other">Other</option>
+		                        </select>
+
+
+
+
+		                    </div>
+
+		                    <div class="form-group" ng-if="ctrl.logparser.parserType === 'delimter' ">
+		                        <label class="control-label">Quote Char</label>
+		                        <input class="form-control" type="text" ng-modal="ctrl.logparser.quoteChar" />
+
+
+		                    </div>
+
+
+		                </div>
+
+
+
+
+
+
+
+
+
+		            </div>
+
+
+
+
+		            <div class="accordion basic-accordion" id="accordion" role="tablist">
+		                <div class="card" style="overflow:inherit">
+		                    <div class="card-header" role="tab" id="headingOne">
+		                        <h6 class="mb-0">
+		                            <a data-toggle="collapse" href="javascript:void('0')" data-target="#collapseOne"
+		                                aria-expanded="false" aria-controls="collapseOne" class="collapsed">
+		                                Raw Logs </a>
+		                        </h6>
+		                    </div>
+		                    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne"
+		                         style="">
+		                        <div class="card-body">
+		                            <div class="panel-body">
+
+
+		                                <div class="row">
+		                                    <div class="col-md-12 col-sm-offset-2 row">
+		                                        <div class="col-md-3">
+
+		                                            <div class="form-group">
+		                                                <label class="control-label">Time :</label>
+
+		                                                <select class="form-control" ng-model="fieldData.timeFilter">
+		                                                    <option value="15m">15m</option>
+		                                                    <option value="30m">30m</option>
+		                                                    <option value="60m">60m</option>
+		                                                    <option value="1h">1h</option>
+		                                                    <option value="4h">4h</option>
+		                                                    <option value="6h">6h</option>
+		                                                    <option value="12h">12h</option>
+		                                                    <option value="24h">24h</option>
+
+		                                                </select>
+
+		                                            </div>
+		                                        </div>
+
+		                                        <div class="col-md-3">
+
+		                                            <div class="form-group">
+		                                                <label class="control-label">Search Query :</label>
+
+		                                                <input class="form-control" type="text"
+		                                                    ng-model="fieldData.searchQuery">
+
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-md-3">
+		                                            <button style="margin-top:7%" type="button" class="btn btn-dark"
+		                                                ng-click="filterMessage()">Filter Messages</button>
+		                                        </div>
+		                                    </div>
+
+		                                </div>
+
+		                                <div class="">
+		                                    <table class="table table-hover" datatable="ng">
+		                                        <thead>
+		                                            <tr>
+		                                                <th class="col-sm-1">Message</th>
+
+		                                            </tr>
+		                                        </thead>
+		                                        <tbody>
+		                                            <tr ng-repeat="data in logMessages track by $index">
+		                                                <td style="word-break: break-all;" ng-click="ctrl.highlight($index,data)" class="pointer"
+		                                                    ng-class="{'selected':$index == ctrl.selectedRow}">{{data}}</td>
+		                                            </tr>
+		                                        </tbody>
+		                                    </table>
+		                                </div>
+
+
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="card" ng-if="ctrl.logparser.parserType === 'json'" style="overflow:inherit">
+		                    <div class="card-header" role="tab" id="headingTwo">
+		                        <h6 class="mb-0">
+		                            <a class="collapsed" data-toggle="collapse" href="javascript:void('0')"
+		                                data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+		                                Field Mapping </a>
+		                        </h6>
+		                    </div>
+		                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo"
+		                        >
+		                        <div class="card-body">
+
+
+		                            <div class="row pad-all">
+
+		                                <div class="col-md-12">
+
+		                                    <button class="btn btn-dark pull-right" type="button" ng-click="addNewMapping()">Add New
+		                                        Mapping</button>
+
+
+		                                </div>
+
+		                                <br />
+		                                <table class="table table-borderless">
+
+		                                    <thead>
+		                                        <tr>
+		                                            <th>Field Name</th>
+		                                            <th>Mapping Field</th>
+		                                            <th></th>
+
+		                                        </tr>
+
+
+
+		                                    </thead>
+
+		                                    <tbody>
+
+		                                        <tr ng-repeat="data in unMappedLogFields">
+
+
+		                                            <td>
+		                                                <ui-select ng-model="data.field" theme="bootstrap" style="width:100%"
+		                                                    title="Fields">
+		                                                    <ui-select-match placeholder="Select Log Field">
+		                                                        {{$select.selected}}
+		                                                    </ui-select-match>
+		                                                    <ui-select-choices
+		                                                        repeat="t  in messageFields | filter: $select.search">
+		                                                        <span ng-bind-html="t | highlight: $select.search"></span>
+		                                                    </ui-select-choices>
+		                                                </ui-select>
+		                                            </td>
+		                                            <td>
+
+		                                                <ui-select ng-model="data.mappedField" theme="bootstrap"
+		                                                    style="width:100%" title="Fields">
+		                                                    <ui-select-match placeholder="Select Log Field">
+		                                                        {{$select.selected}}
+		                                                    </ui-select-match>
+		                                                    <ui-select-choices
+		                                                        repeat="t  in logFields | filter: $select.search">
+		                                                        <span ng-bind-html="t | highlight: $select.search"></span>
+		                                                    </ui-select-choices>
+		                                                </ui-select>
+
+
+		                                            </td>
+		                                            <td><a href="javascript:void('0')" class="btn-link"
+		                                                    ng-click="deleteKeys($index)">Delete</a>
+		                                        </tr>
+
+
+		                                    </tbody>
+
+
+		                                </table>
+		                            </div>
+
+
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="card" ng-if="ctrl.logparser.parserType === 'delimter'" style="overflow:inherit">
+		                    <div class="card-header" role="tab" id="headingThree">
+		                        <h6 class="mb-0">
+		                            <a class="collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false"
+		                                aria-controls="collapseThree">
+		                                Field Mapping </a>
+		                        </h6>
+		                    </div>
+		                    <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree"
+		                        >
+		                        <table class="table table-borderless">
+
+		                            <thead>
+		                                <tr>
+		                                    <th>Field Name</th>
+		                                    <th>Mapping Field</th>
+		                                    <th></th>
+
+		                                </tr>
+
+
+
+		                            </thead>
+
+		                            <tbody>
+		                                <tr ng-repeat="data in unMappedLogFields">
+
+
+		                                    <td>
+		                                        <ui-select ng-model="data.field" theme="bootstrap" style="width:100%"
+		                                            title="Fields">
+		                                            <ui-select-match placeholder="Select Log Field">{{$select.selected}}
+		                                            </ui-select-match>
+		                                            <ui-select-choices repeat="t in logFields | filter: $select.search">
+		                                                <span ng-bind-html="t | highlight: $select.search"></span>
+		                                            </ui-select-choices>
+		                                        </ui-select>
+		                                    </td>
+		                                    <td>
+		                                        {{data.value}}
+
+		                                    </td>
+
+		                                </tr>
+
+
+		                            </tbody>
+
+
+		                        </table>
+
+		                    </div>
+		                </div>
+		                <div class="card" style="overflow:inherit">
+		                    <div class="card-header" role="tab" id="headingFour">
+		                        <h6 class="mb-0">
+		                            <a class="collapsed" data-toggle="collapse" href="javascript:void('0')"
+		                                data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+		                                Regex </a>
+		                        </h6>
+		                    </div>
+		                    <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour"
+		                        >
+		                        <div class="card-body">
+
+		                            <div class="panel-body">
+									<div class="row col-md-12">
+		                                <div class=" col-md-3" ng-if="ctrl.logparser.parserType != 'regex' ">
+		                                    <label class="control-label">Select Field to apply</label>
+		                                    <ui-select ng-model="regexField" theme="bootstrap" style="width:100%"
+		                                        title="Fields" on-select="showValuesForKeys($item)">
+		                                        <ui-select-match placeholder="Select Log Field">{{$select.selected}}
+		                                        </ui-select-match>
+		                                        <ui-select-choices repeat="t in messageFields | filter: $select.search">
+		                                            <span ng-bind-html="t | highlight: $select.search"></span>
+		                                        </ui-select-choices>
+		                                    </ui-select>
+		                                </div>
+									<div class="col-md-9" style="margin-top: 24px;">
+   										<p style="font-size: 14px; text-align: center; font-weight: 300" id="logMessage" class="logMessage" ng-mouseup="showSelectedText()"></p>
+									</div>
+		                                </div>
+
+		                                <div class="row">
+
+<!-- 		                                    <p style="font-size: 14px; text-align: center; font-weight: 300" id="logMessage"
+		                                        class="logMessage" ng-mouseup="showSelectedText()"></p> -->
+
+		                                    <table class="table table-borderless">
+		                                        <thead>
+		                                            <tr>
+		                                                <th>Selected Text</th>
+		                                                <th>Field Name</th>
+		                                                <th>Field Type</th>
+		                                                <th>Prefix</th>
+		                                                <th>Suffix</th>
+		                                                <th></th>
+		                                            </tr>
+		                                        </thead>
+		                                        <tbody>
+		                                            <tr ng-repeat="data in startIndexArr">
+		                                                <td style="width: 20%">{{data.selTxt}}</td>
+		                                                <td style="width: 20%">
+		                                                    <ui-select ng-model="data.fieldname" theme="bootstrap"
+		                                                        style="width:100%">
+		                                                        title = "Fields" on-select="controller.onSelected($item)">
+		                                                        <ui-select-match placeholder="Select Log Field">
+		                                                            {{$select.selected}}</ui-select-match>
+		                                                        <ui-select-choices
+		                                                            repeat="t in logFields  | filter: $select.search">
+		                                                            <span ng-bind-html="t | highlight: $select.search"></span>
+		                                                        </ui-select-choices>
+		                                                    </ui-select>
+		                                                </td>
+		                                                <td style="width: 20%"><select class="form-control"
+		                                                        ng-model="data.fieldtype">
+		                                                        <option value="text">Text</option>
+		                                                        <option value="number">Number</option>
+		                                                        <option value="ip">IP Address</option>
+		                                                        <option value="date">Date</option>
+		                                                    </select></td>
+		                                                <td style="width: 20%"><select class="form-control"
+		                                                        ng-model="data.prefix">
+		                                                        <option
+		                                                            value="{{prefixValues.dataType}}_{{prefixValues.value}}"
+		                                                            ng-repeat="prefixValues in data.prefixValues track by $index">
+		                                                            {{prefixValues.prefix}}</option>
+		                                                    </select></td>
+		                                                <td style="width: 20%"><select class="form-control"
+		                                                        ng-model="data.suffix">
+		                                                        <option
+		                                                            value="{{suffixValues.dataType}}_{{suffixValues.value}}"
+		                                                            ng-repeat="suffixValues in data.suffixValues track by $index">
+		                                                            {{suffixValues.suffix}}</option>
+		                                                    </select></td>
+		                                                <td style="width: 20%"><a href="javascript:void(0)"
+		                                                        ng-click="deleteCurrentSelection($index)">Delete</a></td>
+		                                            </tr>
+		                                        </tbody>
+		                                    </table>
+		                                </div>
+
+
+		                                <div class="text-right">
+
+		                                    <button type="button" class="btn btn-dark" ng-click="createPatterns()">Show
+		                                        Patterns</button>
+
+		                                </div>
+<div class="row col-md-12">
+		                                <div class="  col-md-4">
+
+		                                    <table class="table">
+		                                        <thead>
+		                                            <tr>
+		                                                <th>Pattern</th>
+		                                                <th></th>
+
+		                                            </tr>
+
+
+		                                        </thead>
+
+		                                        <tbody>
+
+		                                            <tr ng-repeat="data in patterns">
+		                                                <td>{{data}}</td>
+		                                                <td><a href="javascript:void('0')" ng-click="applyPattern(data)"
+		                                                        class="btn-link">Apply</a></td>
+		                                            </tr>
+
+		                                            <tr>
+
+		                                                <td><input type="text" class="form-control" ng-model="customRegex">
+		                                                </td>
+		                                                <td><a href="javascript:void('0')"
+		                                                        ng-click="applyPattern(customRegex)"
+		                                                        class="btn-link">Apply</a>
+		                                                </td>
+		                                            </tr>
+
+
+		                                        </tbody>
+
+		                                    </table>
+		                                </div>
+
+		                                <div class="col-md-8">
+
+		                                    <div class="panel-body col-md-12" style="padding: 25px;">
+		                                        <div class="tabbable">
+		                                            <ul class="nav nav-tabs">
+		                                                <li class="uib-tab nav-item" ng-class="{'active':tabName === 'allEvents'}"><a class="nav-link" 
+		                                                        href="javascript:void('0')"
+		                                                        ng-click="openTab('allEvents')">All Events</a></li>
+		                                                <li class="uib-tab nav-item" ng-class="{'active':tabName === 'mathces'}"><a class="nav-link" 
+		                                                        href="javascript:void('0')"
+		                                                        ng-click="openTab('mathces')">Matches</a></li>
+		                                                <li class="uib-tab nav-item" ng-class="{'active':tabName === 'nonMatched'}"><a class="nav-link" 
+		                                                        href="javascript:void('0')"
+		                                                        ng-click="openTab('nonMatched')">Non-Matched</a></li>
+		                                            </ul>
+		                                            <div class="tab-content" style="margin-top:5%">
+		                                                <div class="tab-pane active" id="bottom-tab1"
+		                                                    ng-show="tabName==='allEvents'">
+		                                                    <table datatable="ng" id="messages"
+		                                                        class="table messageTable datatable-basic table-striped dataTable no-footer">
+		                                                        <thead>
+		                                                            <tr>
+		                                                                <th>Message</th>
+		                                                            </tr>
+		                                                        </thead>
+		                                                        <tbody>
+		                                                            <tr ng-repeat="data in allEvents track by $index">
+		                                                                <td ng-bind-html="data.message"></td>
+		                                                            </tr>
+		                                                        </tbody>
+		                                                    </table>
+		                                                </div>
+		                                                <div class="tab-pane active" id="bottom-tab2"
+		                                                    ng-show="tabName==='mathces'">
+		                                                    <table datatable="ng" id="messages"
+		                                                        class="table messageTable datatable-basic table-striped dataTable no-footer">
+		                                                        <thead>
+		                                                            <tr>
+		                                                                <th>Message</th>
+		                                                            </tr>
+		                                                        </thead>
+		                                                        <tbody>
+		                                                            <tr ng-repeat="data in matchedEvents track by $index">
+		                                                                <td>
+		                                                                    <p>{{data.message}}</p> <br />
+		                                                                    <p
+		                                                                        ng-repeat="(key, value) in data track by $index">
+
+		                                                                        <span ng-if="key!='message'">
+		                                                                            <strong>{{key}}</strong>
+		                                                                            : {{value}}
+		                                                                        </span>
+
+		                                                                    </p>
+
+		                                                                </td>
+		                                                            </tr>
+		                                                        </tbody>
+		                                                    </table>
+		                                                </div>
+		                                                <div class="tab-pane active" id="bottom-tab3"
+		                                                    ng-show="tabName==='nonMatched'">
+		                                                    <table datatable="ng" id="messages"
+		                                                        class="table messageTable datatable-basic table-striped dataTable no-footer">
+		                                                        <thead>
+		                                                            <tr>
+		                                                                <th>Message</th>
+		                                                            </tr>
+		                                                        </thead>
+		                                                        <tbody>
+		                                                            <tr
+		                                                                ng-repeat="data in nonMathcedMessages track by $index">
+		                                                                <td ng-bind-html="data.message"></td>
+		                                                            </tr>
+		                                                        </tbody>
+		                                                    </table>
+		                                                </div>
+		                                            </div>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+</div>
+		                <div class="card" style="overflow:inherit">
+		                    <div class="card-header" role="tab" id="headingFive">
+		                        <h6 class="mb-0">
+		                            <a class="collapsed" data-toggle="collapse" href="javascript:void('0')"
+		                                data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFour">
+		                                Condition </a>
+		                        </h6>
+		                    </div>
+		                    <div id="collapseFive" class="collapse" role="tabpanel" aria-labelledby="headingFive"
+		                        >
+		                        <div class="card-body">
+		                            <parser-query-builder group="filter.group" parent="eventContext"></parser-query-builder>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+
+		            <div class="text-right">
+		                <button class="btn btn-success" type="submit" ng-disabled="regexForm.$invalid">Save</button>
+		            </div>
+
+
+
+
+
+
+		        </div>
+		</form>
+</script>
+
+
+
+
+	<script type="text/ng-template" id="queryBuilderDirective.html">
+
+		<div class="query-builder">
+			<div class="rules-group-container">
+
+
+				<div class="rules-group-header">
+					<div class="btn-group pull-right group-actions">
+						<button type="button" class="btn btn-primary"
+							ng-click="addCondition(1)" data-add="rule">
+							Add rule
+						</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="addGroup(1)" data-add="rule">
+							Add Group
+						</button>
+
+						<button type="button" class="btn btn-danger"
+							ng-click="removeGroup()" data-add="group">
+							Remove group
+						</button>
+
+
+
+
+					</div>
+				</div>
+
+
+				<div class="btn-group group-conditions">
+					<select ng-options="o.name as o.name for o in operators"
+						ng-model="group.operator" class="form-control input-sm"></select>
+				</div>
+
+
+
+
+
+				<div class="rules-group-body">
+					<div class="rules-list">
+
+						<div ng-repeat="rule in group.rules | orderBy:'index'"
+							class="rule-container condition">
+							<div ng-switch="rule.hasOwnProperty('group')">
+								<div ng-switch-when="true">
+									<query-builder group="rule.group" parent="rule.parent"></query-builder>
+								</div>
+								<div ng-switch-default="ng-switch-default">
+
+									<table class="table cloneTable">
+										
+										<tr>
+											
+											<td class="clonetd" style="width: 25%;border-top:none">
+
+											  	<ui-select
+													ng-model="rule.field" theme="bootstrap" style="width:100%">
+												title = "Fields" on-select="controller.onSelected($item)"> <ui-select-match
+													placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in fields | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select></td>
+											<td class="clonetd" style="width: 25%;border-top:none">
+
+											 <select ng-model="rule.condition" class="form-control input-sm">
+                                   					<option ng-repeat="  c in conditions" value="{{c.value}}">{{c.name}}</option>  
+											</select>
+
+												</td>
+											<td class="clonetd" style="border-top:none;"><input style="margin-left: 5px;"
+												type="text" ng-model="rule.data"
+												class="form-control  input-sm"  placeholder = "Value"/></td>
+											<td class="clonetd" style="width: 5%;border-top:none"><a
+												ng-click="removeCondition($index)" class="btn btn-link "><i
+													class="ion-trash-a"></span></i></a></td>
+										</tr>
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+
+    </script>
+
+
+
+
+
+	<script type="text/ng-template" id="viewParsers.html">
+		
+			<div class="card"><div class="card-body">
+				<div id = "extractContent" class="{{theme}}" style="height: 500px;"></div>
+					<!-- <table class="table table-hover" datatable="ng" dt-options="dtOptions" style="width:100%">
+						<thead>
+							<tr>
+								<th data-visible="true">Name</th>
+								<th>Log Device</th>
+								<th>Log Type</th>
+								
+								<th>Created By</th>
+								<th>Updated By</th>
+								<th>Last Updated</th>
+								<th data-visible="true">Action</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+						
+						<tr ng-repeat = "data in ctrl.parserDetails">
+							<td>{{data.ruleName}}</td>
+							<td>{{data.logDevice}}</td>
+							<td>{{data.logType}}</td>
+							
+							<td>{{data.createdBy}}</td>
+							<td>{{data.updatedBy}}</td>
+							<td>{{data.lastUpdate}}</td>
+							<td>
+								<button class="btn btn-outline-primary" ng-click = "viewDetails(data.id)">View Details</button>
+								<button class="btn btn-outline-danger" ng-click = "deleteParser(data.id)">Delete</button> 
+							</td>
+						
+						</tr>
+						
+						</tbody>
+
+					</table> -->
+				</div></div>
+
+			
+		</script>
+
+
+	<script type="text/ng-template" id="showEvents.html">
+		
+		<div class="card">
+			<div class="card-body">
+			
+					<ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link" ng-class="eventsTab =='Events'?'active':''" ng-click="openEventsTab('Events')">Events</a>
+                          </li>
+                          <li class="nav-item" >
+                            <a class="nav-link"  ng-class="eventsTab =='eventsTemplates'?'active':''" ng-click="openEventsTab('eventsTemplates')">Events Template</a>
+                          </li>
+                    </ul>	
+				<br/>
+					
+					<div class="col-md-12" ng-if = "eventsTab === 'Events'">
+							<div id = "events" class="{{theme}}" style="height: 500px;"></div>
+					</div>
+
+					<div class="col-md-12" ng-if = "eventsTab === 'eventsTemplates'">
+							<div id = "event-templates" class="{{theme}}" style="height: 500px;"></div>
+					</div>					
+
+					
+			</div>
+		</div>
+				
+
+	</script>
+
+
+	<div id="create-events" class="modal fade bs-example-modal-lg in"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true" style="display: none; padding-left: 0px;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h5 class="page-title modal-title" id="myLargeModalLabel">Create
+						Events</h5>
+				</div>
+				<form ng-submit = "saveEvents()">
+				<div class="modal-body">
+
+
+					
+						<div uib-alert ng-repeat="alert in alertMessagaesFileUpload"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+
+						<div class="row">
+							<div class="col-md-12 col-sm-offset-2 row">
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event Filters :</label>
+
+										<ui-select ng-model="eventFields.name" theme="bootstrap"
+											style="width:100%" title="Fields" multiple > <ui-select-match
+											placeholder="Select Log Field">{{$item.name}}</ui-select-match>
+										<ui-select-choices
+											repeat="t in select2Fields | filter: $select.search">
+										<span ng-bind-html="t.name | highlight: $select.search"></span> </ui-select-choices> </ui-select>
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event ID :</label>
+										
+										<input type="text" required="required" class="form-control"ng-model="ctrl.eventForm.eventId">
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event Name :</label>
+										
+										<input type="text" required="required" class="form-control" ng-model="ctrl.eventForm.eventName">
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event Description :</label>
+										<textarea  class="form-control" required="required" rows="" cols="" ng-model="ctrl.eventForm.eventDescription"></textarea>
+										
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Severity :</label>
+										
+										<select  required="required" class="form-control" ng-model="ctrl.eventForm.severity">
+											<option value="Critical">Critical</option>
+											<option value="High">High</option>
+											<option value="Medium">Medium</option>
+											<option value="Low">Low</option>
+										
+										</select>
+											
+										
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">OBELUS ID :</label>
+										
+										<ui-select ng-model="ctrl.eventForm.obelusId" theme="bootstrap">
+            <ui-select-match placeholder="Select or search a person in the list...">{{$select.selected.obelusTypeId}}</ui-select-match>
+            <ui-select-choices repeat="item in obelusIds | filter: $select.search">
+              <div ng-bind-html="item.categoryName | highlight: $select.search"></div>
+              <small ng-bind-html="item.logDevice | highlight: $select.search"></small>
+            </ui-select-choices>
+          </ui-select>
+											
+										
+										
+									</div>
+								</div>
+								
+							</div>
+
+						</div>
+					
+
+
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="submit" 
+						class="btn btn-success">Save Event</button>
+				</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+	
+	<div id="create-events-template" class="modal fade bs-example-modal-lg in"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true" style="display: none; padding-left: 0px;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h5 class="page-title modal-title" id="myLargeModalLabel">Event Template</h5>
+				</div>
+				<form ng-submit = "saveEventTemplates()">
+				<div class="modal-body">
+
+
+					
+						<div uib-alert ng-repeat="alert in alertMessagaesFileUpload"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+
+						<div class="row">
+							<div class="col-md-12 col-sm-offset-2 row">
+							
+							<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Template Name :</label>
+										
+										<input type="text" class="form-control" ng-model = "ctrl.eventEventTemplateForm.templateName">
+										
+									</div>
+								</div>
+							
+								<div class="col-md-12">
+								
+								
+
+									<div class="form-group">
+										<label class="control-label">Event Filters :</label>
+										
+										<ui-select ng-model="eventFields.name" theme="bootstrap" multiple
+											style="width:100%" title="Fields"  > <ui-select-match
+											placeholder="Select Log Field">{{$item.name}}</ui-select-match>
+										<ui-select-choices
+											repeat="t in select2Fields | filter: $select.search">
+										<span ng-bind-html="t.name | highlight: $select.search"></span> </ui-select-choices> </ui-select>
+										
+
+										
+									</div>
+								</div>
+								
+								
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event Name :</label>
+										
+										<ui-select ng-model="ctrl.eventEventTemplateForm.eventName"  theme="bootstrap"
+											style="width:100%" title="Fields"  > <ui-select-match
+											placeholder="Select Log Field">{{$select.selected.name}}</ui-select-match>
+										<ui-select-choices
+											repeat="t in select2Fields | filter: $select.search">
+										<span ng-bind-html="t.name | highlight: $select.search"></span> </ui-select-choices> </ui-select>
+										
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Event Description :</label>
+										<ui-select ng-model="ctrl.eventEventTemplateForm.eventDescription" theme="bootstrap"
+											style="width:100%" title="Fields"  > <ui-select-match
+											placeholder="Select Log Field">{{$select.selected.name}}</ui-select-match>
+										<ui-select-choices
+											repeat="t in select2Fields | filter: $select.search">
+										<span ng-bind-html="t.name | highlight: $select.search"></span> </ui-select-choices> </ui-select>
+										
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">Severity :</label>
+										
+										<select  required="required" class="form-control" ng-model="ctrl.eventEventTemplateForm.severity">
+											<option value="Critical">Critical</option>
+											<option value="High">High</option>
+											<option value="Medium">Medium</option>
+											<option value="Low">Low</option>
+										
+										</select>
+											
+										
+										
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+
+									<div class="form-group">
+										<label class="control-label">OBELUS ID :</label>
+										
+										<ui-select ng-model="ctrl.eventEventTemplateForm.obelusId" theme="bootstrap">
+            <ui-select-match placeholder="Select or search a person in the list...">{{$select.selected.obelusTypeId}}</ui-select-match>
+            <ui-select-choices repeat="item in obelusIds | filter: $select.search">
+              <div ng-bind-html="item.categoryName | highlight: $select.search"></div>
+              <small ng-bind-html="item.logDevice | highlight: $select.search"></small>
+            </ui-select-choices>
+          </ui-select>
+											
+										
+										
+									</div>
+								</div>
+								
+							</div>
+
+						</div>
+					
+
+
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="submit" 
+						class="btn btn-success">Save Event</button>
+				</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+
+
+	<div id="import-logs" class="modal fade bs-example-modal-lg in"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true" style="display: none; padding-left: 0px;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h5 class="page-title modal-title" id="myLargeModalLabel">Import
+						Logs</h5>
+				</div>
+				<div class="modal-body">
+
+
+					<form>
+						<div uib-alert ng-repeat="alert in alertMessagaesFileUpload"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+
+						<input id="files" type="file" file-model="logFiles">
+
+					</form>
+
+
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"
+						data-dismiss="modal">Close</button>
+					<button type="button" ng-click="uploadFile()"
+						class="btn btn-success">Upload File</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+</div>

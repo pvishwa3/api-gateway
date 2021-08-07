@@ -1,0 +1,265 @@
+
+<div ng-controller="alertdashboardController as contoller">
+
+
+
+
+
+
+	<div class="dashboard-container" id="dashboard-container">
+
+		<div class="row">
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Top User Logon Failures</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="container-fluid">
+						<div class="row"></div>
+					</div>
+
+					<div class="position-relative" id="topuserLoginFailuers"
+						style="height: 240px" ng-click="contoller.showFailedLoginuserDetails()"></div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- Sales stats -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Logon Failures - Error Code </h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="position-relative"  id="logonFailuresErrorCode" style="height: 260px" ng-click="contoller.showFailedLoginuserDetails()">
+							
+					</div>
+
+				</div>
+			</div>
+			<div class="col-lg-4">
+
+				<!-- Sales stats -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Account Locked Out Users</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					<div class="position-relative" style="height: 258px" id="accountLocedOutUsers" ng-click="contoller.showAccountLockedOutUserDetails()">
+						
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Alerts By Category</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					
+
+					<div class="position-relative" style="height: 240px" ng-click="contoller.showAlertDetails()"  id="alertsByCategory">
+
+						
+
+					</div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- Traffic sources -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h6 class="panel-title">Alerts By Priority</h6>
+						<div class="heading-elements"></div>
+					</div>
+
+					
+
+					<div class="position-relative"  ng-click="contoller.showAlertDetails()" style="height: 240px" id="alertsByPriority">
+
+						
+
+					</div>
+				</div>
+				<!-- /traffic sources -->
+
+			</div>
+
+			
+
+
+		</div>
+
+	</div>
+
+
+	<div class="row" ng-show="contoller.showInfoTableForFailedLogin">
+		<div class="col-lg-12">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6 class="panel-title">
+						{{contoller.tableName}}<a class="heading-elements-toggle"><i
+							class="icon-more"></i></a>
+					</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a href="javascript:void('0')"
+								ng-click='contoller.closeTable()' data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<table class="table datatable-pagination" datatable="ng">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Computer name</th>
+								<th>IP Address</th>
+								<th>Target Username</th>
+								<th>Failure Reason</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in contoller.tableResponse track by $index">
+								<td>{{data.timestamp}}</td>
+								<td>{{data.computer_name}}</td>
+								<td>{{data.IpAddress}}</td>
+								<td>{{data.TargetUserName}}</td>
+								<td>{{data.failuerReason}}</td>
+								
+							</tr>
+							
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+	<div class="row" ng-show="contoller.showInfoTableForAccountLockout">
+		<div class="col-lg-12">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6 class="panel-title">
+						{{contoller.tableName}}<a class="heading-elements-toggle"><i
+							class="icon-more"></i></a>
+					</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a href="javascript:void('0')"
+								ng-click='contoller.closeTable()' data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<table class="table datatable-pagination" datatable="ng">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>computer_name</th>
+								<th>TargetUserName</th>
+								<th>TargerDomain</th>
+								<th>SubjectAccountName</th>
+								<th>SubjectAccountDomain</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in contoller.tableResponse track by $index">
+								<td>{{data.timestamp}}</td>
+								<td>{{data.computer_name}}</td>
+								<td>{{data.TargetUserName}}</td>
+								<td>{{data.TargerDomain}}</td>
+								<td>{{data.SubjectAccountName}}</td>
+								<td>{{data.SubjectAccountDomain}}</td>
+								
+							</tr>
+							
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+	
+	<div class="row" ng-show="contoller.showInfoTableForAlerts">
+		<div class="col-lg-12">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h6 class="panel-title">
+						{{contoller.tableName}}<a class="heading-elements-toggle"><i
+							class="icon-more"></i></a>
+					</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a href="javascript:void('0')"
+								ng-click='contoller.closeTable()' data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<table class="table datatable-pagination" datatable="ng">
+						<thead>
+							<tr>
+								<th>Time</th>
+								<th>Rule Name</th>
+								<th>Rule Category</th>
+								<th>Rule Priority</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in contoller.tableResponse track by $index">
+								<td>{{data.timestamp}}</td>
+								<td>{{data.rule_name}}</td>
+								<td>{{data.ruleCategory}}</td>
+								<td>{{data.priority}}</td>
+							
+								
+							</tr>
+							
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+
+</div>
+
+

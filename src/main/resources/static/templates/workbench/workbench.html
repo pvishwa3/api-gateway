@@ -1,0 +1,614 @@
+<div ng-controller="workBenchController as controller"
+	class="content-wrapper" ng-init="controller.init()">
+
+
+
+
+
+
+
+	<div
+		ng-class="createButtonShow ? 'panel  panel-table content-wrapper':'panel content-wrapper'"
+		style="padding: 0px; margin: 0px">
+
+
+		<div ng-include src="templateurl" onload='myFunction()'></div>
+
+
+		<div class="tooltip-static-demo" style="display: none">
+			<div class="tooltip bs-tooltip-top bs-tooltip-top-demo"
+				role="tooltip">
+				<div class="arrow"></div>
+				<div class="tooltip-inner"></div>
+			</div>
+
+		</div>
+
+		<ul class='custom-menu'>
+			<li data-action="first" ng-click="showAlerts();">Show Relevant
+				Alerts</li>
+			<li data-action="second" ng-click="showEvents();">Show Relevant
+				Events</li>
+
+			<li data-action="second" ng-click="showContext();">Show Context</li>
+
+		</ul>
+
+	</div>
+
+
+
+
+
+	<script type="text/ng-template" id="viewWorkBenchs.html">
+
+	
+	<div class="row page-header d-flex justify-content-between">
+		<div class="col-sm-6">
+			<div id="page-head">
+				<h4 class="page-title">Investigations</h4>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<button type="button" ng-show="createButtonShow"
+				ng-click="controller.openWorkBenchModal()"
+				class="btn btn-primary pull-right mar-rgt" title="New investigation">New
+				Investigation</button>
+			<button id="viewInvestigation"
+				class="btn btn-dark pull-right mar-rgt"
+				ng-click='controller.showWorkBench(controller.eventId[0].id)'>View</button>
+		</div>
+	</div>
+
+
+
+
+	<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+	<div class="card">
+		<div class="card-body">
+			<div id="investigationContent" class="{{theme}}"
+				style="height: 500px;"></div>
+		</div>
+	</div>
+
+		
+	</script>
+
+	<script type="text/ng-template" id="showDetailedInvestigation.html">
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaesModal"
+			 class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			 close="closeAlert($index)">{{alert.msg}}</div>
+
+
+	<div class="row investigation-container">
+
+		<div class="col-md-5 investigation-container-left {{controller.workBench.priority}}">
+
+
+				<p>{{controller.workBench.workBenchName}}</p>
+				<p>{{controller.workBench.description}}</p>
+				<p>Priority : {{controller.workBench.priority}}</p>
+
+				<select ng-change = "changeStatus()" ng-model = "controller.workBench.status" class="form-control col-md-2" style="margin-bottom:12px">
+
+					<option value="New">New</option>
+					<option value="In Progress">In Progress</option>
+					<option value="Closed">Close</option>
+				</select>
+
+				<br/>
+
+
+
+		</div>
+
+		<div class="col-md-5 grid-margin stretch-card" style="margin-top:3%">
+			<form class="forms-sample">
+
+				<p style="padding-left:12px">Assignee</p>
+
+			<div class="form-group">
+
+				<select ng-change = "changeAssingee()" ng-model = "controller.workBench.userNames" class="form-control" style="margin-bottom:12px">
+
+					<option value="{{data.userName}}" ng-repeat = "data in controller.userDetailsData">{{data.userName}}</option>
+
+				</select>
+
+			</div>
+			</form>
+		</div>
+
+		<div class="col-md-2 investigation-container-right pull-right" style="margin-top:3%">
+
+			<button class="btn btn-primary" ng-click = "showGraphRelationships()"> Graph Relationships</button>
+
+		</div>
+
+
+
+		</div>
+
+
+
+	</div>
+
+
+	<div class="row">
+		<div class="col-md-6">
+		<h4 style="padding-top:12px;margin-bottom: 24px;">Key Observables</h4>
+		<hr/>
+		<table class="table">
+			<thead>
+				<th style="border-bottom:0px">Critical</th>
+				<th style="border-bottom:0px">Malware</th>
+				<th style="border-bottom:0px">High Value Assests</th>
+				<th style="border-bottom:0px">Risky Users</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{keyObservables.critical}}</td>
+					<td>{{keyObservables.malware}}</td>
+					<td>{{keyObservables.highValueAssest}}</td>
+					<td>{{keyObservables.riskyUsers}}</td>
+				</tr>
+
+			</tbody>
+
+		</table>
+
+			<br/>
+
+			<div id = "threatFeedData" class="{{theme}}" style="height: 500px;"></div>
+
+
+
+		</div>
+
+		<div class="col-md-6">
+			<h4 style="padding-top:12px;margin-bottom: 24px;">Mitre ATT&CK </h4>
+			<hr/>
+			<div class="badge badge-outline-primary" ng-repeat = "(key,value) in keyObservables.mitreData">
+				<a href="javascript:void('0')">{{key}}</a>
+			</div>
+
+
+			<div class="col-md-12 col-lg-12 eq-box-lg" style="padding-top: 21px;padding-left: 0px;display: grid;">
+				<div class="card cases-panel">
+					<div class="card-header cases-heading  d-flex justify-content-between"
+						 style="padding: 0px 10px 0px 10px">
+						<h4 class="card-title"
+							style="padding-top: 6px; font-weight: bold;">Comments</h4>
+						<div class="panel-control">
+							<button class="btn btn-default"
+									ng-click="addCommentToInvestigation()">Add Comment</button>
+						</div>
+					</div>
+					<div class="card-body cases-panel">
+
+					<div class="chat-container-wrapper">
+
+
+
+						<div class="chat-bubble incoming-chat" ng-repeat = "data in currentComments">
+
+							<div class="sender-details">
+								<p class="seen-text">{{data.owner}} added comment - {{data.commentDate | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a'}}
+									<a href="javascript:void('0')" class="btn-link pull-right" style="color:red" ng-click = "deleteComment(data.id)"><i class="fa fa-trash-o"></i> </a>
+								</p>
+							</div>
+							<div class="chat-message" ng-bind-html="data.comment">
+
+
+							</div>
+
+
+						</div>
+
+					</div>
+						
+
+
+
+
+
+					</div>
+				</div>
+
+
+			</div>
+
+
+		</div>
+
+
+
+	</div>
+		
+
+
+	</script>
+
+	<script type="text/ng-template" id="showworkbench.html">
+			
+			<div class = "row">
+				
+					<div class="page-header">
+                 		 <h4 class="page-title" style = "width:50% ; padding-top:6px;font-size:16px">  {{controller.workBench.workBenchName}}</h4>
+                  <div class="quick-link-wrapper w-100 d-md-flex flex-md-wrap">
+                    <ul class="quick-links">
+                      <li><a href="javascript:void('0')">{{controller.workBench.status}}</a></li>
+                      <li><a href="javascript:void('0')">{{controller.workBench.createdDate}}</a></li>
+                      <li><a href="javascript:void('0')">{{controller.workBench.userNames}}</a></li>
+                    </ul>
+                    <ul class="quick-links ml-auto">
+                       <li> <a href="javascript:void('0')" ng-click = "changeLayoutToGraphView()"  class = "btn btn-sm">Graph</a></li>
+					   <li ><a href="javascript:void('0')" ng-click = "changeLayoutToUpDown()"  class = "btn btn-sm">UpDown</a></li>
+
+                      <li id = "leftToRight"><a href="javascript:void('0')" ng-click = "changeLayoutToLeftRight()" class = "btn btn-sm">LeftToRight</a></li>
+                      <li>Labels : <a  href="javascript:void('0')" class="pull-right" > <label class="control-label text-capitalize">{{eventName}} </label> <input type="checkbox" checked ng-model="eventsType" style="display: none;" id="eventsTypeId" checked="checked"></a></li>
+                    </ul>
+                  </div>
+                </div>
+			</div>
+
+			<div class = "card">
+					<div id="workflow-graph" style="height: 1200px"></div>
+			</div>
+		
+	</script>
+
+	<div class="modal fade" id="context-model" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Context</h4>
+				</div>
+
+				<div class="modal-body">
+				
+				
+					<ul class="nav nav-tabs tab-basic" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="javascript:void('0')" ng-click = "tabName = 'Attributes' " role="tab" aria-controls="whoweare" aria-selected="true">Attributes</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="javascript:void('0')" ng-click = "tabName = 'References'" role="tab" aria-controls="ourgoal" aria-selected="false">References</a>
+                          </li>
+                          
+                        </ul>
+				
+
+					
+					 
+					 
+					 <div class="tab-content tab-content-basic">
+					 	<div class="tab-pane fade active show">
+					 		<table class="table" ng-if = "tabName === 'Attributes' ">
+						<thead>
+							<tr>
+								<th>Feed Name</th>
+								<th>Threat Level</th>
+								<th>Category</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in attributes">
+								<td>{{data.feedName}}</td>
+								<td>{{data.threatLevel}}</td>
+								<td>{{data.category}}</td>
+								
+								<td ng-if = "data.category === 'External analysis'"><a href="{{data.value}}" target="_blank"> {{data.value}}</a></td>
+								<td ng-if = "data.category != 'External analysis'"> {{data.value}}</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<table class="table" ng-if = "tabName === 'References' ">
+						<thead>
+							<tr>
+								<th>Feed Name</th>
+								<th>Threat Level</th>
+								<th>Category</th>
+								<th>Value</th>
+								<th>External Ref</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="data in galaxy">
+								<td>{{data.feedName}}</td>
+								<td>{{data.threatLevel}}</td>
+								<td>{{data.type}}</td>
+								<td>{{data.value}}</td>
+								
+								<td>
+									<ul style="width:300px;white-space:pre-wrap;word-wrap:break-word" >
+										<li ng-repeat = "url in data.refs.split(',')"><a target="_blank" href="{{url}}" >{{url.split(",")[url.split(",").length-1]}}</a></li>
+									</ul>
+									 
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					 	</div>
+					 </div>
+
+
+
+
+
+				</div>
+
+			</div>
+
+
+
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div class="modal fade" id="comment-model" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+
+			<div uib-alert ng-repeat="alert in controller.commentAlerts"
+				 class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+				 close="closeAlert($index)">{{alert.msg}}</div>
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Comments</h4>
+				</div>
+
+					<div class="modal-body">
+				
+						<summernote class="col-md-11" config="options"
+											ng-model="controller.workBench.comments"> </summernote>
+				
+				
+				  	</div>
+				<div class="modal-body">
+					<button ng-click = "saveComments()"  type="button" class="btn btn-primary">Save</button>
+				</div>
+				</div>
+
+
+
+
+
+
+
+
+				</div>
+
+			</div>
+
+
+	<div class="modal left fade" id="investigationsInfo" tabindex="-1"
+		 role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Alert Info</h4>
+				</div>
+
+				<div class="modal-body">
+					<div class="col-md-12">
+
+
+						<div class="row">
+
+							<div class="col-sm-12 button-place-holder">
+								<button class="btn btn-sm btn-default investigation-default"
+										style='border-color: transparent !important;'
+										title="Mark as End Node" ng-click="markAsEndNode()">
+									<i class="ion-stop" />
+								</button>
+								<button class="btn btn-sm btn-default investigation-default"
+										style='border-color: transparent !important;'
+										title="Mark as Suspicious Node"
+										ng-click="markASuspiciousNode()">
+									<i class="ion-checkmark-circled" />
+								</button>
+								<button class="btn btn-sm btn-default investigation-default"
+										style='border-color: transparent !important;' title="save"
+										ng-click="saveInvestigation()">
+									<i class="fa fa-save" />
+								</button>
+								<button class="btn btn-sm btn-default investigation-default"
+										style='border-color: transparent !important;'
+										title="Back to All Investigations" ng-click="controller.back()">
+									<i class="ion-arrow-left-a"></i>
+								</button>
+							</div>
+
+						</div>
+
+						<uib-tabset active="active"> <uib-tab
+								class='nav-tabs-white' index="0" heading="Internal Analysis ">
+							<div>
+
+								<div class="accordion basic-accordion" id="accordion"
+									 role="tablist">
+									<div class="card">
+										<div class="card-header" role="tab" id="headingOne">
+											<h6 class="mb-0">
+												<a data-toggle="collapse" href="javascript:void('0')"
+												   data-target="#collapseOne" aria-expanded="true"
+												   aria-controls="collapseOne"> Info </a>
+											</h6>
+										</div>
+										<div id="collapseOne" class="collapse show" role="tabpanel"
+											 aria-labelledby="headingOne" data-parent="#accordion">
+											<div class="card-body">
+												<table class="table table-event-details"
+													   id="table-event-details" style="" ng-show="infoTable">
+													<tbody>
+													<tr ng-repeat="(key,value) in alertInfo">
+														<td class="td-field-label" ng-if="key != 'priroirty'">{{key}}</td>
+														<td class="td-field-value" ng-if="key != 'priroirty'">{{value}}</td>
+
+													</tr>
+
+													</tbody>
+												</table>
+
+
+
+
+											</div>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-header" role="tab" id="eventTables">
+											<h6 class="mb-0">
+												<a class="collapsed" data-toggle="collapse"
+												   href="javascript:void('0')" data-target="#collapseThree"
+												   aria-expanded="false" aria-controls="collapseThree">
+													Events Info </a>
+											</h6>
+										</div>
+
+
+										<div id="collapseThree" class="collapse" role="tabpanel"
+											 aria-labelledby="collapseThree" data-parent="#accordion">
+											<div class="card-body">
+												<table class="table table-event-details"
+													   id="table-event-details" style="" ng-show="infoTable">
+													<tbody>
+
+													<tr ng-repeat="(key,value) in eventInfo">
+														<td class="td-field-label" ng-if="key != 'priroirty'">{{key}}</td>
+														<td class="td-field-value" ng-if="key != 'priroirty'">{{value}}</td>
+
+													</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+
+									<div class="card">
+										<div class="card-header" role="tab" id="headingTwo">
+											<h6 class="mb-0">
+												<a class="collapsed" data-toggle="collapse"
+												   href="javascript:void('0')" data-target="#collapseTwo"
+												   aria-expanded="false" aria-controls="collapseTwo">
+													Observables </a>
+											</h6>
+										</div>
+										<div id="collapseTwo" class="collapse" role="tabpanel"
+											 aria-labelledby="headingTwo" data-parent="#accordion">
+											<div class="card-body">
+												<div class="panel-body">
+													<table class="table">
+														<thead>
+														<tr>
+															<th>Type</th>
+
+															<th>Enable/Disable</th>
+														</tr>
+														</thead>
+														<tbody>
+														<tr ng-repeat="data in analyzedFieldsOptions">
+															<td>{{data.field}}</td>
+															<td><input type="checkbox"
+																	   checklist-model="fieldChecked"
+																	   ng-change="controller.deleteNode(data, checked)"
+																	   checklist-value="data.field" /></td>
+														</tr>
+														</tbody>
+													</table>
+													<div class="row col-md-12" style="margin-top: 10px">
+														<div class="col-md-6">
+															<input type="text" class="form-control"
+																   placeholder="Search  Indicator"
+																   ng-model="searchIndicators">
+														</div>
+														<div class="col-md-6">
+															<button type="button" class=" btn btn-dark pull-right"
+																	ng-click="controller.addIndicatorModal()">Add
+																Indicator</button>
+														</div>
+													</div>
+													<br />
+													<table class="table">
+														<thead>
+														<tr>
+															<th>Indicator</th>
+															<th>Type</th>
+															<th></th>
+														</tr>
+														</thead>
+														<tbody
+																style="height: 100px; overflow-y: auto; overflow-x: hidden;">
+														<tr
+																ng-repeat="data in indicators | filter:searchIndicators">
+															<td>{{data.field}}</td>
+															<td>{{data.type}}</td>
+
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</uib-tab>
+					</div>
+
+
+				</div>
+
+			</div>
+
+
+
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+
+
+	
+
+
+
+
+</div>
+
+
+
+
+
+<!-- modal -->

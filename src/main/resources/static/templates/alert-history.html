@@ -1,0 +1,891 @@
+<div ng-controller="alertHistory as controller" id="page-print">
+
+
+	<div class="page-content " style="margin-top: 35px;">
+
+		<div class="row panel">
+
+			<br />
+
+			<div class="panel-body dashboard-body" id="id">
+
+				
+				
+
+
+
+				<div class="row">
+
+					<div class="col-sm-4">
+
+						<h4 class="text-semibold dashboad-title text-dark ng-binding">Alert
+							History</h4>
+
+					</div>
+
+					<div class="col-sm-4">
+
+						<div class="col-sm-7">
+
+							<div class="input-group" style="margin-left: 1%; margin-top: 6px">
+								<input type="text" ng-model="searchQueryString"
+									placeholder="Search" class="form-control dashboardFilterInput">
+								<span class="input-group-btn">
+									<button class="btn btn-dark dashboardFilterButtonGroup"
+										ng-click="searchBasedonQueryString()" type="button">
+										<i class="ion-search"></i>
+									</button>
+
+
+
+								</span>
+							</div>
+
+
+						</div>
+
+						<div class="col-sm-5">
+							<div class="input-group" style="margin-top: 11px">
+
+								<a href="javascript:void('0')" ng-click="openAdvancedFilter()">Advanced
+									Search</a>
+
+							</div>
+						</div>
+
+
+
+
+					</div>
+
+					<div class="col-sm-4 text-right">
+
+
+						<div class="btn-group">
+
+
+
+							<a href="javascript:void('0')" data-toggle="dropdown"
+								class="btn btn-link btn-float has-text dropdown-toggle"
+								aria-expanded="true"> <i class="ion-clock"></i>
+								{{labelName}}
+							</a>
+							<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+								<div class="row">
+									<div class="col-sm-4 col-md-3">
+
+										<h3 class="panel-title">Custom range</h3>
+
+										<form class="form-horizontal" action=""
+											style="padding-left: 12px; padding-bottom: 12px;">
+
+											<div class="form-group pad-top">
+												<label class="col-sm-3 control-label">From</label>
+												<div class="col-sm-9">
+													<input type="text" id="from-date"
+														ng-model="displayStartDate" class="form-control">
+												</div>
+											</div>
+
+											<div class="form-group pad-top">
+												<label class="col-sm-3 control-label">To</label>
+												<div class="col-sm-9">
+													<input type="text" ng-model="displayEndDate" id="to-date"
+														class="form-control">
+												</div>
+											</div>
+
+											<br />
+
+											<div class="row text-right pad-top">
+												<button class="btn btn-dark" type="button"
+													ng-click="applyTimeBasedFilter()">Apply</button>
+
+											</div>
+
+										</form>
+
+
+									</div>
+									<div class="col-sm-8 col-md-9">
+										<h3 class="panel-title">Quick ranges</h3>
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2Days','Last 2 days')">Last
+														2 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last7Days','Last 7 days')">Last
+														7 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Days','Last 30 days')">Last
+														30 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last90Days','Last 90 days')">Last
+														90 days</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6months','Last 6 months')">Last
+														6 months</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1year','Last 1 year')">Last
+														1 year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last2years','Last 2 years')">Last
+														2 years</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last5years','Last 5 years')">Last
+														5 years</a></li>
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('yesterday','Yesterday')">Yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('dayBeforeYesterday','Day before yesterday')">Day
+														before yesterday</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisLastWeek','This day last week')">This
+														day last week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousWeek','Pervious week')">Pervious
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousMonth','Pervious month')">Pervious
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('perviousYear','Pervious year')">Pervious
+														year</a></li>
+
+											</ul>
+										</div>
+
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('today','Today')">Today</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('todaySoFar','Today so far')">Today
+														so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeek','This week')">This
+														week</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisWeekSoFar','This week so far')">This
+														week so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonth','This month')">This
+														month</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisMonthSoFar','This month so far')">This
+														month so far</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYear','This year')">This
+														year</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('thisYearSoFar','This year so far')">This
+														year so far</a></li>
+
+											</ul>
+										</div>
+										<div class="col-sm-4 col-md-3">
+
+											<ul class="list-unstyled">
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last15Minutes','Last 15 minutes')">Last
+														15 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last30Minutes','Last 30 minutes')">Last
+														30 minutes</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last1Hour','Last 1 hour')">Last
+														1 hour</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last3Hours','Last 3 hours')">Last
+														3 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last6Hours','Last 6 hours')">Last
+														6 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last12Hours','Last 12 hours')">Last
+														12 hours</a></li>
+												<li><a href="javascript:void('0')"
+													ng-click="setRelativeTime('last24Hours','Last 24 hours')">Last
+														24 hours</a></li>
+											</ul>
+										</div>
+									</div>
+
+
+								</div>
+							</div>
+
+
+
+
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row" ng-show="showFilter">
+
+					<div class="col-md-12">
+
+
+						<div class="panel">
+
+							<div class="panel-heading">
+								<div class="panel-control">
+									<a href="javascript:void('0')" class="btn-link btn-link-white"
+										ng-click="openFliter()"> <i class="fa fa-close"
+										title="clear filter"></i> <span ng-show="false"></span></a>
+								</div>
+								<h3 class="panel-title">Filter</h3>
+
+							</div>
+
+							<div class="panel-body">
+
+
+								<div data-elastic-builder="controller.data"></div>
+
+
+
+								<div class="text-right">
+									<button type="button" class="btn btn-danger"
+										ng-click="deleteFilter()">Delete Filter</button>
+
+									<button type="button" class="btn btn-dark"
+										ng-click="saveAndApplyFilter()">Save</button>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row" id="alert-container">
+
+
+					<div class="container-fluid">
+
+						<div class="col-md-3">
+							<div class="panel dashboard-panel  box">
+								<div class="panel-heading dashboard-panel-header">
+									<h3 class="panel-title dashboard-panel-heading dashboad-panel-title">Alerts By Priority</h3>
+								</div>
+								<div class="panel-body">
+									<div id="alerts-by-pr" class="chart has-fixed-height"
+										style="width: 100%; height: 250px;"></div>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="col-md-9">
+							<div class="panel dashboard-panel  box">
+								<div class="panel-heading dashboard-panel-header">
+									<h3 class="panel-title dashboard-panel-heading dashboad-panel-title">Alerts By Type</h3>
+								</div>
+								<div class="panel-body">
+									<div id="alerts-over-time" class="chart has-fixed-height"
+										style="width: 100%; height: 250px;"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr />
+
+					<div class="container-fluid">
+						<div class="col-md-12" style="padding-bottom:47px">
+
+							<div class="panel dashboard-panel  box">
+								
+
+								<div class="panel-heading">
+									<a ng-if="templateUrl=='viewRuleHistory.html'" href="javascript:void('0')" class="btn-link"
+										ng-click="controller.addToCase()">Add Selected To Case</a>    &nbsp;&nbsp;&nbsp;&nbsp;
+									
+									<ol class="breadcrumb text-right">
+										<li><a href="javascript:void('0')"
+											ng-click="showAlerts()">Alerts</a></li>
+										<li ng-if="ruleName!=''"><a href="javascript:void('0')"
+											ng-click="showRules()">{{ruleName}}</a></li>
+										<li ng-if="eventName!=''">{{eventName}}</li>
+									</ol>
+								</div>
+								
+
+								
+								<div class="panel-body" id ="table-body">
+
+									<div ng-include src="templateUrl"></div>
+								</div>
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+
+
+
+
+		</div>
+
+
+
+
+		<script type="text/ng-template" id="viewAlertHistory.html">
+
+
+		
+
+			
+
+
+
+			
+
+			
+
+				
+
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="alertDtOptions" dt-instance="alertDtInstance"  width="100%"  dt-columns="alertDtColumns" dt-column-defs="alertDtColumnDefs">
+							 <thead>
+								<tr>
+								  	
+									<th data-visible="true">Name</th>
+									<th>Rule Name</th>
+									<th>Rule Category</th>
+									<th>Priority</th>
+									
+
+									<th>Frist Seen</th>
+									<th>Last Seen</th>
+									<th data-visible="true">Count</th>
+
+								</tr>
+							</thead>
+
+
+							<tbody>
+								<tr style="cursor:pointer"  ng-repeat="data  in alertHistory" >
+									<td><a ng-click = "getRuleInfo(data)" href= "javascript:void('0')" class='btn-link'>{{data[0]}}</a></td>
+									<td>{{data[1]}}</td>
+									<td>{{data[2]}}</td>
+									<td>{{data[3]}}</td>
+									
+									<td>{{data[5] | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+									<td>{{data[6] | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+									<td><a   ng-click = "getRuleInfo(data)" href= "javascript:void('0')" class='btn-link'>{{data[4]}}</a></td>
+									
+								</tr>
+
+							</tbody>
+						</table>
+					
+	
+		</script>
+
+
+
+		<script type="text/ng-template" id="viewRuleHistory.html">
+
+
+			<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline"
+							datatable="ng" dt-options="alert3DtOptions"
+							dt-instance="vm.dtInstance" width="100%"  dt-columns="vm.dtColumns"
+							dt-column-defs="vm.dtColumnDefs1" id="alert-details-1">
+							<thead>
+								<tr>
+									 <th data-visible="true" style="width:10px" class="nosorting"><input type="checkbox" ng-change="toggleAll(selectAll)" ng-model="selectAll" id="selectAllId"  /></th>
+									
+									<th>Timestamp</th>
+									<th data-visible="true">Name</th>
+									<th>Rule Name</th>
+									<th>Rule Category</th>
+									<th>Priority</th>
+									
+									<th data-visible="true">Count</th>
+									<th data-visible="true"></th>
+								
+									
+
+								</tr>
+							</thead>
+
+
+							<tbody>
+
+								<tr style="cursor:pointer"  ng-repeat = "data in ruleHistory">
+								
+									<td style="width:10px"><input type="checkbox" ng-model="options[$index]" ng-change="toggleCurrency($index)" ng-value="data.id" /></td>
+								
+									<td>{{data.timestamp}}</td>
+									<td ng-click = "getRuleDeletailsInfo(data)" >{{data.name}}</td>
+									<td>{{data.rule_name}}</td>
+									<td>{{data.rule_category}}</td>
+									<td>{{data.priority}}</td>
+									<td><a  ng-click = "getRuleDeletailsInfo(data)" href= "javascript:void('0')" class='btn-link'>{{data.rule_ids.length}}</a></td>
+									<td><a  ng-click = "addToInvestigation(data.id)" href= "javascript:void('0')" class='btn-link'>Investigate</a></td>
+								</tr>
+								
+							</tbody>
+						</table>
+				
+
+		</script>
+		
+		<script type="text/ng-template" id="viewEventInfo.html">
+
+
+					<div class="col-md-8" style="border-right: 1px solid black;  height: 500px;overflow-y:scroll; ">
+
+
+					<table class="table table-striped  dataTable no-footer dtr-inline"
+						datatable="ng" dt-options="vm.dtOptions"
+						dt-instance="vm.dtInstance" width="100%" dt-columns="vm.dtColumns"
+						dt-column-defs="vm.dtColumnDefs" id="alert-details">
+						<thead>
+							<tr>
+
+								<th>TimeStamp</th>
+								<th>Event Name</th>
+								<th>Category</th>
+								
+
+
+							</tr>
+						</thead>
+
+
+						<tbody>
+
+							<tr style="cursor:pointer" ng-click="getSingleEventInfo(data)"
+								ng-repeat="data in eventInfoDataTable">
+
+
+
+
+								<td>{{data.timestamp | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+								<td>{{data.event_name}}</td>
+								<td>{{data.event_category}}</td>
+								
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+				<div class="col-md-4" style="height: 500px;overflow-y:scroll;padding-top: 40px ">
+
+					<table class="table table-event-details" id="table-event-details">
+
+						<tbody>
+
+							<tr ng-repeat="(key,value) in singleEvnentInfo">
+								<td class="td-field-label">{{key}}</td>
+								<td class="td-field-value">{{value}}</td>
+
+							</tr>
+							
+
+
+
+
+						</tbody>
+					</table>
+
+
+				</div>
+				
+
+		</script>
+
+
+
+
+
+
+
+
+	<div id="create_template_chooser"
+			class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">	
+			<form name="caseForm" class="form-horizontal" novalidate>
+
+	
+
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+							<h4 class="modal-title" id="myLargeModalLabel">Add Alerts to Case</h4>
+						</div>
+						<div class="modal-body modal-body-scrolling">
+							<span>You are adding the following events to the selected
+								case:</span>
+							<span class="pull-right">Count : {{alertNames.length}}</span>
+							<ul class="head-list"
+								style="max-height: 300px; padding-top: 13px; overflow-y: auto;">
+
+								<li ng-repeat="data in alertNames track by $index">{{data.alertName}}</li>
+
+							</ul>
+
+							<div class="form-group">
+
+								<label class="col-sm-2 control-label" for="demo-hor	-inputemail">Existing Cases</label>
+								<div class="col-sm-3">
+									<select class="form-control" ng-model = "controller.caseDetails.id" ng-class="ExistingCasesError ? 'border-danger' : ''">
+										<option ng-repeat = "data in controller.allCasesDetails" value="{{data.id}}" >{{data.name}}</option>
+									</select>
+									<small ng-show="ExistingCasesError"
+										class="text-danger" data-bv-validator="notEmpty"
+										data-bv-for="fullName" data-bv-result="INVALID">Please select any case</small>
+								</div>
+							</div>
+
+						</div>
+						<div class="modal-footer">
+						<button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+							<button class="btn btn-default" ng-click="createNewCase()"
+								type="button">Create New Case</button>
+							<button class="btn btn-dark" ng-click = "controller.addToExistingCase()" type="button">Save</button>
+						</div>
+					</div>
+
+
+				</form>
+				</div>
+				
+		</div>
+
+		<div id="create_case_template"
+			class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true"
+			style="display: none; padding-left: 0px;">
+			<div class="modal-dialog modal-lg">
+
+				<form name="caseForm" class="form-horizontal" novalidate
+					ng-submit="controller.createCase()">
+
+
+
+					<div class="modal-content">
+
+
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+							<h4 class="modal-title" id="myLargeModalLabel">Create New
+								Case</h4>
+						</div>
+						<div class="modal-body modal-body-scrolling">
+							<div uib-alert ng-repeat="alert in controller.caseErrorMessages"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="demo-hor	-inputemail">Case
+									Title</label>
+								<div class="col-sm-9">
+									<input type="text" name="title"
+										ng-model="controller.caseDetails.title" class="form-control" autocomplete="off"
+										required >
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="demo-hor-inputemail">Status</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="status"
+										ng-model="controller.caseDetails.status" autocomplete="off" required>
+										<option value="Open">Open</option>
+										<option value="In Progress">In Progress</option>
+										<option value="Resolved">Resolved</option>
+										<option value="Closed">Closed</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="demo-hor-inputemail">Priority</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="priority" autocomplete="off"
+										ng-model="controller.caseDetails.priority" required>
+										<option value="Critical">Critical</option>
+										<option value="High">High</option>
+										<option value="Medium">Medium</option>
+										<option value="Low">Low</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="demo-hor-inputemail">Due Date</label>
+								<div class="col-sm-9">
+									<input type="text" name="dueDate" id="due-date" autocomplete="off"
+										ng-model="$scope.displayDate" required class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label" for="demo-hor-inputemail">Summary</label>
+								<div class="col-sm-9">
+									<textarea rows="" cols="" name="description" required autocomplete="off"
+										ng-model="controller.caseDetails.description"
+										class="form-control"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+							<button class="btn btn-dark" ng-disabled="caseForm.$invalid"
+								type="submit">Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+
+
+		<div class="modal right fade" id="showAdvancedFilter" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel2">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel2">Advanced Search</h4>
+					</div>
+
+
+
+					<div class="modal-body">
+
+						<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+							class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+							close="closeAlert($index)">{{alert.msg}}</div>
+
+						<div data-elastic-builder="controller.data"></div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-danger"
+								ng-click="deleteFilter()">Delete Filter</button>
+							<button type="button" class="btn btn-dark"
+								ng-click="saveAndApplyFilter()">Save</button>
+
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal" aria-label="Close">Cancel</button>
+
+						</div>
+
+					</div>
+
+
+
+				</div>
+				<!-- modal-content -->
+			</div>
+			<!-- modal-dialog -->
+		</div>
+	</div>
+	<div class="panel tableDrillDown" data-id = "close" ng-show="canShowDrillDown" style="margin-bottom: 0px;padding-bottom: 0px;">
+
+		<div class="open panel-heading dashboard-panel-header">
+
+			<h3 class="panel-title dashboard-panel-heading dashboad-panel-title ">Rule History <label class="pull-right mar-hor"><i class="fa fa-close"></i></label></h3>
+
+
+		</div>
+		<div class="content panel">
+
+			<div class="panel-body">
+
+				<div class="col-md-8" style="border-right: 1px solid black;  height: 300px;overflow-y:scroll; ">
+
+
+					<table class="table table-striped  dataTable no-footer dtr-inline"
+						 datatable="ng" dt-options="alert2DtOptions"  width="100%" >
+						<thead>
+							<tr>
+
+								<th>TimeStamp</th>
+								<th data-visible="true">Rule Name</th>
+								<th>Rule Category</th>
+								<th>Priority</th>
+								<th>Event Name</th>
+
+
+							</tr>
+						</thead>
+
+
+						<tbody>
+
+							<tr style="cursor:pointer" ng-click="getSingleRuleInfo(data)"
+								ng-repeat="data in ruleDetailedHistory">
+
+
+
+
+								<td>{{data.timestamp | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+								<td>{{data.rule_name}}</td>
+								<td>{{data.rule_category}}</td>
+								<td>{{data.priority}}</td>
+								<td>{{data.event_name}}</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+				<div class="col-md-4" style="height: 300px;overflow-y:scroll;padding-top: 40px ">
+
+					<table class="table table-event-details" id="table-event-details">
+
+						<tbody>
+
+							<tr ng-repeat="(key,value) in ruleSingleInfo">
+								<td class="td-field-label">{{key}}</td>
+								<td class="td-field-value">{{value}}</td>
+
+							</tr>
+							<tr>
+								<td>
+								
+									<a href="javascript:void('0')" ng-click = "showEventInfo(ruleSingleInfo)" class="btn btn-link">View Contributing Events</a>
+								
+								</td>
+							</tr>
+
+
+
+
+						</tbody>
+					</table>
+
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+
+	</div>
+	
+	<div id="createWorkModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Configure New Investigation</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in controller.alertMessagaesModal"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+					<form class="form-horizontal group-border-dashed"
+						ng-submit="controller.submitData()" name="investigationForm">
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Name</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control"
+									ng-model="controller.workBench.workBenchName"
+									ng-class="((controller.workBench.workBenchName == '' ||controller.workBench.workBenchName == udefined ) && investigationForm.$submitted  ) ? 'border-danger':''">
+								<div class="text-danger text-bold"
+									ng-show="((controller.workBench.workBenchName == '' ||controller.workBench.workBenchName == udefined ) && investigationForm.$submitted  )">Name
+									is mandatory</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Status</label>
+							<div class="col-sm-6">
+								<select class="form-control"
+									ng-model="controller.workBench.status"
+									ng-class="((controller.workBench.status == '' || controller.workBench.status == undefined) && investigationForm.$submitted) ? 'border-danger':''">
+									<option value="New">New</option>
+									<option value="In Progress">In Progress</option>
+									<option value="Pending">Pending</option>
+									<option value="Resolved">Resolved</option>
+									<option value="Closed">Closed</option>
+
+								</select>
+								<div class="text-danger text-bold"
+									ng-show="((controller.workBench.status == '' || controller.workBench.status == undefined) && investigationForm.$submitted)">Select
+									atleast one status</div>
+							</div>
+						</div>
+
+						
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Description </label>
+							<div class="col-sm-6">
+
+								<textarea rows="5" cols="5" class="form-control"
+									ng-model="controller.workBench.description"
+									ng-class="((controller.workBench.description == '' || controller.workBench.description == udefined ) && investigationForm.$submitted  ) ? 'border-danger':''"></textarea>
+								<div class="text-danger text-bold"
+									ng-show="((controller.workBench.description == '' || controller.workBench.description == udefined ) && investigationForm.$submitted  )">Description
+									is mandatory</div>
+							</div>
+						</div>
+
+						<div class="form-group"
+							ng-if="controller.workBench.status === 'Closed' ">
+							<label class="col-sm-3 control-label" for="demo-hor-inputemail">Comments</label>
+							<div class="col-sm-6">
+								<textarea rows="5" cols="5" class="form-control"
+									ng-model="controller.workBench.comments" required="required"></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<input type="submit"
+								class="btn btn-dark waves-effect waves-light"
+								style="color: white" value="Submit">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

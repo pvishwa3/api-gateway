@@ -1,0 +1,128 @@
+<div ng-controller="workBenchTabController as controller"
+	ng-init = "controller.init()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Workbench Tab</h1>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<button type="button" ng-click = "controller.openCreateWorkbenchTab()"
+								class="btn btn-dark pull-right" title="New Workbench">
+								New Workbench Tab</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+
+
+		<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+		<div class="row">
+			<div class="panel panel-table pad-all">
+				<div class="panel-body-alt">
+					<div class="table-responsive">
+						<table class="table table-hover" datatable="ng">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Created Date</th>
+									<th>Updated Date</th>
+									<th>Updated By</th>
+									<th class="text-center">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="data  in controller.workBenchTabDetails">
+									<td>{{data.tabName}}</td>
+									<td>{{data.createdDate}}</td>
+									<td>{{data.updateDate}}</td>
+									<td>{{data.createdBy}}</td>
+									
+									
+									<td class="text-center">
+										<a href="javascript:void('0')" ng-click='controller.editWorkBenchTab(data.id)' class="btn-link">Edit</a> &nbsp;
+										<a href="javascript:void('0')" ng-click='controller.deleteWorkBenchTab(data.id,data.tabName)' class="btn-link">Delete</a> &nbsp;
+												
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="createWorkBenchTab" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title">Configure Workbench Tab</h4>
+					</div>
+					<div class="modal-body">
+					<div uib-alert ng-repeat="alert in controller.alertMessagaesModal"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+						<form class="form-horizontal group-border-dashed" ng-submit="controller.submitData()" name="workBenchTab">
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Name</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" ng-model="controller.workBenchTab.tabName" ng-class="((controller.workBenchTab.tabName == '' ||controller.workBenchTab.tabName == udefined ) && workBenchTab.$submitted  ) ? 'border-danger':''">
+									<div class="text-danger text-bold" ng-show="((controller.workBenchTab.tabName == '' ||controller.workBenchTab.tabName == udefined ) && workBenchTab.$submitted  )"> Name is mandatory</div>
+								</div>
+							</div>
+							
+							
+							
+
+							
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Panels</label>
+								<div class="col-sm-6">
+									
+			<ui-select ng-model="controller.panels" theme="bootstrap" title="Select fields" multiple>
+            <ui-select-match placeholder="Select Panels">{{$item}}</ui-select-match>
+            <ui-select-choices  repeat="item  in controller.panelDetails | filter: $select.search">
+              <span ng-bind-html="item | highlight: $select.search"></span>
+            </ui-select-choices>
+									<div class="text-danger text-bold" ng-show="((controller.workBenchTab.panels == '' || controller.workBenchTab.panels == undefined) && workBenchTab.$submitted)">Select atleast one panel </div>
+								</div>
+							</div>
+							
+							
+							
+							
+							
+							
+							
+							<div class="modal-footer">
+								<input type="submit" class="btn btn-dark waves-effect waves-light" style="color: white" value="Submit">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

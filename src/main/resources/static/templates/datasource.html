@@ -1,0 +1,157 @@
+
+
+	<div class="row">
+	<div class="page-header page-header-default">
+		<div class="page-header-content border-bottom border-bottom-success">
+			<div class="page-title">
+				<h4>
+					<i class="icon-arrow-left52 position-left"></i> <span
+						class="text-semibold">Manage Data Sources</span>
+
+				</h4>
+			</div>
+
+
+
+			<div class="heading-elements">
+				
+			</div>
+		</div>
+	</div>
+	
+
+		<div class="col-md-3">
+			<div class="panel panel-flat">
+
+				<div class="panel-heading">
+					<h6 class="panel-title">Data Source<a class="heading-elements-toggle"><i class="icon-more"></i></a></h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><i class="icon-plus2" ng-click="newDs()"></i></li>
+							
+						</ul>
+					</div>
+				</div>
+				<div class="panel-body">
+
+					<ul class="navigation navigation-main navigation-accordion">
+					
+						<li ng-repeat="o in datasourceList"><a> {{o.name}} <span
+								class="pull-right text-red"> <i class="fa fa-info"
+									style="cursor: pointer" ng-click="showInfo(o)" title=""></i>&nbsp;
+									<i class="fa fa-copy" style="cursor: pointer"
+									ng-click="copyDs(o)" title=""></i>&nbsp; <i class="fa fa-edit"
+									style="cursor: pointer" ng-click="editDs(o)" title=""></i>&nbsp;
+									<i class="fa fa-trash-o" style="cursor: pointer"
+									ng-click="deleteDs(o)" title=""></i>
+							</span>
+						</a></li>
+					</ul>
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+<!-- 		<div class="col-md-3"> -->
+<!-- 			<div class="box box-solid"> -->
+<!-- 				<div class="box-header with-border"> -->
+<!-- 					<i class="fa fa-database"></i> -->
+<!-- 					<h3 class="box-title">Data Source</h3> -->
+<!-- 					<div class="box-tools pull-right"> -->
+<!-- 						<i class="fa fa-plus toolbar-icon" ng-click="newDs()" -->
+<!-- 							title="New Datasource">Test</i>&nbsp;&nbsp; -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="box-body no-padding"> -->
+<!-- 					<div class="row"> -->
+<!-- 						<div class="col-md-12"> -->
+<!-- 							<ul class="nav nav-pills nav-stacked"> -->
+<!-- 								<li ng-repeat="o in datasourceList"><a> {{o.name}} <span -->
+<!-- 										class="pull-right text-red"> <i class="fa fa-info" -->
+<!-- 											style="cursor: pointer" ng-click="showInfo(o)" title=""></i>&nbsp; -->
+<!-- 											<i class="fa fa-copy" style="cursor: pointer" -->
+<!-- 											ng-click="copyDs(o)" title=""></i>&nbsp; <i -->
+<!-- 											class="fa fa-edit" style="cursor: pointer" -->
+<!-- 											ng-click="editDs(o)" title=""></i>&nbsp; <i -->
+<!-- 											class="fa fa-trash-o" style="cursor: pointer" -->
+<!-- 											ng-click="deleteDs(o)" title=""></i> -->
+<!-- 									</span> -->
+<!-- 								</a></li> -->
+<!-- 							</ul> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 					</form> -->
+<!-- 					/.box-body -->
+<!-- 					<div class="box-footer"></div> -->
+<!-- 					/.box-footer -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+		<div class="col-md-9">
+			<div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+				<div class="box-header with-border">
+					<h3 class="box-title">{{curDatasource.name}}</h3>
+				</div>
+				<div class="box-body">
+					 <div ng-show="optFlag == 'new'"
+                         ng-include="'templates/datasource/new.html'"></div>
+                    <div ng-show="optFlag == 'edit'"
+                         ng-include="'templates/datasource/edit.html'"></div> 
+				</div>
+				<!-- /.box-body -->
+				<div class="box-footer"></div>
+				<!-- /.box-footer-->
+			</div>
+		</div>
+		
+		<div  class="modal fade" id="test-diloag">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h5 class="modal-title">Large modal</h5>
+							</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-12 form-horizontal">
+			<div class="row">
+				<div class="col-md-12" ng-repeat="alert in alerts">
+					<div class="col-sm-offset-2 col-sm-10">
+						<div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+							close="alerts.splice($index, 1)">{{alert.msg}}</div>
+					</div>
+				</div>
+				<div class="col-md-12 "
+					>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Index *</label>
+						<div class="col-sm-10">
+							<input ng-model="curWidget.query.index"
+								class="form-control "
+								placeholder="">
+						</div>
+					</div>
+					<div class="form-group ">
+						<label class="col-sm-2 control-label">Type *</label>
+						<div class="col-sm-10">
+							<input ng-model="curWidget.query.type"
+								class="form-control"
+								placeholder="">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal"
+		ng-click="close()">Cancel</button>
+	<button type="button" class="btn btn-dark" ng-click="do()">Test</button>
+</div>
+</div></div></div>
+	</div>
+

@@ -1,0 +1,1373 @@
+<div ng-controller="eventController as controller"
+	ng-init="controller.loadCategories()"  class="content-wrapper">
+		<div class="row page-header  d-flex justify-content-between">
+			<div class="col-sm-2">
+				<h4 class="page-title">Events</h4>
+			</div>
+			<div class="col-sm-10">
+				<button ng-if="templateUrl == 'viewEventsInfo.html'" class="btn btn-primary pull-right"  ng-click="displayNewItem()">New Event</button>
+				<button ng-if="templateUrl == 'viewEventsInfo.html'&& controller.event.eventType == 'Simple Event'" ng-click="controller.manageCategories()" class="btn btn-info pull-right" style="margin-right:5px">Categories</button>
+				<button ng-if="templateUrl == 'viewEventsInfo.html'&& controller.event.eventType == 'Complex Event'" ng-click="controller.manageGroups()" class="btn btn-info pull-right" style="margin-right:5px">Groups</button>
+				<a style="padding: 3px;margin-right:5px" ng-show="templateUrl == 'viewEventsInfo.html'" href="javascript:void('0')" class="pull-right" > <label class="control-label text-capitalize">{{eventName}} </label> <input type="checkbox" ng-model="eventsType" style="display: none;" id="eventsTypeId" checked="checked"></a>
+				<button ng-if="templateUrl != 'viewEventsInfo.html'" class="btn btn-dark pull-right" ng-click="controller.back();">Back</button>
+				<button ng-if="templateUrl == 'viewEventsInfo.html'" ng-click="controller.enableDisableEvents()" id="enableDisableButton" class="btn btn-dark pull-right" style="margin-right:5px">Enable/Disable</button>
+				<button ng-if="templateUrl == 'viewEventsInfo.html'" ng-click="controller.deleteMultipleEvents()" id="bulkDeleteButton" class="btn btn-danger pull-right" title="Delete Selected"  style="margin-right:5px">Delete</button>
+				
+			</div>
+		</div>
+<!-- 		<hr /> -->
+
+								<div uib-alert ng-repeat="alert in controller.alertMessagaes"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+						<div uib-alert
+								ng-repeat="alert in controller.conditionMessage"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+						
+
+<div ng-include src="templateUrl" onload='myFunction()' class="card card-body" style="margin: 0;border: none"></div>
+
+
+
+		<script type="text/ng-template" id="queryBuilderDirective.html">
+
+		<div class="query-builder">
+			<div class="rules-group-container">
+
+
+				<div class="rules-group-header">
+					<div class="btn-group pull-right group-actions">
+						<button type="button" class="btn btn-primary"
+							ng-click="addCondition(1)" data-add="rule">
+							Add rule
+						</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="addGroup(1)" data-add="rule">
+							Add Group
+						</button>
+
+						<button type="button" class="btn btn-danger"
+							ng-click="removeGroup()" data-add="group">
+							Remove group
+						</button>
+
+
+
+
+					</div>
+				</div>
+
+
+				<div class="btn-group group-conditions">
+					<select ng-options="o.name as o.name for o in operators"
+						ng-model="group.operator" class="form-control input-sm"></select>
+
+				</div>
+
+
+
+
+
+				<div class="rules-group-body">
+					<div class="rules-list">
+
+						<div ng-repeat="rule in group.rules | orderBy:'index'"
+							class="rule-container condition" style="border: 1px solid #383e5d;padding: 10px;">
+
+							<div ng-switch="rule.hasOwnProperty('group')">
+								<div ng-switch-when="true">
+									<query-builder group="rule.group" parent="rule.parent"></query-builder>
+								</div>
+								<div ng-switch-default="ng-switch-default" >
+
+									<table class="table cloneTable">
+										<tr>
+											
+											<td class="clonetd" style="width: 25%;border:none">
+
+											  	<ui-select ng-model="rule.field" theme="bootstrap" style="width:100%" title = "Fields" on-select="controller.onSelected($item)"> 
+													<ui-select-match placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+													<ui-select-choices repeat="t in fields | filter: $select.search">
+														<span ng-bind-html="t | highlight: $select.search"></span>
+													</ui-select-choices> 
+												</ui-select>
+												
+											</td>
+											<td class="clonetd" style="width: 25%;border:none">
+
+												 <select ng-model="rule.condition" class="form-control input-sm">
+                                   						<option ng-repeat="  c in conditions" value="{{c.value}}">{{c.name}}</option>  
+												</select>
+												<div class="text-danger" ng-show="formSubmitted && (rule.condition == undefined || rule.condition == undefined)">Condition is mandatory</div>
+											</td>
+											<td style="border-top:none;" class="clonetd" ng-if = "rule.condition!= 'lookup' &&   rule.condition!= 'in_context' && rule.condition!= 'not_in_context'">
+												
+												
+												<input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control  input-sm"  placeholder = "Value"/>
+				
+											</td>
+
+											<td style="border:none" class="clonetd" ng-if = "rule.condition === 'in_context' || rule.condition === 'not_in_context' ">
+												
+												<select ng-model="rule.data"  style="margin-left: 5px" class="form-control  input-sm">
+													<option value = "{{data.id}}" ng-repeat = "data in referenceSetDetails">{{data.referenceSetName}}</option>
+												</select>
+
+												<div class="text-danger" ng-show="formSubmitted && (rule.condition == undefined || rule.condition == undefined)">Condition is mandatory</div>
+
+											</td>
+											<td class="clonetd" style="width: 5%;border:none;"><a
+												ng-click="removeCondition($index)" class="btn btn-link "><i
+													class="ion-trash-a"></span></i></a></td>
+										</tr>
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+
+    </script>
+
+
+		<script type="text/ng-template" id="disabledQueryBuilderDirective.html">
+
+		<div class="query-builder">
+			<div class="rules-group-container">
+
+
+				<div class="btn-group group-conditions">
+					<select ng-options="o.name as o.name for o in operators" disabled
+						ng-model="group.operator" class="form-control input-sm"></select>
+				</div>
+
+
+
+
+
+				<div class="rules-group-body">
+					<div class="rules-list">
+
+						<div ng-repeat="rule in group.rules | orderBy:'index'"
+							class="rule-container condition">
+							<div ng-switch="rule.hasOwnProperty('group')">
+								<div ng-switch-when="true">
+									<query-builder group="rule.group" parent="rule.parent"></query-builder>
+								</div>
+								<div ng-switch-default="ng-switch-default">
+
+									<table class="table cloneTable">
+										<tr>
+											
+											<td class="clonetd" style="width: 25%">
+
+											  	<ui-select ng-model="rule.field" theme="bootstrap" style="width:100%" title = "Fields" on-select="controller.onSelected($item)" ng-disabled="true"> 
+													<ui-select-match placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+													<ui-select-choices repeat="t in fields | filter: $select.search">
+														<span ng-bind-html="t | highlight: $select.search"></span>
+													</ui-select-choices> 
+												</ui-select>
+											</td>
+											<td class="clonetd" style="width: 25%">
+
+											 <select ng-model="rule.condition" class="form-control input-sm" disabled>
+                                   					<option ng-repeat="  c in conditions" value="{{c.value}}">{{c.name}}</option>  
+											</select>
+
+												</td>
+											<td class="clonetd" ng-if = "rule.condition!= 'lookup' &&   rule.condition!= 'in_context' && rule.condition!= 'not_in_context'"><input style="margin-left: 5px"
+												type="text" ng-model="rule.data"
+												class="form-control  input-sm"  placeholder = "Value" disabled/></td>
+
+											<td class="clonetd" ng-if = "rule.condition === 'lookup' ">
+												
+												<select ng-model = "rule.lookupType" class= "form-control input-sm" disabled>
+													<option value = "threat">Threat</option>
+												</select>
+
+											</td>
+										</tr>
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+
+    </script>
+
+		<script type="text/ng-template" id="viewEventsInfo.html">
+
+
+		<div class="card" style="border:none;padding:0;">
+			<div class="card-body" style="background-color: transparent;padding:0;border:none" >
+<ul class="nav nav-tabs nav-tabs-basic" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link" ng-class="tabName =='events'?'active':''" ng-click="tabName = 'events';openTreeStructure('events');">Events</a>
+                          </li>
+                          <li class="nav-item" >
+                            <a class="nav-link"  ng-class="tabName =='rules'?'active':''" ng-click="tabName = 'rules';openTreeStructure('rules');">Rules</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content tab-content-basic" style="padding-top:1%">
+                          <div id = "eventsContent" class="{{theme}}" style="height: 500px;"></div>
+                      </div>
+
+				
+					
+<div id="filterShow">
+<div class="col-md-12 row mar-hor  d-flex justify-content-between">
+<div></div>
+<div>
+	<button id="deleteId" class=" pull-right  btn btn-danger btn-labeled" ng-click="deleteEvent(controller.eventId[0].id,controller.eventId[0].eventName)"><i class="btn-label fa fa-trash"></i> Delete</button>
+	<button id="editId" style="margin-right: 10px;" class=" pull-right btn btn-primary btn-labeled" ng-click="controller.displayForEdit(controller.eventId[0].id)"><i class="btn-label fa fa-pencil"></i> Edit</button>
+</div>
+</div>
+<div ng-if="controller.event.eventType == 'Complex Event'" >
+<div id="disabledForm" class="col-md-12">  
+	<div ng-include="'ruleInformation.html'"></div>
+</div>
+</div>
+<div ng-if="controller.event.eventType == 'Simple Event'" >
+<div id="disabledForm" class="col-md-12">
+	<div ng-include="'eventInformation.html'"></div>
+</div>
+</div>
+</div>
+	</script>
+
+
+		<script type="text/ng-template" id="eventInformation.html">
+<form name="eventForm" novalidate="novalidate">
+		<div class="accordion basic-accordion" id="accordion-2" role="tablist">
+	    <div class="card" style="overflow:inherit">
+	        <div class="card-header" role="tab" id="headingOne-21">
+	            <h6 class="mb-0">
+	                <a data-toggle="collapse" href="javascript:void('0')" data-target="#collapseOne-2" aria-expanded="true"
+	                    aria-controls="collapseOne-2"> Event Information </a>
+	            </h6>
+	        </div>
+	        <div id="collapseOne-2" class="collapse show" role="tabpanel" aria-labelledby="headingOne-21">
+	            <div class="card-body" >
+	                <div class="row">
+	                    <div class="col-md-12">
+	                        
+	                            
+	                        <div class="row">
+	                            <div class="col-sm-6">
+	                                <div class="form-group">
+	                                    <label class="col-sm-3 control-label">Log Device *</label>
+	                                    <div class="col-sm-9">
+	                                        <select class="form-control" ng-model="controller.event.logDevice" ng-change="controller.loadLogFields()" required="required" name="logDevice">
+	                                            <option value="{{data.deviceType}}" ng-repeat="data in devices | unique : 'deviceType' | orderBy : 'deviceType'"> {{data.deviceTypedisplayName}} </option>
+	                                        </select>
+											<div class="text-danger" ng-show="(formSubmitted || eventForm.logDevice.$touched) && eventForm.logDevice.$error.required">Log Device is mandatory</div>
+	                                    </div>
+	                                </div>
+	                            </div>
+								<div class="col-sm-6">
+	                                <div class="form-group">
+	                                    <label class="col-sm-3 control-label">Category *</label>
+	                                    <div class="col-sm-9">
+	                                        <selectize options='controller.allCategories' title="Select Category"
+	                                            config="controller.categoryConfig" ng-model="controller.event.categoryId">
+	                                        </selectize>
+	                                        <!--
+                          <select class="form-control" ng-model="controller.event.categoryId">  
+                          
+                              <option value="{{data.id}}" ng-repeat = "data in controller.allCategories.simpleCategories| orderBy : 'categoryName'  | unique : 'categoryName' " ng-if = "data.categoryName">{{data.categoryName}}</option>
+                          
+                          </select>
+    -->
+											<div class="text-danger" ng-show="formSubmitted && (!controller.event.categoryId)">Category is mandatory</div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                        </div>
+
+							 							
+
+	                        
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="card" style="overflow:inherit">
+	       
+	        
+	    <div class="card" style="overflow:inherit">
+	        <div class="card-header" role="tab" id="headingThree-2">
+	            <h6 class="mb-0">
+	                <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseThree-2"
+	                    aria-expanded="false" aria-controls="collapseThree-2">
+	                    Event Fields</a>
+	            </h6>
+	        </div>
+	        <div id="collapseThree-2" class="collapse" role="tabpanel" aria-labelledby="headingThree-2"
+	            >
+	            <div class="card-body">
+	                <div class="pull-right">
+	                    <a href="javascript:void('0')" ng-click="addLogField()">Add Row</a>
+	                </div>
+	                <table class="table pad-all">
+	                    <thead>
+	                        <tr class="row col-md-12">
+	                            <th class="col-md-5">Field</th>
+	                            <th class="col-md-4">Is Mandatory</th>
+	                            <th class="col-md-3">Action</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <tr ng-repeat="data in eventFields" class="row col-md-12 pad-hor">
+	                            <td class="col-md-5">
+	                                <ui-select title="Event Fields" ng-model="data.logField" theme="bootstrap"
+	                                    title="Select fields" on-select="controller.selectLogFieldSelect($item)">
+	                                    <ui-select-match placeholder="Select">{{$select.selected.fieldname}}
+	                                    </ui-select-match>
+	                                    <ui-select-choices repeat="item in logFields | filter: $select.search">
+	                                        <span ng-bind-html="item.fieldname | highlight: $select.search"></span>
+	                                    </ui-select-choices>
+	                                </ui-select>
+	                            </td>
+	                            <td class="col-md-4">
+	                                <input type='checkbox' ng-model="data.isMandatory" style="margin-top: 10px;" />
+	                            </td>
+	                            <td class="col-md-3	">
+	                                <a href="javascript:void('0')" class="btn btn-link" ng-click="deleteLogField($index)">Delete </a>
+	                            </td>
+	                        </tr>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+
+	    
+	    <div class="modal-footer" style="border:none">
+	        <button class="btn btn-danger" type="button" ng-if="controller.event.id!=0"
+	            ng-click="deleteEvent(controller.event.id,controller.event.eventName)">Delete Event</button>
+	        <button ng-if="canPromoteEvent && controller.event.approvalStatus === 'Custom' " class="btn btn-dark"
+	            type="button" ng-click="promoteEvent()">Promote Event</button>
+	        <button class="btn btn-success" type="button" ng-click="createEvent()" ng-disabled="eventForm.$invalid">Save</button>
+	    </div>
+
+	</div>		</form>
+</script>
+
+    <script type="text/ng-template" id="ruleInformation.html">
+		<form class="form-horizontal" name="ruleForm" novalidate="novalidate">
+
+<div uib-alert ng-repeat="alert in controller.eventMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+						
+    <div class="accordion basic-accordion" id="accordion" role="tablist">
+        <div class="card" style="overflow:inherit">
+            <div class="card-header" role="tab" id="headingOne">
+                <h6 class="mb-0">
+                    <a data-toggle="collapse" href="javascript:void('0')" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                        class="collapsed">
+                        Rule Information
+                    </a>
+                </h6>
+            </div>
+            <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" 
+                style="">
+                <div class="card-body">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Event Name *</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" ng-model="controller.event.eventName" class="form-control" required="required" name="eventName" pattern="[a-zA-Z0-9\s-_]+" >
+
+										<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.eventName.$touched) && ruleForm.eventName.$error.required">Event name is mandatory</div>
+										<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.eventName.$touched) && ruleForm.eventName.$error.pattern">Special characters are not allowed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Description *</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" ng-model="controller.event.eventDescription" class="form-control" required="required" name="eventDescription" >
+										<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.eventDescription.$touched) && ruleForm.eventDescription.$error.required">Description is mandatory</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Severity *</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" ng-model="controller.event.severity" name="severity" required="required">
+                                            <option value="critical">Critical</option>
+                                            <option value="high">High</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="low">Low</option>
+                                        </select>
+										<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.severity.$touched) && ruleForm.severity.$error.required">Severity is mandatory</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Tags *</label>
+                                    <div class="col-sm-9">
+                                        <selectize options='controller.tagDetails' title="Select Tags"
+                                            config="controller.tagConfig" ng-model="controller.tags"></selectize>
+										<div class="text-danger" ng-show="ruleFormSubmitted && controller.tags.length == 0">Tags is mandatory</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Group *</label>
+                                <div class="col-sm-9">
+                                    <selectize options='ruleGroups' title="Select Group"
+                                        config="controller.ruleGroup" ng-model="controller.rulesGroupList">
+                                    </selectize>
+									<div class="text-danger" ng-show="ruleFormSubmitted && (!controller.rulesGroupList > 0)">Group is mandatory</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Reference *</label>
+                                <div class="col-sm-9">
+
+                                   <select class="form-control" ng-model="controller.event.reference" name="reference" required="required">
+                                            <option value="Mitre">Mitre</option>
+                                            <option value="Compliance">High</option>
+                                            
+                                     </select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6" ng-if = "controller.event.reference === 'Mitre'">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Techniques *</label>
+                                <div class="col-sm-9">
+                                    <ui-select multiple ng-model="controller.techniques" theme="bootstrap"
+                                        title="Tatics">
+                                        <ui-select-match placeholder="Select">{{$item}}</ui-select-match>
+                                        <ui-select-choices
+                                            repeat="t in controller.allTechniques | filter: $select.search">
+                                            <span ng-bind-html="t | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+	
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Risk Score *</label>
+                                <div class="col-sm-9">
+                                    <input type="number" ng-model="controller.event.riskScore" class="form-control" />
+									<div class="text-danger" min="0" ng-show="ruleFormSubmitted && (controller.event.riskScore == null || controller.event.riskScore == undefined )">Risk score is mandatory</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+					 <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Rule Type *</label>
+                                <div class="col-sm-9">
+                                  	<select class="form-control" ng-model = "controller.event.ruleType">
+										<option value = "Template">Template</option>
+										<option value = "Rule">Rule</option>
+									</select>
+	
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+<div uib-alert ng-repeat="alert in controller.filterMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+        <div class="card" style="overflow:inherit">
+            <div class="card-header" role="tab" id="headingTwo">
+                <h6 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseTwo" aria-expanded="false"
+                        aria-controls="collapseTwo">
+                        Event Correlation Filter</a>
+                </h6>
+            </div>
+
+            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="card-body" >
+                        <div class="panel-body">
+							
+                            <rule-bulider group="ruleFilter.group" fields="logFields" events="logFields"
+                                parentContext="rule.eventContext" categories="controller.allCategories"></rule-bulider>
+                        </div>
+                </div>
+				
+            </div>
+        </div>
+        <div class="card" style="overflow:inherit">
+            <div class="card-header" role="tab" id="headingThree">
+                <h6 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseThree" aria-expanded="false"
+                        aria-controls="collapseThree">
+                        Custom Fields </a>
+                </h6>
+            </div>
+
+            <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+
+                <div class="card-body" >  
+                        <div class="card-body" style="border:none">
+							<div classs="modal-footer mar-all">
+                         		<button style="float:right;" class="btn btn-dark" ng-click="addCustomFields()" type="button">Add Row</button>
+                    		</div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Key</th>
+                                        <th>Value</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tr ng-repeat="data in customFields">
+                                    <td><input type="text" ng-model="data.customField" class="form-control" /></td>
+                                    <td><input type="text" ng-model="data.customFieldValue" class="form-control" /></td>
+                                    <td><a href="javascript:void('0')" ng-click="deleteCustomFields($index)">Delete</a></td>
+                                </tr>
+                            </table>
+                           
+                        </div>
+                    </div>
+            </div>
+        </div>
+<div uib-alert ng-repeat="alert in controller.triggerMessagaes"
+								class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+								close="closeAlert($index)">{{alert.msg}}</div>
+        <div class="card" style="overflow:inherit" ng-if = "controller.event.ruleType!= 'Template' ">
+            <div class="card-header" role="tab" id="headingFour">
+                <h6 class="mb-0">
+                    <a class="collapsed" data-toggle="collapse" href="javascript:void('0')" data-target="#collapseFour" aria-expanded="false"
+                        aria-controls="collapseFour">
+                        Notifications </a>
+                </h6>
+            </div>
+            <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour"
+                >
+                <div class="card card-body" style="border:none"> 
+                        <div class="panel-body" style="margin-top:17px">
+                            <div class="col-md-12 row">
+                                <div class="col-sm-4" style="padding-right:0px;padding-left:0px">
+                                    <div class="form-group" style="width:inherit">
+                                        <label class="col-md-6 control-label">Trigger alert when *
+                                        </label>
+                                        <div class="col-md-12">
+                                            <select class="form-control" ng-model="controller.alert.triggerCondition">
+                                                <option value="numberOfConditions">Number of Results</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" style="padding-right:0px;padding-left:0px">
+                                    <div class="form-group" style="width:inherit">
+                                        <label class="col-md-3 control-label">Operator *</label>
+                                        <div class="col-md-12">
+                                            <select class="form-control" ng-model="controller.alert.triggerConditionOperator">
+                                                <option value="isGreaterThan">is greater than</option>
+                                                <option value="isLessThan">is less than</option>
+                                                <option value="isEqualTo">is equal to</option>
+                                                <option value="isNotEqualTo">is not equal to</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" style="padding-right:0px;padding-left:0px">
+                                    <div class="form-group" style="width:inherit">
+                                        <label class="col-md-3 control-label">Value *</label>
+                                        <div class="col-md-12">
+                                            <input type='text' class="form-control"
+                                                ng-model="controller.alert.triggerConditionValue" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body row col-md-12" style="margin:0px;padding:0px;>
+                            <div class="col-md-2"></div>
+                            <div class="panel-group accordion col-md-12" id="accordion23">
+                                <div class="card" style="overflow:inherit">
+                                    <div class="card-header">
+                                        <h4 class="panel-title" ng-click="changeAction('sendEmail');">
+                                            <a href="javascript:void('0')" class="collapsed">Email</a>
+                                        </h4>
+                                    </div>
+                                    <div ng-if="actionName.indexOf('sendEmail') != -1 ? 'in' : '' ">
+                                        <div class="card-body" >
+                                            <div class="row">
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">To *</label>
+                                                    <div class="col-sm-12">
+                                                        <input class="form-control" placeholder="Comma separated list of email addresses." ng-model="controller.email.to" name="to" required="true" pattern="[a-zA-Z0-9@_.,]+" >
+														<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.to.$touched) && ruleForm.to.$error.required">Email is mandatory</div>
+														<div class="text-danger" ng-show="(ruleFormSubmitted ||ruleForm.to.$touched) && ruleForm.to.$error.pattern">Special characters are not allowed</div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">Subject *</label>
+                                                    <div class="col-sm-12">
+                                                        <input class="form-control" placeholder="Subject" ng-model="controller.email.subject" required="true" name="subject">
+														<div class="text-danger" ng-show="(ruleFormSubmitted ||ruleForm.subject.$touched) && ruleForm.subject.$error.required">Email subject is mandatory</div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">Message *</label>
+                                                    <div class="col-sm-12">
+                                                        <input class="form-control" ng-model="controller.email.message"
+                                                            placeholder="Message" required="true" name="message">
+															<div class="text-danger" ng-show="(ruleFormSubmitted ||ruleForm.message.$touched )&& ruleForm.message.$error.required">Message is mandatory</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="card" style="overflow:inherit">
+                                    <div class="card-header">
+                                        <h4 class="panel-title" ng-click="changeAction('lookupTable');">
+                                            <a href="javascript:void('0')">Update Loookup Table</a>
+                                        </h4>
+                                    </div>
+
+									 <div ng-if="actionName.indexOf('lookupTable') != -1 ? 'in' : '' ">
+                                        <div class="card-body" style="border-bottom: 1px solid #383e5d;">
+                                            <div class="row">
+                                                <form class = "form-horizontal">
+                                                    <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                        <label class="col-sm-12 control-label">Select Lookup *</label>
+                                                        <div class="col-sm-12">
+                                                           <select ng-model = "controller.updateLookTable.lookupContext" class= "form-control" ng-change = "getValuesFromRefData()">
+                                                            <option value = "{{data.id}}" ng-repeat = "data in referenceSetDetails">{{data.referenceSetName}}</option>
+                                                           </select>
+                                                         </div>
+                                                    </div>
+                                                </form>
+                                               
+											</div>
+										</div>
+                                </div>
+                            </div>
+                                <div class="card" style="overflow:inherit">
+                                    <div class="card-header">
+                                        <h4 class="panel-title" ng-click="changeAction('notable');">
+                                            <a href="javascript:void('0')">Notable</a>
+                                        </h4>
+                                    </div>
+                                    <div ng-if="actionName.indexOf('notable') != -1 ? 'in' : '' ">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">Title *</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control" ng-model="controller.notable.title"
+                                                            required="true" 
+                                                            name="notableTitle" pattern="[a-zA-Z0-9\s_-]+"  />
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.notableTitle.$touched)&&ruleForm.notableTitle.$error.required">Title is mandatory</div>
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.notableTitle.$touched)&&ruleForm.notableTitle.$error.pattern">Special charactors are not allowed</div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">Description *</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control"
+                                                            ng-model="controller.notable.description" required="true"
+                                                            name="notableDescription" />
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.notableDescription.$touched)&&ruleForm.notableDescription.$error.required">Description is mandatory</div>
+
+                                                    </div>
+                                                </div>
+
+			<div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                    <label class="col-sm-12 control-label">Assignee *</label>
+                                                    <div class="col-sm-12">
+                                                        <select ng-model="controller.notable.assignee" class = "form-control">
+															<option value = "data" ng-repeat = "data in users">{{data}}</option>
+														</select>
+                                                    </div>
+                                                </div>
+		
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;margin-top:10px">
+                                                    <label class="col-sm-12 control-label">Message *</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control"
+                                                            ng-model="controller.notable.message" required="true" name="notableMessage" pattern="[a-zA-Z0-9\s-_]+"  />
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.notableMessage.$touched)&&ruleForm.notableMessage.$error.required">message is mandatory</div>
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.notableMessage.$touched)&&ruleForm.notableMessage.$error.pattern">Special charactors are not allowed</div>
+
+                                                    </div>
+                                                </div>
+                                               
+                                                
+                                                <div class="form-group col-md-4" style="padding: 0;margin: 0;margin-top:10px">
+                                                    <label class="col-sm-12 control-label">IRP *</label>
+                                                    <div class="col-sm-12">
+                                                        <selectize options='controller.irps' title="Select Tags"
+                                                            config="controller.irpConfig" ng-model="controller.notable.irpTemplate">
+                                                        </selectize>
+<div class="text-danger" ng-show="ruleFormSubmitted && (controller.notable.irpTemplate == '' || controller.notable.irpTemplate == undefined)">IRP is mandatory</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card" style="overflow:inherit">
+                                    <div class="card-header">
+                                        <h4 class="panel-title" ng-click="changeAction('ticket');">
+                                            <a href="javascript:void('0');">Ticket </a>
+                                        </h4>
+                                    </div>
+                                    <div ng-show="actionName.indexOf('ticket') != -1 ? 'in' : '' ">
+<div class="card-body" >
+                                        <div class="row">
+                                            <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                <label class="col-md-12 control-label">Title *</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" class="form-control" ng-model="controller.ticket.title"
+                                                        required="true" name="tickerTitle" pattern="[a-zA-Z0-9\s_]+"  />
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.tickerTitle.$touched)&&ruleForm.tickerTitle.$error.required">Title is mandatory</div>
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.tickerTitle.$touched)&&ruleForm.tickerTitle.$error.pattern">Special charactors are not allowed</div>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                <label class="col-md-12 control-label">Description *</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" class="form-control" ng-model="controller.ticket.description" required="true"  name="ticketDescription" />
+<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.ticketDescription.$touched)&&ruleForm.ticketDescription.$error.required">description is mandatory</div>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4" style="padding: 0;margin: 0;">
+                                                <label class="col-md-12 control-label">Priority *</label>
+                                                <div class="col-md-12">
+                                                    <select class="form-control" ng-model="controller.ticket.priority" name="priority" required="required">
+                                                        <option value="Critical">Critical</option>
+                                                        <option value="High">High</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="Low">Low</option>
+                                                    </select>
+													<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.priority.$touched)&&ruleForm.priority.$error.required">Priority is mandatory</div>
+
+                                                </div>
+                                            </div>
+
+											<div class="form-group col-md-4" style="padding: 0;margin: 0;margin-top:10px">
+                                                <label class="col-md-12 control-label">Ticket Type *</label>
+                                                <div class="col-md-12">
+                                                    <select class="form-control" ng-model="controller.ticket.type" name="type" required="required">
+                                                        <option value="Port Scanning Activity">Port Scanning Activity</option>
+									                    <option value="Malware Infection">Malware Infection</option>
+									                    <option value="Distributed Denial Of Service">Distributed Denial Of Service</option>
+                                                        <option value="Distributed Denial Of Service Diversion">Distributed Denial Of Service Diversion</option>
+                                                        <option value="Unauthorized Access">Unauthorized Access</option>
+                                                        <option value="Insider Breach">Insider Breach</option>
+                                                        <option value="Unauthorized Privilege Escalation">Unauthorized Privilege Escalation</option>
+                                                        <option value="Destructive Attack">Destructive Attack</option>
+                                                        <option value="Advanced Persistent Threat Or Multistage Attack">Advanced Persistent Threat Or Multistage Attack</option>
+                                                        <option value="False Alarms">False Alarms</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+													<div class="text-danger" ng-show="(ruleFormSubmitted || ruleForm.priority.$touched)&&ruleForm.priority.$error.required">Ticker type is mandatory</div>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4" style="padding: 0;margin: 0;margin-top:10px">
+                                                <label class="col-md-12 control-label">Assignee search *</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" class="form-control" ng-model="controller.ticket.assignee" name="assignee" 
+                                                        required="true" />
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                            </div>
+                        </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="border:none">
+        <button class="btn btn-danger" type="button" ng-if="controller.event.id!=0"
+            ng-click="deleteEvent(controller.event.id,controller.event.eventName)">Delete
+            Event</button>
+        <button ng-if="canPromoteEvent && controller.event.approvalStatus === 'Custom' " class="btn btn-dark"
+            type="button" ng-click="promoteEvent()">Promote
+            Event</button>
+        <button class="btn btn-success" type="button" ng-click="createEvent()">Save</button>
+    </div>
+</form>
+
+		</script>
+
+
+
+
+
+
+
+
+
+
+    <script type="text/ng-template" id="ruleEventBuilderDirective.html">
+
+	<div class="query-builder">
+    <div class="rules-group-container">
+
+
+        <div class="rules-group-header">
+            <div class="btn-group pull-right group-actions">
+                <button class="btn btn-primary" ng-click="addToEventToRule()" data-add="rule"> Add rule
+                </button>
+                <button class="btn btn-primary"
+                    ng-if="group.perviousConditionGroups && group.perviousConditionGroups.length>0"
+                    ng-click="addGroupCorrelation()" data-add="rule">
+                    Add Correlation Group
+                </button>
+                <button class="btn btn-primary" ng-click="addEventGroup()" data-add="group">
+                    Add group
+                </button>
+                <button type="button" class="btn btn-danger" ng-click="removeGroup()" data-add="group">
+                    Remove group
+                </button>
+
+
+
+
+            </div>
+            <div class="btn-group group-conditions">
+                <select ng-options="o.name as o.name for o in operators" ng-model="group.operator"
+                    class="form-control input-sm"></select>
+            </div>
+
+            <div class="btn-group group-conditions"
+                ng-if="group.perviousConditionGroups && group.perviousConditionGroups.length>0 && group.operator === 'AND' ">
+                <table class="table cloneTable" style="margin-top: 2px;margin-bottom:5px">
+                    <tr class="row">
+                        <td style="border-top: 0px" class="col-md-3"><select class="form-control"
+                                ng-change="getPerviousConditionFields(group.perviousEventName)"
+                                ng-model="group.perviousEventName">
+                                <option value="{{data.crruentEvent.eventName}}"
+                                    ng-repeat="data in group.perviousConditionGroups">{{data.crruentEvent.eventName}}
+                                </option>
+                            </select></td>
+                        <td style="border-top: 0px" class="col-md-3"><select class="form-control"
+                                ng-model="group.perviousEventField">
+                                <option value="{{data}}" ng-repeat="data in perviousConditionFields">{{data}}</option>
+                            </select></td>
+
+                        <td style="border-top: 0px" class="col-md-3"><select class="form-control"
+                                ng-change="getCurrentConditionFields(group.currentEventName)"
+                                ng-model="group.currentEventName">
+                                <option value="{{data.crruentEvent.eventName}}"
+                                    ng-repeat="data in group.currentConditionsGroups">{{data.crruentEvent.eventName}}
+                                </option>
+                            </select></td>
+                        <td class="col-md-3" style="border-top: 0px"><select class="form-control"
+                                ng-model="group.currentEventField">
+                                <option value="{{data}}" ng-repeat="data in currentConditionFields">{{data}}</option>
+                            </select></td>
+
+                    </tr>
+
+                </table>
+            </div>
+
+        </div>
+
+        <div class="rules-group-body">
+            <div class="rules-list">
+
+                <div ng-repeat="rule in group.rules | orderBy:'index'" class="rule-container condition">
+                    <div ng-switch="rule.hasOwnProperty('group')">
+                        <div ng-switch-when="true">
+                            <rule-bulider group="rule.group" fields="fields" events="events"
+                                parentContext="rule.parentContext"></rule-bulider>
+                        </div>
+                        <div ng-switch-default="ng-switch-default" class="bg-f3f3f3">
+
+                            <div id="fitler_modal-{{$index}}" class="modal fade" role="dialog" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">
+                                                <i class="pci-cross pci-circle"></i>
+                                            </button>
+                                            <h4 class="modal-title" id="myLargeModalLabel">Event Filter</h4>
+                                        </div>
+                                        <form class="form-horizontal group-border-dashed"
+                                            ng-submit="controller.saveConditionEventCategory()"
+                                            name="conditionSubCategory">
+                                            <div class="modal-body">
+
+
+
+
+
+
+                                                <query-builder group="filter.group" parent="eventContext">
+                                                </query-builder>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default waves-effect"
+                                                    data-dismiss="modal" ng-click="close(rule,index)">Close</button>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="col-md-10"></div>
+                                <div class="col-md-2" id="filterId" style="margin-right:0;padding-right:0;">
+                                    <a href="javascript:void('0')" style="color:#128ff2;" class="btn pull-right"
+                                        data-toggle="collapse" data-target="#currentConditions{{$index}}" role="tab"
+                                        aria-expanded="true" aria-controls="currentConditions{{$index}}"> Filter </a>
+                                    <a class="btn pull-right" style="color:#ff5449;margin-right:0;padding-right:0;"><i
+                                            title="Remove Filter" ng-click="removeCondition(rule,$index)"
+                                            class="fa fa-trash pull-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="row col-md-12 collapse show" id="currentConditions{{$index}}">
+                                <div class="row col-md-12" ng-repeat="ruleData in rule.currentConditions">
+
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Field *</label>
+                                            <ui-select ng-model="ruleData.conditionField" theme="bootstrap"
+                                                title="Fields">
+                                                <ui-select-match placeholder="Select">{{$select.selected.fieldname}}
+                                                </ui-select-match>
+                                                <ui-select-choices
+                                                    repeat="t in currentConditions  | filter: $select.search">
+                                                    <span ng-bind-html="t.fieldname | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Operator *</label>
+                                            <select class="form-control" ng-model="ruleData.conditionOperator">
+                                                <option value="{{condition.value}}" ng-repeat="condition in conditions">
+                                                    {{condition.name}}</option>
+
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3" ng-if="ruleData.conditionField.fieldname!= 'event_category' && ruleData.conditionOperator != 'in_context' &&  ruleData.conditionOperator != 'not_in_context'">
+                                        <div class="form-group">
+                                            <label class="control-label">Value</label>
+                                            <input class="form-control" type="text"
+                                                ng-model="ruleData.conditionValue" />
+                                        </div>
+                                    </div>
+
+
+									
+									<div class="col-sm-3" ng-if="ruleData.conditionOperator === 'in_context'">
+                                        <div class="form-group">
+                                            <label class="control-label">Context Tables *</label>
+                                            <select class="form-control" ng-model = "ruleData.refData" ng-change = "getValuesFromRefData(ruleData)">
+												<option value = "{{data.id}}" ng-repeat = "data in refset">{{data.referenceSetName}}</option>
+											</select> 
+                                        </div>
+                                    </div>
+									
+									
+
+									
+
+									<div class="col-sm-3" ng-if="ruleData.conditionOperator === 'not_in_context'">
+                                        <div class="form-group">
+                                            <label class="control-label">Context Tables</label>
+                                            <select class="form-control" ng-model = "ruleData.refData" ng-change = "getValuesFromRefData(ruleData)">
+												<option value = "{{data.id}}" ng-repeat = "data in refset">{{data.referenceSetName}}</option>
+											</select> 
+                                        </div>
+                                    </div>
+									
+									
+
+
+                                    <div class="col-sm-3" ng-if="ruleData.conditionField.fieldname === 'event_category'">
+                                        <div class="form-group"
+                                            ng-if="ruleData.conditionOperator != 'any_match' && ruleData.conditionOperator != 'all_match' && ruleData.conditionOperator === 'in_condition' && ruleData.conditionOperator === 'not_in_condition'">
+                                            <label class="control-label">Categories
+                                                {{ruleData.conditionOperator}}</label>
+                                            <ui-select ng-model="ruleData.conditionValue" theme="bootstrap"
+                                                title="Fields">
+                                                <ui-select-match placeholder="Select">{{$select.selected.categoryName}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="t in categories  | filter: $select.search">
+                                                    <span
+                                                        ng-bind-html="t.categoryName | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+
+                                        <div class="form-group"
+                                            ng-if="ruleData.conditionOperator === 'any_match' || ruleData.conditionOperator === 'all_match' || ruleData.conditionOperator === 'in_condition' || ruleData.conditionOperator === 'not_in_condition'">
+                                            <label class="control-label">Categories</label>
+                                            <ui-select ng-model="ruleData.conditionValue" theme="bootstrap"
+                                                title="Fields" multiple>
+                                                <ui-select-match placeholder="Select">{{$item.categoryName}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="t in categories  | filter: $select.search">
+                                                    <span
+                                                        ng-bind-html="t.categoryName | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <a href="javascript:void('0')" class="btn btn-link has-text"
+                                            style="margin-top:7%;padding:0px;padding-top:8px;color:white"
+                                            ng-click="addCondition(rule.currentConditions)"><i style="font-size:14px"
+                                                class='fa fa-plus-circle'></i></a>
+                                        <a href="javascript:void('0')" class="btn btn-link has-text"
+                                            style="margin-top:7%;padding:0px;padding-top:8px;color:red"
+                                            ng-click="deleteCondition(rule.currentConditions,$index)"><i
+                                                style="font-size:14px" class='fa fa-trash-o'></i></a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-12" id="filterId" style="margin-right:0;padding-right:0;">
+                            <a href="javascript:void('0')" style="color:#128ff2;" class="btn pull-right"
+                                data-toggle="collapse" data-target="#advancedFilter{{$index}}" role="button"
+                                aria-expanded="false" aria-controls="advancedFilter{{$index}}"> Advanced Filter </a>
+                        </div>
+                        <div class="row col-md-12 collapse" id="advancedFilter{{$index}}">
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Aggergation</label>
+                                    <select class="form-control" ng-model="rule.aggergationType">
+                                        <option value="count">Count</option>
+                                        <option value="uniqueCount">Unique Count</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3" ng-if="rule.aggergationType === 'uniqueCount' ">
+                                <div class="form-group">
+                                    <label class="control-label">Unique Fields</label>
+                                    <ui-select title="Event Fields" ng-model="rule.unqiueTempFiled" theme="bootstrap"
+                                        title="Select fields">
+                                        <ui-select-match placeholder="Select">{{$select.selected.fieldname}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="item in currentConditions | filter: $select.search">
+                                            <span ng-bind-html="item.fieldname | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Aggregation Fields</label>
+									<div style="width:100%">
+                                    <ui-select title="Event Fields" ng-model="rule.aggTempFiled" multiple="multiple"
+                                        theme="bootstrap" title="Select fields" style="width:100%">
+                                        <ui-select-match placeholder="Select">{{$item.fieldname}}</ui-select-match>
+                                        <ui-select-choices repeat="item in currentConditions | filter: $select.search">
+                                            <span ng-bind-html="item.fieldname | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Operator</label> <select class="form-control"
+                                        ng-model="rule.operator">
+                                        <option value="greaterThan">></option>
+                                        <option value="lessThan">
+                                            <</option> <option value="equalTo">==
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Value</label> <input type="number"
+                                        ng-model="rule.value" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Time Value</label>
+                                    <input type="number" ng-model="rule.timeValue" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label">Time Unit {{rule.timeType}}</label>
+                                    <select class="form-control" ng-model="rule.timeType">
+                                        <option value="" selected disabled></option>
+                                        <option value="days">Days</option>
+                                        <option value="hours">Hours</option>
+                                        <option value="minutes">Minutes</option>
+                                        <option value="seconds">Seconds</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class=" row col-sm-10" ng-if="$index>0 && group.operator === 'AND' ">
+                            <table class="table cloneTable">
+
+                                <tr>
+
+                                    <th style="border-top-color: #383e5d;">Previous Event Fields</th>
+                                    <th style="border-top-color: #383e5d;">Current Event Fields</th>
+                                    <th style="border-top-color: #383e5d;">Action</th>
+                                </tr>
+                                <tr ng-repeat="joinInfo in rule.join">
+
+
+
+                                    <td style="border:none;"><select class="form-control"
+                                            ng-model="joinInfo.perviousConditionField">
+                                            <option value="{{data.fieldname}}" ng-repeat="data in currentConditions">
+                                                {{data.fieldname}}</option>
+                                        </select></td>
+                                    <td style="border:none;"><select class="form-control"
+                                            ng-model="joinInfo.currentConditionField">
+                                            <option value="{{data.fieldname}}" ng-repeat="data in currentConditions">
+                                                {{data.fieldname}}</option>
+                                        </select></td>
+                                    <td style="border:none;">
+                                        <a href="javascript:void('0')" class="btn btn-icons" ng-click="addJoin(rule)"
+                                            title="Add New Row"><i class="fa fa-plus"></i></a>
+                                        <a href="javascript:void('0')" class="btn btn-icons"
+                                            ng-click="removeJoin(rule,$index)" title="Remove"><i
+                                                class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+
+
+                        <div class="col-sm-2">
+                            <div class="form-group" style="margin-top:13%">
+                                <a ng-if="$index>0 && group.operator === 'AND' " href="javascript:void('0')"
+                                    class="btn btn-dark" ng-click="addJoin(rule)" title="Add New Row"><i
+                                        class="fa fa-plus"></i></a>
+
+                                <!-- <a class="btn btn-danger" href="javascript:void('0')" ng-click="removeCondition(rule,$index)">Remove</a> -->
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+</div>
+
+
+</div>
+</div>
+
+</script>
+
+
+
+<div id="manageCategories" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+			<i class="pci-cross pci-circle"></i>
+		</button>
+        <h4 class="modal-title">Manage Categories</h4>
+      </div>
+      <div class="modal-body" style="height: 450px;">
+	      <div id="showAllCategories">
+	      
+	      <div uib-alert ng-repeat="alert in controller.alertModalMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="">
+	        <div class="col-md-12 pad-btm d-flex justify-content-between">
+	        	<div></div>
+	        	<div>
+		        	<button style="margin-right: 10px" id="editCategoryId" ng-click="controller.editCategory()" class="btn btn-primary btn-labeled"><i class="fa fa-pencil btn-label"></i> Edit</button>
+		        	<button style="margin-right: 10px"  id="deleteCategoryId" ng-click="deleteCategory();" class="btn btn-danger btn-labeled"><i class="fa fa-trash btn-label"></i> Delete</button>
+		        	<button style="margin-right: 10px" ng-click="controller.createCategory()" class="btn btn-primary">Create Category</button>
+	        	</div>
+	        	</div>
+	        </div>
+	        <div class="col-md-12">
+	        	<div id = "categoryDetails" class="{{theme}}" style="height: 300px;width: 100%;"></div>
+	        </div>
+	      </div>
+	      <div id="editNewCategory">
+	      <div class="col-md-12 pad-btm">
+	      	<button class="btn btn-default pull-right" ng-click="controller.backToCategories();"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back</button>
+	      </div>
+	      <div class="row pad-all mar-all"></div>
+		      <form class="form-horizontal row" style="margin-top:5%">
+		      	<div class="col-md-3"></div>
+			      <div class="form-group col-md-7">
+			      		<label class="col-md-3 control-label">Category Name</label>
+			      		<div class="col-md-9">
+				      		<input type="text" ng-model="controller.categoryName" class="form-control" >
+			      		</div>
+			      </div>
+			      <div class="form-group col-md-6">
+			      		<button class="btn btn-success pull-right" ng-click="controller.createNewCategory()" >Save</button> 	      
+			      </div>
+		      </form>
+	      </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<div id="manageGroups" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+			<i class="pci-cross pci-circle"></i>
+		</button>
+        <h4 class="modal-title">Manage Groups</h4>
+      </div>
+      <div class="modal-body" style="height: 450px;">
+	      <div id="showAllGroups">
+	      
+	      <div uib-alert ng-repeat="alert in controller.alertModalMessagaes" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+						<div class="">
+	        <div class="col-md-12 pad-btm d-flex justify-content-between">
+	        	<div></div>
+	        	<div>
+		        	<button style="margin-right: 10px" id="editGroupId" ng-click="controller.editGroup()" class="btn btn-primary btn-labeled"><i class="fa fa-pencil btn-label"></i> Edit</button>
+		        	<button style="margin-right: 10px"  id="deleteGroupId" ng-click="deletegroup();" class="btn btn-danger btn-labeled"><i class="fa fa-trash btn-label"></i> Delete</button>
+		        	<button style="margin-right: 10px" ng-click="controller.createGroup()" class="btn btn-primary">Create Group</button>
+	        	</div>
+	        	</div>
+	        </div>
+	        <div class="col-md-12">
+	        	<div id = "groupDetails" class="{{theme}}" style="height: 300px;width: 100%;"></div>
+	        </div>
+	      </div>
+	      <div id="editNewGroup">
+	      <div class="col-md-12 pad-btm">
+	      	<button class="btn btn-default pull-right" ng-click="controller.backToGroup();"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back</button>
+	      </div>
+	      <div class="row pad-all mar-all"></div>
+		      <form class="form-horizontal row" style="margin-top:5%">
+		   
+			      <div class="form-group col-md-12">
+			      		<label class="col-md-3 control-label">Group Name</label>
+			      		<div class="col-md-9">
+				      		<input type="text" ng-model="controller.groupName" class="form-control" >
+			      		</div>
+			      </div>
+			      <div class="form-group col-md-6">
+			      		<button class="btn btn-success pull-right" ng-click="controller.createNewGroup()" >Save</button> 	      
+			      </div>
+		      </form>
+	      </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+	</div>
+
+
+
+
+
+
+
+
+<script>
+	var eventTypeCheckBox = document.getElementById('eventsTypeId');
+	new Switchery(angular.element(eventTypeCheckBox), {
+		size : 'medium'
+	})
+	angular.element(eventTypeCheckBox).onchange = function() {
+		if (changeCheckbox.checked) {
+			openEventTypes('Custom')
+		} else {
+			openEventTypes('Standard')
+		}
+	};
+</script>

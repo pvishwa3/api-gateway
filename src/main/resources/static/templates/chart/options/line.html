@@ -1,0 +1,95 @@
+<div class="col-xs-12 col-md-12">
+
+
+
+	<uib-tabset active="active"> 
+	<uib-tab index="0" heading="Grid" id="bg-color">
+	
+		<ng-include src="'templates/chart/options/common/grid.html'"></ng-include>
+	
+	</uib-tab>
+	
+	<uib-tab index="1" heading="Legend" id="bg-color">
+	
+		<ng-include src="'templates/chart/options/common/legend.html'"></ng-include>
+	
+	</uib-tab> 
+	
+	<uib-tab index="2" heading="Category Axis" id="bg-color">
+	
+		<ng-include src="'templates/chart/options/common/categoryAxis.html'"></ng-include>
+	
+	</uib-tab>  
+	
+	<uib-tab index="3" heading="Value Axis" id="bg-color">
+	
+		<form class="form-horizontal" style="padding-top: 2%;padding-left:2%">
+				<div class="row" ng-repeat="v in curWidget.config.values">
+					<div class="form-group col-md-12 row">
+						<label class="col-md-1 control-label" style="padding: 7px 2px">Axis Name</label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" ng-model="v.name">
+						</div>
+					</div>
+					<div class="form-group col-md-12 row">
+						<label class="col-md-1 control-label" style="padding: 7px 2px">Min</label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" ng-model="v.min">
+						</div>
+					</div>
+					<div class="form-group col-md-12 row">
+						<label class="col-md-1 control-label" style="padding: 7px 2px">Max</label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" ng-model="v.max">
+						</div>
+					</div>
+				</div>
+			</form>
+	
+	</uib-tab>  
+	
+	<uib-tab index="5" heading="Ext">
+	
+		<form class="form-horizontal" style="padding-top: 2%">
+				<div class="col-md-12">
+					<div class="col-md-1"></div>
+					<div class="form-group col-md-4">
+						<div class="checkbox">
+							<label> <input type="checkbox"
+								ng-model="curWidget.config.option.dataZoom"
+								ng-init="curWidget.config.option.dataZoom=false"> Show
+								DataZoom
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="form-group row">
+						<label class="col-md-1 control-label">Value Orient</label>
+						<div class="col-md-5">
+							<select class="form-control"
+								ng-model="curWidget.config.valueAxis"
+								ng-init="curWidget.config.valueAxis ? null : curWidget.config.valueAxis='vertical'">
+								<option value="horizontal">horizontal</option>
+								<option value="vertical">vertical</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</form>
+	</uib-tab> 
+	
+	
+		
+		
+	
+	
+</uib-tabset>
+
+
+
+
+
+
+
+	

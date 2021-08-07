@@ -1,0 +1,71 @@
+
+<div ng-controller="retentionPolicyController as controller" ng-init="controller.init()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Retention Policy</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+		<hr />
+
+
+
+
+		<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+		<div uib-alert ng-repeat="alert in controller.conditionMessagesModal"
+			class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+		
+		<div class="row">
+		
+		<br/>
+		
+		<table class = "table">
+				<thead>
+					<tr>
+						<th>Index Name</th>
+						<th>Hot (Storage)</th>
+						<th>Warm (Storage)</th>
+						<th>Cold (Storage)</th>
+						<th>Retention (Storage)</th>
+						
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat = "data in storageDetails">
+						<td>{{data.storageName}}</td>
+						<td><input type="number" class="form-control" ng-model = "data.hotStorage" placeholder="Enter in Days"> </td>
+						<td><input type="number" class="form-control" ng-model = "data.warmStorage" placeholder="Enter in Days"> </td>
+						<td><input type="number" class="form-control" ng-model = "data.coldStorage" placeholder="Enter in Days"> </td>
+						<td><input type="number" class="form-control" ng-model = "data.renention" placeholder="Enter in Days"> </td>
+				
+					</tr>
+				
+				</tbody>
+				
+		</table>
+		</div>
+
+		
+		
+		<div class="pull-right">
+				<button class="btn btn-dark pull-right" type="button" ng-click = "controller.saveDetails()">Save</button>
+		</div>
+
+
+	</div>
+</div>

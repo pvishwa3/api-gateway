@@ -1,0 +1,281 @@
+<div  id="content-container" ng-controller="activityController as controller" ng-init="controller.loadAllConditions()">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+						<div id="page-head">
+							<div id="page-title">
+								<h1 class="page-header text-overflow">Event Activity</h1>
+							</div>
+						<ol class="breadcrumb">
+							<li><a href="/configuration#!">Home</a></li>
+							<li class="active">Activity</li>
+						</ol>
+						</div>
+					</div>
+				</div>
+		</div>
+		<hr/>
+
+		<div class="panel">
+
+
+			<div class="panel-heading">
+				<div class="panel-control">
+
+					<button class="btn   dropdown-toggle" data-toggle="dropdown"
+						aria-expanded="false">
+						{{evetName}} <span class="caret"></span>
+					</button>
+
+					<ul class="dropdown-menu dropdown-menu-right">
+
+						<li>
+							<div class="has-feedback has-feedback-left">
+								<input type="search" class="form-control" style="border: 0px"
+									ng-model="eventSearch" placeholder="Search">
+								<div class="form-control-feedback">
+									<i class="icon-search4 text-size-base text-muted"></i>
+								</div>
+							</div>
+
+						</li>
+
+						<li
+							ng-repeat="data  in controller.conditionDetails  |  filter:eventSearch">
+							<a href="javascript:void(0)"
+							ng-click="getEventInformation(data.id,data.conditionName)"
+							style="font-size: 12px">{{data.conditionName}}</a>
+						</li>
+
+					</ul>
+					<button type="button"
+						class="btn  events-daterange-ranges heading-btn">
+						<i class="icon-calendar5 position-left"></i> <span>Today</span> <b
+							class="caret"></b>
+					</button>
+
+
+				</div>
+
+			</div>
+
+			<div class="panel-body">
+
+
+				<form action="#" class="form-horizontal">
+
+
+
+					<div class="form-group">
+						<div class="input-group">
+							<input type="text" ng-model="filterQUery"
+								class="form-control input-text-group"
+								placeholder="SQL Like Syntax"> <span
+								class="input-group-addon primary-input-group"
+								style="cursor: pointer;" ng-click="search()"><i
+								class="ion-search"></i></span>
+						</div>
+
+
+					</div>
+
+
+				</form>
+
+
+				<div class="chart-container">
+
+					<div id="events_container" class="chart has-fixed-height"
+						style="width: 100%; height: 250px;"></div>
+				</div>
+			</div>
+
+
+
+
+
+			<hr />
+			<div class="panel-body">
+				<div class="row" ng-show="controller.eventsInformation.length>0">
+
+					<div class="pad-btm form-inline">
+						<div class="row">
+
+							<div class="col-sm-12 table-toolbar-right">
+								
+								<div class="btn-group dropdown">
+									<button type="button" aria-label="columns"
+										class="btn btn-default btn-active-primary dropdown-toggle" data-toggle="dropdown"
+										aria-expanded="true">
+										<i class="glyphicon demo-pli-check"></i> <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right" role="menu">
+										<li ng-repeat="data in cols" role="menuitem"><label><input
+												type="checkbox" ng-click="addOrDeleteColumn($index)"
+												value="{{data}}" ng-checked="$index<4"> {{data}}</label></li>
+
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					
+					<div class="clearfix"></div>
+
+					<div class="table-responsive" >
+						<table id="datatable-activity" style="height:500px;"  class="table table-striped">
+							<thead >
+								<tr>
+									<th ng-repeat="(key, value) in controller.eventsInformation[0]">{{key}}</th>
+
+								</tr>
+							</thead>
+
+
+							<tbody >
+								<tr ng-click="showInformation(data.id)" class="row-details"
+									data-id="{{data.id}}" style="cursor: pointer;"
+									ng-repeat="data in controller.eventsInformation">
+
+									<td ng-repeat="(key,value) in data">{{value}}</td>
+
+								</tr>
+
+							</tbody>
+							<tfoot>
+							
+								<tr>
+									<td colspan="4">
+										
+										<button type="button"> Load More</button>
+									
+									</td>
+								
+								</tr>
+							
+							</tfoot>
+						</table>
+
+						
+
+					</div>
+
+					<div class="row" ng-show="controller.eventsInformation.length==0">
+						<h4 class="text-center">No data to display.</h4>
+					</div>
+
+
+
+
+
+
+
+				</div>
+
+
+
+
+			</div>
+
+			<div class="modal right fade" id="event_details_modal" tabindex="-1"
+				role="dialog" aria-labelledby="myModalLabel2">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<i class="pci-cross pci-circle"></i>
+							</button>
+
+
+
+							<h4 class="modal-title" id="myModalLabel2">{{eventSingleInformation.conditionName}}</h4>
+							<span class="modal-subtitle display-block">{{eventSingleInformation.TimeStamp}}</span>
+
+						</div>
+
+						<div class="modal-body">
+
+							<div class="panel panel-flat">
+
+								<div class="panel-heading">
+
+									<h5 class="panel-title">Event Details</h5>
+
+
+
+								</div>
+
+
+
+
+								<div class="panel-body">
+
+
+
+									<table class="table table-event-details"
+										id="table-event-details">
+
+										<tbody>
+											<tr ng-repeat="(key,value) in eventSingleInformation"
+												ng-if="key!= 'id' && key!= 'conditionName' && key!='message' && key!= 'description' ">
+
+												<td class="td-field-label">{{key}}</td>
+												<td class="td-field-value">{{value}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+								<br />
+
+								<div class="row">
+									<div class="col-md-12">
+										<h5 class="panel-title">Description</h5>
+									</div>
+
+									<div class="col-md-12">
+										<span class="panel-title">{{eventSingleInformation.description.trim()}}</span>
+									</div>
+
+								</div>
+
+								<hr />
+
+								<div class="col-md-12">
+
+									<h5 class="panel-title">Log</h5>
+
+									<div class="pre">
+
+										<pre class="log">
+								 {{eventSingleInformation.message.trim()}}
+							 </pre>
+
+									</div>
+
+								</div>
+
+							</div>
+
+
+
+						</div>
+
+					</div>
+					<!-- modal-content -->
+				</div>
+				<!-- modal-dialog -->
+			</div>
+			<!-- modal -->
+
+
+
+		</div>
+	</div>
+
+</div>
+

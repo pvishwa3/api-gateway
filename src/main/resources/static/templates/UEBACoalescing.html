@@ -1,0 +1,237 @@
+
+<div ng-controller="UEBACoalescingController as controller"
+	ng-init="controller.init()" class="content-wrapper">
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<h4 class="page-title text-overflow">User Coalescing</h4>
+		</div>
+	</div>
+
+
+
+
+	<script type="text/ng-template" id="alert.html">
+        <div ng-transclude></div>
+  					</script>
+	<div uib-alert ng-repeat="alert in alertErrors"
+		class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+		close="closeAlert($index)">{{alert.msg}}</div>
+
+
+
+
+	<div class="col-12 grid-margin">
+		<div class="card">
+			<div class="card-body">
+
+				<h4 class="card-title">Attributes Search</h4>
+
+
+
+				<form ng-submit="searchAttributes()" class="form-sample">
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Base DN : </label>
+								<div class="col-sm-9">
+									<input type="text" required="required" class="form-control"
+										ng-model="searchFilters.baseDN">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Search Filter : </label>
+								<div class="col-sm-9">
+									<input type="text" required="required" class="form-control"
+										ng-model="searchFilters.searchFilter">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row pull-right">
+						<div class="form-group">
+
+							<button class="btn btn-success customNextBtn mr-2" type="submit">Search</button>
+
+						</div>
+
+					</div>
+
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+
+
+		<div class="col-md-6">
+
+			<div class="card card-statistics social-card card-default">
+
+				<div class="card-header header-sm">
+					<div class="d-flex align-items-center">
+						<h2 class="card-title ml-3">User Coalescing</h2>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="card-body"
+				style="height: 400px; overflow-y: scroll; background: #232438">
+				<table class="table table-striped">
+
+					<thead>
+						<tr>
+							<th></th>
+							<th>Attribute</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr ng-repeat="data in attributes">
+							<td><input type="checkbox" ng-model="data.isChecked"></td>
+							<td>{{data.name}}</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+			</div>
+
+
+
+
+		</div>
+
+		<div class="col-md-6">
+
+			<div class="card card-statistics social-card card-default">
+
+				<div class="card-header header-sm">
+
+					<h2 class="card-title ml-3">Display Attributes</h2>
+
+				</div>
+
+			</div>
+
+			<div class="card-body"
+				style="height: 400px; overflow-y: scroll; background: #232438">
+				<form action="">
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Display Name : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.displayName" 
+										class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Full Name : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.fullName" class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Email : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.email" class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Job Title : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.jobTitle" class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">Department : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.department"
+										class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label">City : </label>
+								<div class="col-sm-9">
+									<select ng-model="displayAttributes.city" class="form-control">
+										<option value="{{data.name}}" ng-repeat="data in attributes">
+											{{data.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</form>
+			</div>
+
+
+
+
+		</div>
+
+	</div>
+	<div class="row pull-right">
+		<div class="form-group">
+
+			<button class="btn btn-success customNextBtn mr-2" ng-click = "saveDetails()" type="button">Save</button>
+
+		</div>
+
+	</div>
+
+
+
+
+</div>

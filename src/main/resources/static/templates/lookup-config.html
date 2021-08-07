@@ -1,0 +1,452 @@
+<div ng-controller="lookupController as ctrl">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Manage Lookups</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4 pull-right">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<button  class="btn btn-dark pull-right mar-lft" ng-click="ctrl.configureLookup()" ng-if = "canShowContextButton && ctrl.canCreate">Configure Context</button>
+							
+							<button  class="btn btn-dark pull-right mar-lft" ng-click="ctrl.goBack()" ng-if = "canShowContextGroupsBackButton ">Back</button>
+							<button  class="btn btn-dark pull-right mar-lft" ng-click="ctrl.showLookupContent()" >View Content</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+	</div>
+	
+	<script type="text/ng-template" id = "lookupConfigureContextGroups.html">
+	
+
+		<div class="panel panel-table">
+        <div class="panel-body-alt">
+            <div class="table-responsive">
+                <table class="table table-striped  dataTable no-footer" datatable="ng">
+					<thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Updated By</th>
+							<th>Last Updated</th>
+                            <th>Action</th>
+                        </tr>
+					</thead>
+					<tbody>
+                        <tr ng-repeat="data in lookupGroupsDetails">
+                            <td>{{data.typeName}}</td>
+                            <td>{{data.createdBy }}</td>
+                            <td>{{data.createDate | date:'yyyy-MM-dd HH:mm:ss '}}</td>
+                            <td>{{data.updateBy}}</td>
+ 							<td>{{data.updateDate | date:'yyyy-MM-dd HH:mm:ss '}}</td>
+                            <td>
+								<a class="btn-link" href="javascript:void('0')" ng-if = "ctrl.canUpdate" ng-click="ctrl.editLookupGroupDetails(data)">Edit</a>&nbsp;
+								
+								<a class="btn-link" href="javascript:void('0')" ng-if = "ctrl.canDelete" ng-click="ctrl.deleteLookupGroupDetails(data.id)">Delete</a>
+							</td>
+                        </tr>
+					</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+		
+	
+	</script>
+	
+	
+							
+							
+	
+	<script type="text/ng-template" id="lookupConfiguration.html">
+
+		<form  role="form" ng-submit="saveDetails()" name="alertsForm">
+					
+
+					
+					
+						<div class="panel-body">
+							<div class = "col-md-3">
+							<div class="form-group">
+											<label class="control-label">Lookup Name</label> <input
+												type="text" class="form-control col-md-4" required="required"
+												ng-model="ctrl.lookupDetails.lookupName">
+
+							</div>
+
+							<div class="form-group">
+											<label class="control-label">Description</label> <textarea rows="5" cols="5" class="form-control"
+											required="required"
+											ng-model="ctrl.lookupDetails.lookupDescription"></textarea>
+
+							</div>
+							</div>
+							<div class = "col-md-12">
+							
+<div class= "row pad-all">
+
+							<button class="btn btn-dark pull-right" type="button" ng-click = "addBindings()">Add Bindings</button>
+</div>
+							
+				
+								
+							<uib-accordion close-others="oneAtATime">
+
+							<div uib-accordion-group class="panel-group accordion" ng-repeat = "group in bindings" >
+
+									  <uib-accordion-heading>
+       <span class="col-md-9"> Event Binding </span> <div> <a class="col-md-3" href="javascript:void('0')"> <i style=" transform: rotate(360deg);" ng-click="deleteBinding($index)" class="fa fa-trash pull-right mar-top"></i></a></div>
+      </uib-accordion-heading>
+									
+								
+
+									<div class = "row pad-all"> 
+
+										<div class = "col-md-6 lookup-container-with-border" >
+					
+										<div class="form-group col-md-4">
+											<label class="control-label">Select Events</label> 
+											
+											<ui-select
+													ng-model="group.lookupTableName" theme="bootstrap" style="width:100%"
+												title = "Events" on-select="ctrl.onSelectedEvent(group,$item)"> <ui-select-match
+													placeholder="Select Lookup">{{$select.selected.eventName}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.events | filter: $select.search">
+												<span ng-bind-html="t.eventName | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											
+												
+
+									</div>
+
+									<div class="form-group col-md-4">
+											<label class="control-label">Log Device</label> 
+											
+											<ui-select
+													ng-model="group.bindingLogDevice" theme="bootstrap" style="width:100%"
+												title = "Events" on-select="ctrl.onSelectedBindingLogDeviece(group,$item)"> <ui-select-match
+													placeholder="Select Lookup">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in logDevice | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											
+												
+
+									</div>
+
+									<div class = "col-md-2" style= "margin-top:2%">
+										
+										<button class="btn btn-dark pull-right" type="button" ng-click = "addLooupFields(group)">Add Field</button>
+															
+			
+									</div>
+									
+									<div class = "col-md-12" style = "height:300px; overflow-y: scroll;">
+
+									 <table class="table table-borderless" >
+
+									<thead>
+										<tr>
+											<th>Source Field</th>
+											<th>Destination Field</th>
+											<th></th>
+
+										</tr>
+
+
+
+									</thead>
+
+									<tbody >
+										<tr ng-repeat="data in group.lookupFields">
+												
+
+											<td> <ui-select
+													ng-model="data.sourceField" theme="bootstrap" style="width:100%"
+												title = "Fields"> <ui-select-match
+													placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.currentLogFields | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select> </td>
+											<td>
+												<ui-select
+													ng-model="data.destinationField" theme="bootstrap" style="width:100%"
+												title = "Fields"> <ui-select-match
+													placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.currentLogFields | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											 </td>
+
+											<td>
+												<a href = "javascript:void('0')" ng-click  = 'deleteLookupFields(group.lookupFields,$index)' >Delete</a>
+	
+											</td>
+											
+										</tr>
+
+
+									</tbody>
+
+
+								</table>
+								</div>
+
+									</div>
+									<div class = "col-md-6 lookup-container">
+										<div class="form-group col-md-4">
+											<label class="control-label">Select Events</label> 
+												
+											<ui-select
+													ng-model="group.unBindlookupTableName" theme="bootstrap" style="width:100%"
+												title = "Events" on-select="ctrl.onSelectUnBindEvent(group,$item)"> <ui-select-match
+													placeholder="Select Lookup">{{$select.selected.eventName}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.unbindingEvents | filter: $select.search">
+												<span ng-bind-html="t.eventName | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											
+												
+
+									</div>
+
+<div class="form-group col-md-4">
+											<label class="control-label">Log Device</label> 
+											
+											<ui-select
+													ng-model="group.unBindingLogDevice" theme="bootstrap" style="width:100%"
+												title = "Events" on-select="ctrl.onSelectedUnBindingLogDeviece(group,$item)"> <ui-select-match
+													placeholder="Select Lookup">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in logDevice | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											
+												
+
+									</div>
+									<div class = "col-md-3" style= "margin-top:2%">
+									
+										<button class="btn btn-dark pull-right" type="button" ng-click = "addUnBindLooupFields(group)">Add Field</button>
+									
+									
+									</div>
+								
+									
+									<br/>
+<div class = "col-md-12" style = "height:300px; overflow-y: scroll;">
+									
+									<table class="table table-borderless">
+
+									<thead>
+										<tr>
+											<th>Source Field</th>
+											<th>Destination Field</th>
+											<th></th>
+
+										</tr>
+
+
+
+									</thead>
+
+									<tbody style = "height:300px;overflow-y: auto;">
+										<tr ng-repeat="data in group.unBindlookupFields">
+												
+
+											<td> <ui-select
+													ng-model="data.sourceField" theme="bootstrap" style="width:100%"
+												title = "Fields"> <ui-select-match
+													placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.unBindCurrnetLogFields | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select> </td>
+											<td>
+												<ui-select
+													ng-model="data.destinationField" theme="bootstrap" style="width:100%"
+												title = "Fields"> <ui-select-match
+													placeholder="Select Log Field">{{$select.selected}}</ui-select-match>
+												<ui-select-choices
+													repeat="t in group.unBindCurrnetLogFields | filter: $select.search">
+												<span ng-bind-html="t | highlight: $select.search"></span>
+												</ui-select-choices> </ui-select>
+											
+											 </td>
+
+											<td>
+												<a href = "javascript:void('0')" ng-click  = 'deleteLookupFields(group.unBindlookupFields,$index)' >Delete</a>
+	
+											</td>
+											
+										</tr>
+
+
+									</tbody>
+
+
+								</table>
+</div>
+
+
+								</div>
+
+									</div>
+									
+									
+							</div>
+
+							
+
+							</div>
+							</div>
+							</uib-accordion>
+
+							<div class = "pull-right">
+									<button class = "btn btn-dark pull-right" type = "submit">Save Configuration</button>
+							</div>
+
+						</div>
+						</div>
+					
+				</form>
+	</script>
+	
+	
+	<script type="text/ng-template" id="viewLookupContents.html">
+
+            <div class="panel panel-table">
+        <div class="panel-body-alt">
+            	<div id = "lookupContent" ng-class="theme == 'theme-dark-full' ? 'ag-theme-balham-dark':'ag-theme-balham'" style="height: 500px;"><div>
+        </div>
+    </div>
+    </script>
+	
+
+	<script type="text/ng-template" id="viewLookupDetails.html">
+
+            <div class="panel panel-table">
+        <div class="panel-body-alt">
+            <div class="table-responsive">
+				<div id = "lookupDetails" class="ag-theme-balham" style="height: 500px;"><div>
+                
+            </div>
+        </div>
+    </div>
+    </script>
+    
+   
+   <div id="createConfiguration" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Map Attributes to Type</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed" ng-submit="ctrl.submitData()" name="conditionCategory" >
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.conditionMessagesModal" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Type</label>
+								<div class="col-sm-6">
+									<select class = "form-control" ng-model = "ctrl.typeMapping.domainType">
+										<option value="User">User</option>
+										<option value="IP">IP</option>
+										<option value="Domain">Domain</option>
+										<option value="File">File</option>
+									
+									</select>
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Log Fields</label>
+								<div class="col-sm-6">
+								
+									<ui-select multiple="multiple"
+										ng-model="ctrl.logFieldsModel" theme="bootstrap"
+										style="width:100%" title="Fields"
+										on-select="controller.onSelected($item)"> <ui-select-match
+										placeholder="Select">{{$item}}</ui-select-match> <ui-select-choices
+										repeat="t in ctrl.logFields | filter: $select.search">
+									<span ng-bind-html="t | highlight: $select.search"></span>
+									</ui-select-choices> </ui-select>
+								
+								
+									
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Log Fields</label>
+								<div class="col-sm-6">
+								
+									<ui-select multiple="multiple"
+										ng-model="ctrl.logFieldsModelForProperty" theme="bootstrap"
+										style="width:100%" title="Fields"
+										on-select="controller.onSelected($item)"> <ui-select-match
+										placeholder="Select">{{$item}}</ui-select-match> <ui-select-choices
+										repeat="t in ctrl.logFields | filter: $select.search">
+									<span ng-bind-html="t | highlight: $select.search"></span>
+									</ui-select-choices> </ui-select>
+								
+								
+									
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Property</label>
+								<div class="col-sm-6">
+								
+									<input type="text" class = "form-control" ng-model = "ctrl.typeMapping.propetyName"/>
+									
+										
+								</div>	
+							</div>
+							
+						</div>
+						 <div class="modal-footer">
+							<button type="button" class="btn btn-default waves-effect"
+								data-dismiss="modal">Close</button>
+							<input type="submit" class="btn btn-dark" value="Save">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+	
+</div>

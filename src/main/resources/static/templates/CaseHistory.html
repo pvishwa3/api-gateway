@@ -1,0 +1,1205 @@
+<div id="container" ng-init="controller.init()"
+	ng-controller="caseHistoryController as controller"
+	class="content-wrapper">
+
+	<div class="page-content pad-top-50">
+
+		<div uib-alert ng-repeat="alert in alertMessages" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+
+		<div id="case-container">
+			<div class="pad-all">
+
+				<div class="eq-height row">
+
+
+
+					<div class="col-md-8 col-lg-8 eq-box-lg col-md-12"
+						style="padding: 0; display: grid;">
+						<div
+							class="panel  incident-container {{controller.caseDetails.priority}}"
+							style="display: grid;">
+
+							<div class="panel-body indident-panel-body">
+								<div class="eq-height row col-md-12">
+
+									<div class="col-md-3 incidentLeft" style="padding-top: 2%">
+
+										<h2 class="inciden-text" style="cursor: pointer;"
+											title="Click Here to Change Priority"
+											ng-click="openPriorityModel()">{{controller.caseDetails.priority}}</h2>
+
+										<span class="label label-danger"
+											ng-if="controller.caseDetails.isSLABreched==='true'">
+											Overdue </span> <span class="label label-danger"
+											ng-if="controller.caseDetails.isResponded==='false'">
+											Not Responded </span>
+
+										<h5 class="inciden-text">
+											Age :
+											<time am-time-ago="controller.age"
+												title="{{ controller.age | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+										</h5>
+
+										<div class="dropdown toolbar-item">
+
+											<button class="btn btn-inverse-primary dropdown-toggle"
+												type="button" id="dropdownMenuButton1"
+												data-toggle="dropdown" aria-haspopup="true"
+												aria-expanded="false">{{controller.caseDetails.status}}</button>
+
+											<div class="dropdown-menu"
+												aria-labelledby="dropdownMenuButton1"
+												x-placement="bottom-start"
+												style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 33px, 0px);">
+												
+												<a class="dropdown-item"
+													ng-repeat="data in controller.caseOptions"
+													href="javascript:void('0')"
+													ng-click="controller.changeStatus(data)">{{data}}</a>
+												
+											</div>
+
+										</div>
+
+										
+
+
+										
+
+
+
+
+
+
+									</div>
+
+									<div class="col-md-9 incidentRight" style="padding-top: 1%">
+										<div class="col-md-12 row">
+											<div class="col-md-6 incident-case-dispaly">
+
+												<p>
+													<strong> Case ID :</strong>
+													{{controller.caseDetails.caseId}}
+												</p>
+
+												<p>
+													<strong> Case Title: </strong>
+													{{controller.caseDetails.title}}
+												</p>
+												<p>
+													<strong> Created Date: </strong>
+													{{controller.caseDetails.createDate}}
+												</p>
+												<p>
+													<strong> Owner :</strong>
+													{{controller.caseDetails.assignedUser}}
+												</p>
+
+
+
+
+
+
+
+
+											</div>
+
+
+											<div class="col-md-6 incident-case-dispaly">
+
+
+
+												<p>
+													<strong> Created By :</strong>
+													{{controller.caseDetails.createdBy}}
+												</p>
+
+
+
+												<p ng-if="controller.caseDetails.status=== 'Open'">
+													<strong>First Respond Due :</strong>
+													{{controller.caseDetails.respondDueDate | date:'medium' :
+													'UTC'}}
+												</p>
+
+												<p ng-if="controller.caseDetails.status!='Open'">
+													<strong>Responded On :</strong>
+													{{controller.caseDetails.respondedDate | date:'medium' :
+													'UTC'}}
+												</p>
+
+												<p ng-if="controller.caseDetails.status!='Resolved'">
+													<strong>Resolution Due :</strong>
+													{{controller.caseDetails.resolutionDueDate | date:'medium'
+													: 'UTC'}}
+												</p>
+
+												<p ng-if="controller.caseDetails.status==='Resolved'">
+													<strong>Resolved On :</strong>
+													{{controller.caseDetails.resolutionDueDate | date:'medium'
+													: 'UTC'}}
+												</p>
+
+
+
+
+
+												<p>
+													<strong>Summary :</strong>
+													{{controller.caseDetails.description}}
+												</p>
+
+
+
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+
+							</div>
+						</div>
+
+
+					</div>
+
+
+					<div class="col-md-4 col-lg-4 eq-box-lg" style="display: grid;">
+						<div class="panel card cases-panel">
+							<div
+								class="card-header cases-heading  d-flex justify-content-between"
+								style="padding: 0px 10px 0px 10px">
+								<h4 class="card-title"
+									style="padding-top: 6px; font-weight: bold;">Collaborators</h4>
+								<div class="panel-control">
+									<button class="btn btn-default"
+										ng-click="controller.assignOwnershipModal()"
+										ng-if="controller.caseDetails.status=== 'Open' || controller.caseDetails.status=== 'In Progress'">Assign
+										Ownership</button>
+								</div>
+							</div>
+							<div class="card-body cases-panel">
+
+								<div class="list-group bord-no"
+									ng-if="!controller.caseDetails.assignedUser">
+									<h6 style="padding: 8% 25%;">No Collaborators Found.</h6>
+								</div>
+
+
+
+								<div class="list-group bord-no">
+									<h4 class="card-title" style="text-transform: none;"
+										href="javascript:void('0')"
+										ng-repeat="data in controller.caseDetails.collaboratiors">{{data.name}}</h4>
+								</div>
+
+
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+
+
+			</div>
+
+			<div class="pad-all" style="padding-top: 3%">
+
+
+				<div class="eq-height row">
+
+					<div class="col-md-8 col-lg-8 eq-box-lg col-md-12 caseContainer">
+
+						<div class="tab-base">
+
+							<!--Nav Tabs-->
+							<ul class="nav nav-tabs " id="cases-nav">
+								<li class="nav-item active"
+									style="width: 33%; text-align: center;"><a
+									style="border: none; padding-left: 30%" data-toggle="tab"
+									class="nav-link" href="javascript:void('0')"
+									ng-click='controller.changeTab("evidence")'>Evidence</a></li>
+								<li class="nav-item" style="width: 33%; text-align: center;"><a
+									class="nav-link" style="border: none; padding-left: 30%"
+									data-toggle="tab" href="javascript:void('0')"
+									ng-click='controller.changeTab("alerts")'>Alerts</a></li>
+
+								<li class="nav-item" style="width: 34%; text-align: center;"><a
+									class="nav-link" style="border: none; padding-left: 30%"
+									data-toggle="tab" href="javascript:void('0')"
+									ng-click='controller.changeTab("activity")'>Activity</a></li>
+
+							</ul>
+
+							<!--Tabs Content-->
+							<div class="tab-content">
+
+
+								<div id="demo-lft-tab-1 " ng-show="currentTab ==='evidence' "
+									class="tab-pane active in" style="height: 500px;">
+
+									<div class="col-md-12" ng-if="notesErroMessage.length > 0">
+										<div uib-alert ng-repeat="alert in notesErroMessage"
+											class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+											close="closeAlert($index)">{{alert.msg}}</div>
+									</div>
+
+
+
+
+									<div class="panel-body cases-body">
+										<div style="height: 300px; overflow: scroll;">
+
+
+
+											<div class="list-group"
+												ng-repeat="data in controller.caseDetails.notes">
+												<div href="javascript:void('0');" class="list-group-item"
+													style="margin: 5px; text-decoration: none; color: #efefef;">
+													<h5 style="text-transform: none; color: white;">{{data.createdBy}}
+														added a note {{data.createdDate | date:'medium' : 'UTC' }}</h5>
+													<p ng-bind-html="data.notes" class="list-group-item-text"></p>
+												</div>
+											</div>
+										</div>
+
+
+
+
+
+										<div class="list-group bord-no">
+											<span class="list-group-item " href="javascript:void('0')"
+												ng-repeat="data in controller.caseDetails.files"><strong>{{data.fileUploadedBy}}
+											</strong> added a file <a
+												href="/case-management/user/case/downloadFile/{{data.fileName}}"
+												class="btn btn-link">{{data.fileName}}</a>
+												{{data.fileCreatedDate | date:'medium' : 'UTC' }}</span>
+										</div>
+
+
+
+
+
+									</div>
+
+
+
+									<div
+										class="col-md-12 case-input-group input-group row  d-flex justify-content-between"
+										style="bottom: 10px; position: absolute; padding-left: 3%">
+
+
+										<summernote class="col-md-11" config="options"
+											ng-model="casemessage.message"> </summernote>
+
+
+										<span class="input-group-btn" class="col-md-1"
+											style="padding-top: 75px;">
+											<button class="btn btn-icon add-tooltip" style="width: 1%"
+												ng-click="controller.addFileModel()" title="Attach file"
+												type="button">
+												<i class="demo-psi-paperclip icon-lg"></i>
+											</button>
+											<button class="btn btn-icon add-tooltip" style="width: 1%"
+												ng-click="controller.addNotes()" title="Send" type="button">
+												<i class="demo-pli-paper-plane icon-lg"></i>
+											</button>
+										</span>
+									</div>
+
+
+
+
+
+
+
+
+
+								</div>
+
+								<div id="demo-lft-tab-3" ng-show="currentTab ==='alerts' "
+									class="tab-pane active" style="margin: 1.5%;">
+									<p class="text-main text-semibold"></p>
+
+									<div class="table-responsive">
+										<table
+											class="table table-striped  dataTable no-footer dtr-inline"
+											datatable="ng" dt-options="vm.dtOptions"
+											dt-instance="vm.dtInstance" width="100%"
+											dt-columns="vm.dtColumns" dt-column-defs="vm.dtColumnDefs"
+											id="alert-details-1">
+											<thead>
+												<tr>
+													<th>Alert Name</th>
+													<th>Category</th>
+													<th>Priority</th>
+													<th>IRP</th>
+
+												</tr>
+
+
+											</thead>
+											<tbody>
+
+												<tr style="cursor: pointer"
+													ng-repeat="data in controller.caseDetails.alertEvidences">
+
+													<td ng-click="controller.getAlertInfo(data)">
+														{{data.alertName}}</td>
+													<td>{{data.alertCategory}}</td>
+													<td>{{data.alertPriority}}</td>
+													<td><a href="javascript:void('0');"
+														ng-click="controller.showIRP(data.steps,data.irpName)"><label
+															ng-if="data.irpName =='' || data.irpName ==undefined">No
+																IRP</label><label
+															ng-if="data.irpName !='' || data.irpName !=undefined">{{data.irpName}}</label></a></td>
+												</tr>
+
+
+											</tbody>
+
+
+										</table>
+
+
+									</div>
+								</div>
+
+
+								<div id="demo-lft-tab-1 " ng-show="currentTab ==='activity' "
+									class="tab-pane active in" style="margin: 2%">
+
+
+
+
+
+
+									<div class="panel-body cases-body">
+										<div class="list-group"
+											ng-repeat="data in controller.caseDetails.caseActivities">
+
+
+											<p class="list-group-item-text">
+												<span ng-bind-html="data.activity"></span> on <b>{{data.activityDate
+													| date:'medium' : 'UTC'}}</b>
+											</p>
+
+
+
+
+										</div>
+
+
+
+
+
+
+
+
+
+
+
+									</div>
+
+
+
+
+
+
+
+
+
+
+
+
+								</div>
+							</div>
+
+
+						</div>
+
+					</div>
+					<div class="col-md-4 col-lg-4 eq-box-lg" style="display: grid;">
+						<div class="card cases-panel">
+							<div
+								class="card-header cases-heading  d-flex justify-content-between"
+								style="padding: 0px 10px 0px 10px">
+								<h4 class="card-title"
+									style="padding-top: 6px; font-weight: bold;">External incident management system</h4>
+								<div class="panel-control">
+									<button class="btn btn-default"
+										ng-click="controller.attachCasesModal()"
+										ng-if="(controller.caseDetails.status=== 'Open' || controller.caseDetails.status=== 'In Progress') && (!controller.caseDetails.externalCaseId) ">Create Case</button>
+								</div>
+							</div>
+							<div class="card-body cases-panel">
+
+
+
+								<div class="list-group bord-no"
+									ng-if="!controller.caseDetails.externalCaseId">
+									<h6 style="padding: 8% 25%;">No Related Cases Found.</h6>
+								</div>
+
+
+								<div class="list-group bord-no">
+									<a class="card-title" target="_blank" style="text-transform: none;"
+										href="{{controller.caseDetails.externalRef}}"
+										>{{controller.caseDetails.externalCaseId}}</a>
+								</div>
+
+
+							</div>
+						</div>
+
+
+					</div>
+
+
+
+
+
+
+				</div>
+
+			</div>
+
+
+			<div class="pad-all" style="padding-top: 3%">
+
+
+				<div class="eq-height row">
+
+					<div class="col-md-12" style="padding: 0">
+
+						<uib-tabset active="active" id="cases-nav"> <uib-tab
+							index="0" heading="Rules">
+
+
+						<div class="card">
+
+							<div class="card-body">
+
+								<table
+									class="table table-striped  dataTable no-footer dtr-inline"
+									datatable="ng" dt-options="vm.dtOptions"
+									dt-instance="vm.dtInstance" width="100%"
+									dt-columns="vm.dtColumns" dt-column-defs="vm.dtColumnDefs"
+									id="alert-details">
+									<thead>
+										<tr>
+
+											<th>TimeStamp</th>
+											<th>Rule Name</th>
+											<th>Rule Category</th>
+											<th>Priority</th>
+											<th>Count</th>
+
+
+
+
+										</tr>
+									</thead>
+
+
+									<tbody>
+
+										<tr ng-click="getSingleRuleInfo(data)"
+											ng-repeat="data in ruleDetailedHistory">
+
+
+
+
+											<td>{{data['@timestamp'] | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+											<td>{{data.rule_name}}</td>
+											<td>{{data.rule_category}}</td>
+											<td>{{data.priority}}</td>
+											<td><a href="javascript:void('0')" class="btn-link"
+												ng-click="showEventDetails(data)">
+													{{data.event_data.length}}</a></td>
+
+										</tr>
+
+									</tbody>
+								</table>
+
+							</div>
+
+						</div>
+
+						</uib-tab> <uib-tab index="1" heading="Investigations">
+
+						<div class="card">
+
+							<div class="card-body">
+
+								<table
+									class="table table-striped  dataTable no-footer dtr-inline"
+									datatable="ng" dt-options="vm.dtOptions"
+									dt-instance="vm.dtInstance" width="100%"
+									dt-columns="vm.dtColumns" dt-column-defs="vm.dtColumnDefs"
+									id="alert-details">
+									<thead>
+										<tr>
+											<th>Investigation ID</th>
+											<th>Created Date</th>
+											<th>Name</th>
+											<th>Status</th>
+											<th>Action</th>
+
+
+
+
+										</tr>
+									</thead>
+
+
+									<tbody>
+
+										<tr ng-repeat="data in investigationDetails">
+
+
+
+											<td>{{data.id}}</td>
+											<td>{{data.createdDate | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+											<td>{{data.name}}</td>
+											<td>{{data.status}}</td>
+											<td><a href="javascript:void('0')" class="btn-link"
+												ng-click="quickView(data)"> Quick View </a> || <a
+												href="/configuration#!/investigations?id={{data.id}}">Show
+													More Info</a></td>
+
+										</tr>
+
+									</tbody>
+								</table>
+
+							</div>
+
+						</div>
+
+						</uib-tab> <uib-tab index="2" select="alertMe()" heading="IRP">
+
+
+						<div class="panel">
+
+
+							<div class="panel-heading" style="border-bottom: 0px">
+
+								<div class="panel-control">
+									<a href="javascript:void('0')" ng-click="toggleFullScreen()">View
+										in Full Screen</a>
+								</div>
+
+							</div>
+
+							<div class="panel-body">
+								<div class="list-group bord-no">
+									<div class="panel-group accordion" id="accordion"
+										style="height: 600px; overflow: scroll">
+										<div id="irpGraph"></div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+
+
+						</uib-tab> </uib-tabset>
+
+
+
+					</div>
+
+				</div>
+
+
+
+
+
+
+			</div>
+
+		</div>
+
+
+	</div>
+
+
+	<!-- 							<div class="panel-group accordion" id="accordion"> -->
+	<!-- 					            <div class="panel" ng-repeat="data in controller.irpDetails.steps track by $index"> -->
+	<!-- 					                <div class="panel-heading"> -->
+	<!-- 					                    <h4 class="panel-title"> -->
+	<!-- 					                        <a class="col-md-12" data-parent="#accordion" data-toggle="collapse" href="javascript:void('0')" data-target="#{{data.key |spaceless}}"><b>{{data.key}}</b></a> -->
+	<!-- 					                    </h4> -->
+	<!-- 					                </div> -->
+	<!-- 					                <div class="panel-collapse collapse" id="{{data.key | spaceless}}" dnd-list="value"> -->
+	<!-- 					                    <div class="panel-body"   ng-repeat="value in data.value track by $index"> -->
+	<!--    			                        		<div class="col-md-12"> -->
+	<!--    			                        			<div ng-bind-html="value.action"></div> -->
+	<!-- 											</div> -->
+	<!-- 					                    </div> -->
+	<!-- 									</div> -->
+	<!-- 					            </div> -->
+	<!-- 					        </div> -->
+
+
+
+	<div class="modal  fade" id="QuickViewModel" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">Investigation Quick
+						View</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+
+					<div id="read-only-workflow-graph" style="height: 500px"></div>
+
+
+					<div class="panel-footer text-right">
+
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							aria-label="Close">Cancel</button>
+
+					</div>
+
+
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div id="showEventDetails" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<i class="pci-cross pci-circle"></i>
+					</button>
+					<h4 class="modal-title">Rule Information</h4>
+				</div>
+				<div class="modal-body">
+					<div uib-alert ng-repeat="alert in ctrl.alertMessagaesModal"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+
+					<form action="" class="horizontal-form">
+						<div class="row">
+							<div class="col-sm-6">
+
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>TimeStamp</strong>
+									</label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.event_time}}</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Name</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.rule_name}}</p>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Priority</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.priority}}</p>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-md-6">
+								<div class="form-group row">
+
+									<label class="col-md-3 control-label"><strong>Description</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.description}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Category</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.rule_category}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>Tags</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{singleEvnentInfo.event_tags}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+
+
+
+					<div class="row" style="padding-top: 15px;">
+
+
+
+						<div class="col-md-12" style="padding-top: 15px;">
+
+							<h5 class="page-title"
+								style="text-decoration: underline; font-weight: bold;">Contributed
+								Events</h5>
+
+							<div class="table-responsive" style="padding-top: 15px;">
+								<table
+									class="table table-striped  dataTable no-footer dtr-inline"
+									datatable="ng" dt-options="widgetDtOptions"
+									dt-instance="widgetDtInstance" width="100%"
+									dt-columns="widgetDtColumns"
+									dt-column-defs="widgetDtColumnDefs">
+									<thead>
+										<tr>
+											<th class="col-md-4">Timestamp</th>
+											<th class="col-md-4">Event Name</th>
+											<th class="col-md-2">Event Category</th>
+											<th class="col-md-2">Log Device</th>
+
+										</tr>
+									</thead>
+
+
+									<tbody>
+										<tr ng-repeat="data  in singleEvnentInfo.event_data"
+											style="cursor: pointer;"
+											ng-click="showSingleEventDetails(data)">
+											<td>{{singleEvnentInfo.event_time}}</td>
+											<td>{{data.event_name}}</td>
+											<td>{{data.event_category}}</td>
+											<td>{{data.log_device | date:'yyyy-MM-dd h:mm:ss a'}}</td>
+
+
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+
+
+						<div class="col-md-12 row"
+							style="border-top: 1px solid #1c1c1c; padding-top: 15px;">
+
+
+							<h5 class="panel-title col-md-12"
+								style="text-decoration: underline; font-weight: bold; padding-bottom: 15px;">Event
+								Information</h5>
+
+							<div class="col-sm-6"
+								ng-repeat="(key,value) in singleEventDetails">
+
+								<div class="form-group row">
+									<label class="col-md-3 control-label"><strong>{{key}}</strong></label>
+									<div class="col-md-8">
+										<p class="form-control-static">{{value}}</p>
+									</div>
+								</div>
+
+
+							</div>
+
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal  fade" id="assing-owner" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">Assign User</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form action="#" class="form-horizontal">
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Assign User:</label>
+							<div class="col-sm-6">
+
+								<select class="form-control" ng-model="assignee">
+
+									<option ng-repeat="data in controller.users">{{data.userName}}</option>
+
+								</select>
+
+
+							</div>
+
+						</div>
+
+
+					</form>
+
+					<div class="panel-footer text-right">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal" aria-label="Close">Cancel</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="controller.changeAssignee()">Save</button>
+
+					</div>
+
+
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div class="modal  fade" id="PriorityModel" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">Change Priority</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form action="#" class="form-horizontal">
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Change Priority:</label>
+							<div class="col-sm-6">
+
+								<select class="form-control" ng-model="priority">
+
+									<option value="Critical">Critical</option>
+									<option value="High">High</option>
+									<option value="Medium">Medium</option>
+									<option value="Low">Low</option>
+
+								</select>
+
+
+							</div>
+
+						</div>
+
+
+					</form>
+
+					<div class="panel-footer text-right">
+
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							aria-label="Close">Cancel</button>
+						<button type="button" class="btn btn-dark"
+							ng-click="controller.changePriority()">Save</button>
+
+					</div>
+
+
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div class="modal fade" id="add-file" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">Attach Files</h4>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in ctrl.fitlerMessages"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form action="#" class="form-horizontal">
+
+						<div class="form-group">
+
+							<div class="col-sm-6">
+
+								<input type="file" file-model="caseFiles">
+
+
+							</div>
+
+						</div>
+
+
+					</form>
+
+					<div class="panel-footer text-right">
+
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							aria-label="Close">Cancel</button>
+						<button type="button" class="btn btn-dark" ng-click="uploadFile()">Save</button>
+
+					</div>
+
+
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div class="modal fade" id="attach-cases-modal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel2">External incident management system</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+
+
+				<div class="modal-body">
+
+					<div uib-alert ng-repeat="alert in attachCasesErrorMessage"
+						class="alert" ng-class="'alert-' + (alert.type || 'warning')"
+						close="closeAlert($index)">{{alert.msg}}</div>
+
+					<form action="#" class="form-horizontal">
+
+						<div class="form-group row">
+							<label class="col-sm-6 control-label">Select Connections Cases:</label>
+
+							<div class="col-sm-6">
+
+								<select class="form-control" ng-model = "controller.releatedCases.caseId">
+									<option ng-repeat = "data in controller.existingJiraConnections" value = "{{data.id}}">{{data.connectionName}}</option>
+
+
+								</select>
+
+								
+
+
+							</div>
+
+						</div>
+
+
+					</form>
+
+					<div class="panel-footer text-right">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal" aria-label="Close">Cancel</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="attachCases()">Save</button>
+
+					</div>
+
+
+
+				</div>
+
+
+
+			</div>
+			<!-- modal-content -->
+		</div>
+		<!-- modal-dialog -->
+	</div>
+
+	<div class="panel tableDrillDown" data-id="close"
+		ng-show="canShowDrillDown">
+
+		<div class="open panel-heading dashboard-panel-header">
+
+			<h3 class="panel-title dashboard-panel-heading dashboad-panel-title ">Rule
+				History</h3>
+
+
+		</div>
+		<div class="content panel">
+
+			<div class="panel-body">
+
+				<div class="col-md-8"
+					style="border-right: 1px solid black; height: 300px; overflow-y: scroll;">
+
+
+					<table class="table table-striped  dataTable no-footer dtr-inline"
+						datatable="ng" dt-options="vm.dtOptions"
+						dt-instance="vm.dtInstance" width="100%" dt-columns="vm.dtColumns"
+						dt-column-defs="vm.dtColumnDefs" id="alert-details">
+						<thead>
+							<tr>
+
+								<th>TimeStamp</th>
+								<th>Rule Name</th>
+								<th>Rule Category</th>
+								<th>Priority</th>
+								<th>Event Name</th>
+
+
+							</tr>
+						</thead>
+
+
+						<tbody>
+
+							<tr style="cursor: pointer" ng-click="getSingleRuleInfo(data)"
+								ng-repeat="data in ruleDetailedHistory">
+
+
+
+
+								<td>{{data.timestamp | date:'MM/dd/yyyy HH:mm:ss'}}</td>
+								<td>{{data.rule_name}}</td>
+								<td>{{data.rule_category}}</td>
+								<td>{{data.priority}}</td>
+								<td>{{data.event_name}}</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+				<div class="col-md-4"
+					style="height: 300px; overflow-y: scroll; padding-top: 40px">
+
+					<table class="table table-event-details" id="table-event-details">
+
+						<tbody>
+
+							<tr ng-repeat="(key,value) in ruleSingleInfo">
+								<td class="td-field-label">{{key}}</td>
+								<td class="td-field-value">{{value}}</td>
+
+							</tr>
+
+
+
+
+
+						</tbody>
+					</table>
+
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+
+	</div>
+
+</div>
+<style>
+#cases-nav li.active {
+	background: #282a40;
+}
+
+#cases-nav li {
+	background: #222437;
+}
+</style>

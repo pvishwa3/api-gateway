@@ -1,0 +1,203 @@
+
+<div ng-controller="explorerController as controller"
+	ng-init="controller.init()" class="content-wrapper">
+	<div class="row page-header">
+		<div class="col-sm-8">
+			<h4 class="page-title text-overflow">Threat Explorer</h4>
+		</div>
+	</div>
+
+	<div class="card row">
+
+
+		
+
+
+		<div class="col-md-12">
+
+			<table class="table">
+
+				<thead>
+					<tr>
+						<th>Start Date</th>
+						<th>End Date</th>
+						<th>Category</th>	
+						<th ng-if = "huntingData.fieldType === 'User'  || huntingData.fieldType === 'IP' || huntingData.fieldType === 'Device' || huntingData.fieldType === 'Threat_IOC_IP' || huntingData.fieldType === 'Threat_IOC_Domain' ||  huntingData.fieldType === 'Threat_IOC_Url' " >Value</th>
+						<th ng-if = "huntingData.fieldType === 'Malware'">Malware Search Type</th>	
+						<th ng-if = "huntingData.fieldType === 'Malware' &&  huntingData.malwareSearchTye === 'malwareCategory' ">Malware Category</th>	
+						<th ng-if = "huntingData.fieldType === 'Malware' &&  huntingData.malwareSearchTye === 'malwareValue' ">Malware Hash</th>
+
+
+
+					</tr>
+
+				</thead>
+
+				<tbody>
+
+					<tr>
+						<td><input class="form-control datetimepicker"
+							placeholder="Select a start date..."
+							moment-picker="startDateInput.momentDate" locale="en"
+							format="YYYY-MM-DD HH:mm:ss" autoclose="true"
+							ng-model="startDateInput.momentDate"
+							ng-model-options="{ updateOn: 'blur' }"></td>
+
+						<td><input class="form-control datetimepicker"
+							placeholder="Select a End date..."
+							moment-picker="endDateInput.momentDate" locale="en"
+							format="YYYY-MM-DD HH:mm:ss" autoclose="true"
+							ng-model="endDateInput.momentDate"
+							ng-model-options="{ updateOn: 'blur' }"></td>
+
+						<td><select class="form-control" ng-model="huntingData.fieldType">
+								<option value="User">User</option>
+								<option value="Device">Device</option>
+								<option value="IP">IP</option>
+								<option value="Malware">Malware</option>
+								<option value="Threat_IOC_IP">Threat_IOC_IP</option>
+								<option value="Threat_IOC_Domain">Threat_IOC_Domain</option>
+
+								<option value="Threat_IOC_Url">Threat_IOC_Url</option>
+						</select></td>
+
+						<td ng-if = "huntingData.fieldType === 'User'  || huntingData.fieldType === 'IP' || huntingData.fieldType === 'Device' "><ui-select ng-model="selectionModel.name"
+								data-ng-disabled="disabled" style="min-width: 300px;">
+							<ui-select-match placeholder="Search">{{$select.selected}}</ui-select-match>
+							<ui-select-choices refresh="autoComplete($select)"
+								refresh-delay="300" repeat="data in searchResults">
+							<span
+								ng-bind-html="data | highlight: $select.search"></span>
+							</ui-select-choices> </ui-select>
+						</td>
+
+						<td  ng-if = "huntingData.fieldType === 'Malware'">
+							<select class="form-control" ng-model = "huntingData.malwareSearchTye" ng-change = "getMalwareCategoies()"> 
+								<option value="malwareCategory">Malware Category</option>
+								<option value="malwareValue">Malware Hash</option>
+							</select>	
+						</td>
+
+						<td  ng-if = "huntingData.fieldType === 'Malware' && huntingData.malwareSearchTye === 'malwareCategory' ">
+							<select class="form-control"  ng-model = "selectionModel.name" >
+								<option ng-repeat = "data in malwareCategories" value="{{data}}">{{data}}</option>
+								
+							</select>	
+						</td>
+						<td  ng-if = "huntingData.fieldType === 'Malware' && huntingData.malwareSearchTye === 'malwareValue' ">
+							<input type="text" class="form-control" ng-model = "selectionModel.name"> 
+						</td>
+
+						<td  ng-if = "huntingData.fieldType === 'Threat_IOC_IP'">
+							<input type="text" class="form-control" ng-model = "selectionModel.name">
+						</td>
+						<td  ng-if = "huntingData.fieldType === 'Threat_IOC_Domain'">
+							<input type="text" class="form-control" ng-model = "selectionModel.name">
+						</td>
+
+						<td  ng-if = "huntingData.fieldType === 'Threat_IOC_Url'">
+							<input type="text" class="form-control" ng-model = "selectionModel.name">
+						</td>
+
+
+
+					</tr>
+
+				</tbody>
+
+
+			</table>
+
+
+
+		</div>
+
+
+		<div class="col-md-12">
+			<button type="button" class="btn btn-primary pull-right"
+				ng-click="searchIndicators()">Explore</button>
+		</div>
+
+		
+
+		<script type="text/ng-template" id="queryBuilderDirective.html">
+            <div class="alert-group col-md-12 text-md-center">
+
+
+                <div class="text-center text-md-center">
+
+                    <table class="table cloneTable bord-btm" >
+                        <tr>
+                            <td class="clonetd" style="width:20%"><select ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="form-control input-sm"></select></td>
+                            <td class="clonetd" style="width:5%"><button  ng-click="addCondition(group)" class="btn btn-dark">Add Condition</button></td>
+                            <td class="clonetd" style="width:5%"> <button ng-click="addGroup()" class="btn  btn-dark"> Add Group</button></td>
+                            <td class="clonetd" ><button  ng-click="removeGroup()" class="btn btn-default ">Remove Group</button></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+
+
+                <div class="group-conditions">
+                    <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
+                        <div ng-switch="rule.hasOwnProperty('group')">
+                            <div ng-switch-when="true">
+                                <query-builder group="rule.group"></query-builder>
+                            </div>
+                            <div ng-switch-default="ng-switch-default">
+
+
+
+
+                                <table class="table cloneTable">
+                                    <tr>
+
+                                        <td  class="clonetd" style="width:30%">
+                                            <ui-select  ng-model="rule.field"  theme="select2" style="width:100%"> title = "Fields"
+                                                <ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices  repeat="t in fields | filter: $select.search">
+                                                    <span ng-bind-html="t.name | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+
+
+                                        </td>
+                                        <td class="clonetd"  style="width:30%">
+
+
+                                            <select   ng-model="rule.condition" class="form-control input-sm">
+                                                <option ng-repeat="  c in conditions" value ="{{c.value}}">{{c.name}}</option>
+                                            </select>
+                                        </td>
+
+
+                                        <td class="clonetd" style="width:30%" ><input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/></td>
+
+                                        <td class="clonetd"><a ng-click="removeCondition($index)" class="btn btn-link "><i class="fa fa-trash"></i></a></td>
+                                    </tr>
+
+                                </table>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+        </script>
+
+
+
+	</div>
+
+
+
+	<div class="row" style="padding-top: 12px;">
+
+		<ng-include src="templateUrl" style="width: 100%;"></ng-include>
+	</div>
+</div>

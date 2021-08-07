@@ -1,0 +1,361 @@
+<div id="content-container" ng-controller="metricsContoller as metrics">
+	<div id="page-content">
+		<div class="row">
+			<div id="page-head" ng-init="metrics.init()">
+
+
+
+				<div class="pad-btm form-inline">
+					<div class="row" style="padding-top: 15px;">
+						<div class="col-sm-6 table-toolbar-left">
+							<h4 class="text-semibold">Application Overview</h4>
+						</div>
+						<div class="col-sm-6 table-toolbar-right">
+
+
+							<div class="btn-group">
+
+								<a href="javascript:void('0')" title="Export To Pdf"
+									class="btn btn-link btn-float has-text"
+									title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_UNDO') }}"
+									ng-click="exportToPdf()"> <i class="fa fa-download"></i>
+								</a> <a href="javascript:void('0')"
+									class="metric-daterange-ranges btn btn-link  heading-btn text-semibold">
+									<i class="fa fa-calendar"></i> <span></span> <b class="caret"></b>
+								</a>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+
+
+			<div class="row">
+
+				<div class="col-md-3">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_events_per_second"> <i class="fa fa-calendar"
+									title="time picker"></i> <span ng-show="false"></span> <b
+									class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Events Per Second</h3>
+						</div>
+
+						<div class="panel-body">
+								<div id="dwidget" class="pad-all">
+
+                                    <div class="panel panel-default panel-colorful">
+
+                                        <div class="pad-no media">
+
+                                          
+
+                                            <div class="media-body  pad-lft pad-top mar-no">
+
+                                                <div class="row text-left mar-no">
+
+                                                     <button id="lftbtn" class="btn btn-xs btn-rounded btn-default"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
+
+                                                </div>
+
+                                                <div class="row">
+
+                                                   <div class="col-md-6 col-xs-6 rgtborder">
+
+                                                     <p class="text-sm media-heading">THREAT ACTIVITY</p>
+
+                                                         <span class="text-xs tag-line">Total Count</span>
+
+                                                            <ul class="list-unstyled row">
+
+                                                                <li class="col-xs-6 col-sm-6 text-left number-txt">
+
+                                                                   <span class="text-2x text-semibold">778</span>
+
+                                                                    
+
+                                                                </li>
+
+                                                                
+
+                                                                <li class="col-xs-6  col-sm-6 arrow-rotate-green">
+
+                                                                    <span class="text-lg text-semibold text-left"><i class="fa fa-arrow-down"></i></span>
+
+                                                                   <p class="text-sm text-left">-50</p>
+
+                                                                </li>
+
+                                                            </ul>
+
+                                                     </div>
+
+                                                  
+
+                                                     <div class="col-md-6 col-xs-6">
+
+                                                            <p class="text-sm  media-heading">AUTH USERS</p>
+
+                                                            <span class="text-xs tag-line">Distinct Court</span>
+
+                                                            <ul class="list-unstyled row">
+
+                                                                <li class="col-xs-6  col-sm-6 text-left number-txt">
+
+                                                                   <span class="text-2x text-semibold">3.9K</span>
+
+                                                                    
+
+                                                                </li>
+
+                                                                
+
+                                                                <li class="col-xs-6 col-sm-6 arrow-rotate-red">
+
+                                                                    <span class="text-lg text-semibold text-left"><i class="fa fa-arrow-up"></i></span>
+
+                                                                    <p class="text-sm text-left">+67</p>
+
+                                                                </li>
+
+                                                            </ul>
+
+                                                       </div>
+
+                                                      
+
+                                                </div><!--row end -->
+
+                                                
+
+                                                
+
+                                            </div> <!-- media body end -->
+
+                                        </div> <!-- media end -->
+
+                                      
+
+
+                                
+
+                              </div><!-- col end -->
+
+        
+
+                          </div><!--dwidget id end -->
+<!-- 							<div id="events_per_second_container" -->
+<!-- 								class="chart has-fixed-height"></div> -->
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="col-md-9">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_log_trend_per_second"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Log Trend</h3>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="log_trend_container" class="chart has-fixed-height">
+
+
+							</div>
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+
+
+			</div>
+
+			<div class="row">
+
+
+
+
+				<div class="col-md-3">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_logvolume_per_second"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Log Volume</h3>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="log_volume_container" class="chart has-fixed-height">
+
+							</div>
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="col-md-9">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_log_volume_per_second"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Top Volume Trend</h3>
+						</div>
+
+						<div class="panel-body">
+
+
+							<div id="log_over_time_trend_container"
+								class="chart has-fixed-height"></div>
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+
+
+			</div>
+
+			<div class="row">
+
+
+
+				<div class="col-md-4">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_top_events_per_second"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Top Events</h3>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="top_events_devices_container"
+								class="chart has-fixed-height"></div>
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="col-md-4">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_events_by_category"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Top Events By Category</h3>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="top_events_by_category_container"
+								class="chart has-fixed-height"></div>
+
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="col-md-4">
+					<div class="panel">
+						<div class="panel-heading">
+							<div class="panel-control">
+								<a href="javascript:void('0')"
+									class="btn-link btn-link-white widget-daterange-ranges"
+									id="timerange_top_sending_devices_per_second"> <i
+									class="fa fa-calendar" title="time picker"></i> <span
+									ng-show="false"></span> <b class="caret"></b>
+								</a>
+							</div>
+							<h3 class="panel-title">Top Sending Devices</h3>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="top_seding_devices_container"
+								class="chart has-fixed-height"></div>
+
+
+
+						</div>
+
+
+					</div>
+
+				</div>
+
+
+
+
+
+			</div>
+		</div>
+
+	</div>
+
+</div>

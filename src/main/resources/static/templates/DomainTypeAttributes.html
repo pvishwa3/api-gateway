@@ -1,0 +1,173 @@
+<div ng-controller="domainTypeAttributeController as ctrl">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-10">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<h1 class="page-header text-overflow">Type Attribute Configuration</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2 pull-right">
+				<div class="row">
+					<div id="page-head">
+						<div id="page-title">
+							<button 
+								class="btn btn-dark pull-right" ng-show = "ctrl.canCreateDomainTypeAttribute" ng-click="ctrl.assosicateAttributesWithType()">Add Configuration</button>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+
+		<div uib-alert ng-repeat="alert in ctrl.alertMessagaes" class="alert"
+			ng-class="'alert-' + (alert.type || 'warning')"
+			close="closeAlert($index)">{{alert.msg}}</div>
+		<div ng-include src="templateUrl" onload='myFunction()'></div>
+	</div>
+
+	<script type="text/ng-template" id="configurationDetails.html">
+
+            <div class="panel panel-table">
+				<div class="panel-body bord-no">
+					<div class="table-responsive">
+						<table class="table table-striped  dataTable no-footer dtr-inline" datatable="ng" dt-options="vm.dtOptions" dt-instance="vm.dtInstance"  width="100%" dt-column-defs="vm.dtColumnDefs">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2">Type</th>
+                                    <th class="col-md-2">Attributes</th>
+									<th class="col-md-2">Created By</th>
+									<th class="col-md-2">Created At</th>
+									<th class="col-md-2">Updated At</th>
+									<th class="col-md-2">Updated By</th>
+                                    <th class="col-md-2 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data  in ctrl.confugrationDetails">
+                                    <td>{{data.domainType}}</td>
+                                    <td>{{data.domainAttributes}}</td>
+									<td>{{data.createdBy}}</td>
+									<td>{{data.createdDate | date:'yyyy-MM-dd h:mm:ss a'}}</td>
+									<td>{{data.updateDate | date:'yyyy-MM-dd h:mm:ss a'}}</td>
+									<td>{{data.updateDatedBy}}</td>
+									<td class="cell-name text-center">
+										<div class="dropdown">
+					                    	<button class="dropdown-toggle btn" data-toggle="dropdown" aria-expanded="false"><i class="demo-psi-dot-vertical"></i></button>
+					                    	<ul class="dropdown-menu dropdown-menu-right">
+					                        	<li><a href="javascript:void('0')" ng-show = "ctrl.canUpdateDomainTypeAttribute" class="btn-link" ng-click="ctrl.edit(data.id)"> Edit </a></li>
+					                            <li><a href="javascript:void('0')" ng-show = "ctrl.canDeleteDomainTypeAttribute" class="btn-link" ng-click="ctrl.delete(data.id,data.domainType)"> Delete </a></li>
+					                        </ul>
+					                    </div>
+									</td>
+                                </tr>
+                            </tbody>	
+                        </table>
+					</div>
+                </div>
+            </div>
+    </script>
+    
+   
+   <div id="createConfiguration" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<i class="pci-cross pci-circle"></i>
+						</button>
+						<h4 class="modal-title" id="myLargeModalLabel">Map Attributes to Type</h4>
+					</div>
+					<form class="form-horizontal group-border-dashed" ng-submit="ctrl.submitData()" name="conditionCategory" >
+						<div class="modal-body">
+							<div uib-alert ng-repeat="alert in ctrl.conditionMessagesModal" class="alert" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Type</label>
+								<div class="col-sm-6">
+									<select class = "form-control" ng-model = "ctrl.typeMapping.domainType" required="required">
+										<option value="User">User</option>
+										<option value="IP">IP</option>
+										<option value="Domain">Domain</option>
+										<option value="File">File</option>
+										<option value="URL">URL</option>
+										<option value="Hash">Hash</option>
+									
+									</select>
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Attribute Fields</label>
+								<div class="col-sm-6">
+								
+									<ui-select multiple="multiple"
+										ng-model="ctrl.logFieldsModel" theme="bootstrap"
+										style="width:100%" title="Fields"
+										on-select="controller.onSelected($item)"> <ui-select-match
+										placeholder="Select">{{$item}}</ui-select-match> <ui-select-choices
+										repeat="t in ctrl.logFields | filter: $select.search">
+									<span ng-bind-html="t | highlight: $select.search"></span>
+									</ui-select-choices> </ui-select>
+								
+								
+									
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Log Fields</label>
+								<div class="col-sm-6">
+								
+									<ui-select multiple="multiple"
+										ng-model="ctrl.logFieldsModelForProperty" theme="bootstrap"
+										style="width:100%" title="Fields"
+										on-select="controller.onSelected($item)"> <ui-select-match
+										placeholder="Select">{{$item}}</ui-select-match> <ui-select-choices
+										repeat="t in ctrl.logFields | filter: $select.search">
+									<span ng-bind-html="t | highlight: $select.search"></span>
+									</ui-select-choices> </ui-select>
+								
+								
+									
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Property</label>
+								<div class="col-sm-6">
+								
+									<input type="text" class = "form-control" ng-model = "ctrl.typeMapping.propetyName"/>
+									
+										
+								</div>	
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Include/Exclude</label>
+								<div class="col-sm-6">
+								
+									<input type="checkbox" ng-checked = "ctrl.typeMapping.includeInContext"  value="true" class = "form-control" ng-model = "ctrl.typeMapping.includeInContext"/>
+									
+										
+								</div>	
+							</div>
+							
+						</div>
+						 <div class="modal-footer">
+							<button type="button" class="btn btn-default waves-effect"
+								data-dismiss="modal">Close</button>
+							<input type="submit" class="btn btn-dark" value="Save">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	
+</div>

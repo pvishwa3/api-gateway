@@ -1,0 +1,69 @@
+
+
+
+
+
+<div class="row" ng-controller="incidentsController as ctrl">
+
+	<div class="page-header page-header-default">
+		<div class="page-header-content border-bottom border-bottom-success">
+			<div class="page-title">
+				<h4>
+					<i class="icon-arrow-left52 position-left"></i> <span
+						class="text-semibold">Recent Incidents</span>
+
+				</h4>
+			</div>
+
+
+
+			<div class="heading-elements">
+				<div class="heading-btn-group">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="panel panel-flat">
+
+		<div class="panel-heading">
+			<div class="clearfix"></div>
+		</div>
+
+		
+
+
+
+
+		<div class="panel-body table-responsive">
+
+			<nvd3 options="options" data="data"></nvd3>
+
+			<table class="table" datatable="ng">
+				<thead>
+					<tr>
+						<th>Rule Name</th>
+						<th>Rule Category</th>
+						<th>Count</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="data in ctrl.recentIncidents"
+						ng-click="ctrl.drillDownToRulesDetails(data.ruleName)"
+						style="cursor: pointer;">
+						<td>{{data.ruleName}}</td>
+						<td>{{data.ruleCategory}}</td>
+						<td>{{data.count}}</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+	</div>
+
+
+
+</div>
